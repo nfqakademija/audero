@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="1839ba38-6c70-43c3-9b2b-42a6f16aa205" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/cache/.gitkeep" afterPath="$PROJECT_DIR$/app/cache/.gitkeep" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/logs/.gitkeep" afterPath="$PROJECT_DIR$/app/logs/.gitkeep" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/AppKernel.php" afterPath="$PROJECT_DIR$/app/AppKernel.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/config/config.yml" afterPath="$PROJECT_DIR$/app/config/config.yml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/config/routing.yml" afterPath="$PROJECT_DIR$/app/config/routing.yml" />
-    </list>
+    <list default="true" id="1839ba38-6c70-43c3-9b2b-42a6f16aa205" name="Default" comment="" />
     <ignored path="audero.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="TRACKING_ENABLED" value="true" />
