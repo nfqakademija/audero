@@ -33,7 +33,7 @@ twig:
 assetic:
     debug:          "%kernel.debug%"
     use_controller: false
-    bundles:        [ ]
+    bundles:        [AuderoAdminBundle]
     #java: /usr/bin/java
     filters:
         cssrewrite: ~

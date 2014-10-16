@@ -1,0 +1,3 @@
+audero_admin_index:
+    path:     /admin
+    defaults: { _controller: AuderoAdminBundle:Dashboard:index }

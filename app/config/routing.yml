@@ -1,0 +1,4 @@
+audero_admin:
+    resource: "@AuderoAdminBundle/Resources/config/routing.yml"
+    prefix:   /
+
