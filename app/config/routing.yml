@@ -1,4 +1,15 @@
-audero_admin:
-    resource: "@AuderoAdminBundle/Resources/config/routing.yml"
+audero_backend:
+    resource: "@AuderoBackendBundle/Resources/config/routing.yml"
     prefix:   /
+
+audero_showphoto:
+    resource: "@AuderoShowphotoBundle/Resources/config/routing.yml"
+    prefix:   /
+
+audero_web:
+    resource: "@AuderoWebBundle/Resources/config/routing.yml"
+    prefix:   /
+
+fos_user:
+    resource: "@FOSUserBundle/Resources/config/routing/all.xml"
 

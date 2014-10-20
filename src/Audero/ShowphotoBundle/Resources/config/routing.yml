@@ -1,0 +1,3 @@
+audero_showphoto_homepage:
+    path:     /hello/{name}
+    defaults: { _controller: AuderoShowphotoBundle:Default:index }
