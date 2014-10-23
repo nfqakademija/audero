@@ -1,27 +1,27 @@
 <?php
 
-namespace Audero\BackendBundle\Controller;
+namespace Audero\ShowphotoBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Audero\BackendBundle\Entity\Demand;
-use Audero\BackendBundle\Form\DemandType;
+use Audero\ShowphotoBundle\Entity\Application;
+use Audero\ShowphotoBundle\Form\ApplicationType;
 
 /**
- * Demand controller.
+ * Application controller.
  *
- * @Route("/demand")
+ * @Route("/game/request")
  */
-class DemandController extends Controller
+class ApplicationController extends Controller
 {
 
     /**
-     * Lists all Demand entities.
+     * Lists all Application entities.
      *
-     * @Route("/", name="demand")
+     * @Route("/", name="request")
      * @Method("GET")
      * @Template()
      */
@@ -29,22 +29,22 @@ class DemandController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entities = $em->getRepository('AuderoBackendBundle:Demand')->findAll();
+        $entities = $em->getRepository('AuderoShowphotoBundle:Application')->findAll();
 
         return array(
             'entities' => $entities,
         );
     }
     /**
-     * Creates a new Demand entity.
+     * Creates a new Application entity.
      *
-     * @Route("/", name="demand_create")
+     * @Route("/", name="request_create")
      * @Method("POST")
-     * @Template("AuderoBackendBundle:Demand:new.html.twig")
+     * @Template("AuderoShowphotoBundle:Application:new.html.twig")
      */
     public function createAction(Request $request)
     {
-        $entity = new Demand();
+        $entity = new Application();
         $form = $this->createCreateForm($entity);
         $form->handleRequest($request);
 
@@ -53,7 +53,7 @@ class DemandController extends Controller
             $em->persist($entity);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('demand_show', array('id' => $entity->getId())));
+            return $this->redirect($this->generateUrl('request_show', array('id' => $entity->getId())));
         }
 
         return array(
@@ -63,16 +63,16 @@ class DemandController extends Controller
     }
 
     /**
-     * Creates a form to create a Demand entity.
+     * Creates a form to create a Application entity.
      *
-     * @param Demand $entity The entity
+     * @param Application $entity The entity
      *
      * @return \Symfony\Component\Form\Form The form
      */
-    private function createCreateForm(Demand $entity)
+    private function createCreateForm(Application $entity)
     {
-        $form = $this->createForm(new DemandType(), $entity, array(
-            'action' => $this->generateUrl('demand_create'),
+        $form = $this->createForm(new ApplicationType(), $entity, array(
+            'action' => $this->generateUrl('request_create'),
             'method' => 'POST',
         ));
 
@@ -82,15 +82,15 @@ class DemandController extends Controller
     }
 
     /**
-     * Displays a form to create a new Demand entity.
+     * Displays a form to create a new Application entity.
      *
-     * @Route("/new", name="demand_new")
+     * @Route("/new", name="request_new")
      * @Method("GET")
      * @Template()
      */
     public function newAction()
     {
-        $entity = new Demand();
+        $entity = new Application();
         $form   = $this->createCreateForm($entity);
 
         return array(
@@ -100,9 +100,9 @@ class DemandController extends Controller
     }
 
     /**
-     * Finds and displays a Demand entity.
+     * Finds and displays a Application entity.
      *
-     * @Route("/{id}", name="demand_show")
+     * @Route("/{id}", name="request_show")
      * @Method("GET")
      * @Template()
      */
@@ -110,10 +110,10 @@ class DemandController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entity = $em->getRepository('AuderoBackendBundle:Demand')->find($id);
+        $entity = $em->getRepository('AuderoShowphotoBundle:Application')->find($id);
 
         if (!$entity) {
-            throw $this->createNotFoundException('Unable to find Demand entity.');
+            throw $this->createNotFoundException('Unable to find Application entity.');
         }
 
         $deleteForm = $this->createDeleteForm($id);
@@ -125,9 +125,9 @@ class DemandController extends Controller
     }
 
     /**
-     * Displays a form to edit an existing Demand entity.
+     * Displays a form to edit an existing Application entity.
      *
-     * @Route("/{id}/edit", name="demand_edit")
+     * @Route("/{id}/edit", name="request_edit")
      * @Method("GET")
      * @Template()
      */
@@ -135,10 +135,10 @@ class DemandController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entity = $em->getRepository('AuderoBackendBundle:Demand')->find($id);
+        $entity = $em->getRepository('AuderoShowphotoBundle:Application')->find($id);
 
         if (!$entity) {
-            throw $this->createNotFoundException('Unable to find Demand entity.');
+            throw $this->createNotFoundException('Unable to find Application entity.');
         }
 
         $editForm = $this->createEditForm($entity);
@@ -152,16 +152,16 @@ class DemandController extends Controller
     }
 
     /**
-    * Creates a form to edit a Demand entity.
+    * Creates a form to edit a Application entity.
     *
-    * @param Demand $entity The entity
+    * @param Application $entity The entity
     *
     * @return \Symfony\Component\Form\Form The form
     */
-    private function createEditForm(Demand $entity)
+    private function createEditForm(Application $entity)
     {
-        $form = $this->createForm(new DemandType(), $entity, array(
-            'action' => $this->generateUrl('demand_update', array('id' => $entity->getId())),
+        $form = $this->createForm(new ApplicationType(), $entity, array(
+            'action' => $this->generateUrl('request_update', array('id' => $entity->getId())),
             'method' => 'PUT',
         ));
 
@@ -170,20 +170,20 @@ class DemandController extends Controller
         return $form;
     }
     /**
-     * Edits an existing Demand entity.
+     * Edits an existing Application entity.
      *
-     * @Route("/{id}", name="demand_update")
+     * @Route("/{id}", name="request_update")
      * @Method("PUT")
-     * @Template("AuderoBackendBundle:Demand:edit.html.twig")
+     * @Template("AuderoShowphotoBundle:Application:edit.html.twig")
      */
     public function updateAction(Request $request, $id)
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entity = $em->getRepository('AuderoBackendBundle:Demand')->find($id);
+        $entity = $em->getRepository('AuderoShowphotoBundle:Application')->find($id);
 
         if (!$entity) {
-            throw $this->createNotFoundException('Unable to find Demand entity.');
+            throw $this->createNotFoundException('Unable to find Application entity.');
         }
 
         $deleteForm = $this->createDeleteForm($id);
@@ -193,7 +193,7 @@ class DemandController extends Controller
         if ($editForm->isValid()) {
             $em->flush();
 
-            return $this->redirect($this->generateUrl('demand_edit', array('id' => $id)));
+            return $this->redirect($this->generateUrl('request_edit', array('id' => $id)));
         }
 
         return array(
@@ -203,9 +203,9 @@ class DemandController extends Controller
         );
     }
     /**
-     * Deletes a Demand entity.
+     * Deletes a Application entity.
      *
-     * @Route("/{id}", name="demand_delete")
+     * @Route("/{id}", name="request_delete")
      * @Method("DELETE")
      */
     public function deleteAction(Request $request, $id)
@@ -215,21 +215,21 @@ class DemandController extends Controller
 
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-            $entity = $em->getRepository('AuderoBackendBundle:Demand')->find($id);
+            $entity = $em->getRepository('AuderoShowphotoBundle:Application')->find($id);
 
             if (!$entity) {
-                throw $this->createNotFoundException('Unable to find Demand entity.');
+                throw $this->createNotFoundException('Unable to find Application entity.');
             }
 
             $em->remove($entity);
             $em->flush();
         }
 
-        return $this->redirect($this->generateUrl('demand'));
+        return $this->redirect($this->generateUrl('request'));
     }
 
     /**
-     * Creates a form to delete a Demand entity by id.
+     * Creates a form to delete a Application entity by id.
      *
      * @param mixed $id The entity id
      *
@@ -238,7 +238,7 @@ class DemandController extends Controller
     private function createDeleteForm($id)
     {
         return $this->createFormBuilder()
-            ->setAction($this->generateUrl('demand_delete', array('id' => $id)))
+            ->setAction($this->generateUrl('request_delete', array('id' => $id)))
             ->setMethod('DELETE')
             ->add('submit', 'submit', array('label' => 'Delete'))
             ->getForm()

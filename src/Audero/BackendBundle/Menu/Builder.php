@@ -13,7 +13,6 @@ class Builder extends ContainerAware
 
         $menu->addChild('labas', array('route' => 'audero_admin_index'));
         $menu->addChild('labas2', array('route' => 'audero_admin_index'));
-
         return $menu;
     }
 }

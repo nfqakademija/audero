@@ -1,28 +1,28 @@
 {% extends '::base.html.twig' %}
 
 {% block body -%}
-    <h1>Demand list</h1>
+    <h1>Interpretation list</h1>
 
     <table class="records_list">
         <thead>
             <tr>
                 <th>Id</th>
-                <th>Title</th>
+                <th>Photo</th>
                 <th>Actions</th>
             </tr>
         </thead>
         <tbody>
         {% for entity in entities %}
             <tr>
-                <td><a href="{{ path('demand_show', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
-                <td>{{ entity.title }}</td>
+                <td><a href="{{ path('game_response_show', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
+                <td>{{ entity.photo }}</td>
                 <td>
                 <ul>
                     <li>
-                        <a href="{{ path('demand_show', { 'id': entity.id }) }}">show</a>
+                        <a href="{{ path('game_response_show', { 'id': entity.id }) }}">show</a>
                     </li>
                     <li>
-                        <a href="{{ path('demand_edit', { 'id': entity.id }) }}">edit</a>
+                        <a href="{{ path('game_response_edit', { 'id': entity.id }) }}">edit</a>
                     </li>
                 </ul>
                 </td>
@@ -33,7 +33,7 @@
 
         <ul>
         <li>
-            <a href="{{ path('demand_new') }}">
+            <a href="{{ path('game_response_new') }}">
                 Create a new entry
             </a>
         </li>

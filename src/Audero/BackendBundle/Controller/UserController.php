@@ -11,7 +11,6 @@ class UserController extends Controller
     {
         // Fix
         $users = $this->get('fos_user.user_manager')->findUsers();
-
         return $this->render('AuderoBackendBundle:User:index.html.twig', array(
             'users' => $users
         ));

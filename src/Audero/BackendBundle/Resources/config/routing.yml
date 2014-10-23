@@ -1,3 +1,7 @@
-audero_admin_index:
+audero_dashboard_index:
     path: /admin
     defaults: { _controller: AuderoBackendBundle:Dashboard:index }
+
+audero_user_index:
+    path:     /admin/users
+    defaults: { _controller: AuderoBackendBundle:User:index }
