@@ -5,3 +5,8 @@ audero_showphoto_application:
 audero_showphoto_interpretation:
     resource: "@AuderoShowphotoBundle/Controller/InterpretationController.php"
     type:     annotation
+
+audero_showphoto_judgement:
+    resource: "@AuderoShowphotoBundle/Controller/JudgementController.php"
+    type:     annotation
+

@@ -39,6 +39,11 @@ class Interpretation
     private $application;
 
     /**
+     * @ORM\OneToMany(targetEntity="Judgement", mappedBy="interpretation")
+     */
+    private $judgements;
+
+    /**
      * Get id
      *
      * @return integer
@@ -46,6 +51,14 @@ class Interpretation
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->judgements = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -64,7 +77,7 @@ class Interpretation
     /**
      * Get photo
      *
-     * @return string
+     * @return string 
      */
     public function getPhoto()
     {
@@ -87,7 +100,7 @@ class Interpretation
     /**
      * Get user
      *
-     * @return \Audero\BackendBundle\Entity\User
+     * @return \Audero\BackendBundle\Entity\User 
      */
     public function getUser()
     {
@@ -110,10 +123,43 @@ class Interpretation
     /**
      * Get application
      *
-     * @return \Audero\ShowphotoBundle\Entity\Application
+     * @return \Audero\ShowphotoBundle\Entity\Application 
      */
     public function getApplication()
     {
         return $this->application;
+    }
+
+    /**
+     * Add judgements
+     *
+     * @param \Audero\ShowphotoBundle\Entity\Judgement $judgements
+     * @return Interpretation
+     */
+    public function addJudgement(\Audero\ShowphotoBundle\Entity\Judgement $judgements)
+    {
+        $this->judgements[] = $judgements;
+
+        return $this;
+    }
+
+    /**
+     * Remove judgements
+     *
+     * @param \Audero\ShowphotoBundle\Entity\Judgement $judgements
+     */
+    public function removeJudgement(\Audero\ShowphotoBundle\Entity\Judgement $judgements)
+    {
+        $this->judgements->removeElement($judgements);
+    }
+
+    /**
+     * Get judgements
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getJudgements()
+    {
+        return $this->judgements;
     }
 }

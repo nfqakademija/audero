@@ -1,45 +1,43 @@
 <?php
 
-namespace Audero\ShowphotoBundle\Entity;
+namespace Audero\BackendBundle\Entity;
 
+
+use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="application")
+ * @ORM\Table(name="fos_user")
  */
-class Application
+class User extends BaseUser
 {
     /**
-     * @var integer
-     *
-     * @ORM\Column(name="id", type="integer")
      * @ORM\Id
+     * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    private $id;
+    protected $id;
+
+     /**
+     * @ORM\OneToMany(targetEntity="Audero\ShowphotoBundle\Entity\Application", mappedBy="user")
+     */
+    protected $applications;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="title", type="string", length=255)
+     * @ORM\OneToMany(targetEntity="Audero\ShowphotoBundle\Entity\Interpretation", mappedBy="user")
      */
-    private $title;
+    protected $interpretations;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Audero\BackendBundle\Entity\User", inversedBy="applications")
-     * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
+     * @ORM\OneToMany(targetEntity="Audero\ShowphotoBundle\Entity\Judgement", mappedBy="user")
      */
-    private $user;
-
-    /**
-     * @ORM\OneToMany(targetEntity="Interpretation", mappedBy="application")
-     */
-    private $interpretations;
+    protected $judgements;
 
     public function __construct()
     {
+        parent::__construct();
+        $this->applications = new ArrayCollection();
         $this->interpretations = new ArrayCollection();
     }
 
@@ -53,57 +51,45 @@ class Application
         return $this->id;
     }
 
+
     /**
-     * Set title
+     * Add applications
      *
-     * @param string $title
-     * @return Application
+     * @param \Audero\ShowphotoBundle\Entity\Application $applications
+     * @return User
      */
-    public function setTitle($title)
+    public function addApplication(\Audero\ShowphotoBundle\Entity\Application $applications)
     {
-        $this->title = $title;
+        $this->applications[] = $applications;
 
         return $this;
     }
 
     /**
-     * Get title
+     * Remove applications
      *
-     * @return string 
+     * @param \Audero\ShowphotoBundle\Entity\Application $applications
      */
-    public function getTitle()
+    public function removeApplication(\Audero\ShowphotoBundle\Entity\Application $applications)
     {
-        return $this->title;
+        $this->applications->removeElement($applications);
     }
 
     /**
-     * Set user
+     * Get applications
      *
-     * @param \Audero\BackendBundle\Entity\User $user
-     * @return Application
+     * @return \Doctrine\Common\Collections\Collection 
      */
-    public function setUser(\Audero\BackendBundle\Entity\User $user = null)
+    public function getApplications()
     {
-        $this->user = $user;
-
-        return $this;
-    }
-
-    /**
-     * Get user
-     *
-     * @return \Audero\BackendBundle\Entity\User 
-     */
-    public function getUser()
-    {
-        return $this->user;
+        return $this->applications;
     }
 
     /**
      * Add interpretations
      *
      * @param \Audero\ShowphotoBundle\Entity\Interpretation $interpretations
-     * @return Application
+     * @return User
      */
     public function addInterpretation(\Audero\ShowphotoBundle\Entity\Interpretation $interpretations)
     {
