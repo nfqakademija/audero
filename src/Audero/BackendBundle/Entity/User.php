@@ -29,6 +29,11 @@ class User extends BaseUser
      */
     protected $interpretations;
 
+    /**
+     * @ORM\OneToMany(targetEntity="Audero\ShowphotoBundle\Entity\Judgement", mappedBy="user")
+     */
+    protected $judgements;
+
     public function __construct()
     {
         parent::__construct();
@@ -44,72 +49,5 @@ class User extends BaseUser
     public function getId()
     {
         return $this->id;
-    }
-
-
-    /**
-     * Add applications
-     *
-     * @param \Audero\ShowphotoBundle\Entity\Application $applications
-     * @return User
-     */
-    public function addApplication(\Audero\ShowphotoBundle\Entity\Application $applications)
-    {
-        $this->applications[] = $applications;
-
-        return $this;
-    }
-
-    /**
-     * Remove applications
-     *
-     * @param \Audero\ShowphotoBundle\Entity\Application $applications
-     */
-    public function removeApplication(\Audero\ShowphotoBundle\Entity\Application $applications)
-    {
-        $this->applications->removeElement($applications);
-    }
-
-    /**
-     * Get applications
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getApplications()
-    {
-        return $this->applications;
-    }
-
-    /**
-     * Add interpretations
-     *
-     * @param \Audero\ShowphotoBundle\Entity\Interpretation $interpretations
-     * @return User
-     */
-    public function addInterpretation(\Audero\ShowphotoBundle\Entity\Interpretation $interpretations)
-    {
-        $this->interpretations[] = $interpretations;
-
-        return $this;
-    }
-
-    /**
-     * Remove interpretations
-     *
-     * @param \Audero\ShowphotoBundle\Entity\Interpretation $interpretations
-     */
-    public function removeInterpretation(\Audero\ShowphotoBundle\Entity\Interpretation $interpretations)
-    {
-        $this->interpretations->removeElement($interpretations);
-    }
-
-    /**
-     * Get interpretations
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getInterpretations()
-    {
-        return $this->interpretations;
     }
 }

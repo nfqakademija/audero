@@ -17,7 +17,7 @@ class InterpretationType extends AbstractType
         $builder
             ->add('photo')
             ->add('user')
-            ->add('application')
+            ->add('application','entity', array('class'=>'Audero\ShowphotoBundle\Entity\Application', 'property'=>'id'));
         ;
     }
 
