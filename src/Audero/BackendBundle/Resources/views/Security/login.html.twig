@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>ShowPhoto</title>
+
+    {% block stylesheets %}
+        {% stylesheets
+        '@AuderoBackendBundle/Resources/public/css/bootstrap.min.css'
+        %}
+        <link rel="stylesheet" href="{{ asset_url }}" />
+        {% endstylesheets %}
+    {% endblock %}
+</head>
+<body>
+<div class="container">
+    {% if error %}
+        <div>{{ error.message }}</div>
+    {% endif %}
+    <form action="{{ path('audero_admin_login_check') }}" method="post">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="_username" value="{{ last_username }}" />
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="_password" />
+        <button type="submit">login</button>
+    </form>
+</div>
+{% block javascripts %}
+    {% javascripts
+    '@AuderoBackendBundle/Resources/public/js/jquery-1.11.0.js'
+    '@AuderoBackendBundle/Resources/public/js/bootstrap.min.js'
+    %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock %}
+</body>
+</html>
