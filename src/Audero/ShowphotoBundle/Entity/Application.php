@@ -69,7 +69,7 @@ class Application
     /**
      * Get title
      *
-     * @return string
+     * @return string 
      */
     public function getTitle()
     {
@@ -92,10 +92,43 @@ class Application
     /**
      * Get user
      *
-     * @return \Audero\BackendBundle\Entity\User
+     * @return \Audero\BackendBundle\Entity\User 
      */
     public function getUser()
     {
         return $this->user;
+    }
+
+    /**
+     * Add interpretations
+     *
+     * @param \Audero\ShowphotoBundle\Entity\Interpretation $interpretations
+     * @return Application
+     */
+    public function addInterpretation(\Audero\ShowphotoBundle\Entity\Interpretation $interpretations)
+    {
+        $this->interpretations[] = $interpretations;
+
+        return $this;
+    }
+
+    /**
+     * Remove interpretations
+     *
+     * @param \Audero\ShowphotoBundle\Entity\Interpretation $interpretations
+     */
+    public function removeInterpretation(\Audero\ShowphotoBundle\Entity\Interpretation $interpretations)
+    {
+        $this->interpretations->removeElement($interpretations);
+    }
+
+    /**
+     * Get interpretations
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getInterpretations()
+    {
+        return $this->interpretations;
     }
 }
