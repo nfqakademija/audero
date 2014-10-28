@@ -1,3 +1,12 @@
-audero_showphoto_homepage:
-    path:     /hello/{name}
-    defaults: { _controller: AuderoShowphotoBundle:Default:index }
+audero_showphoto_application:
+    resource: "@AuderoShowphotoBundle/Controller/ApplicationController.php"
+    type:     annotation
+
+audero_showphoto_interpretation:
+    resource: "@AuderoShowphotoBundle/Controller/InterpretationController.php"
+    type:     annotation
+
+audero_showphoto_judgement:
+    resource: "@AuderoShowphotoBundle/Controller/JudgementController.php"
+    type:     annotation
+

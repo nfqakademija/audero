@@ -9,7 +9,9 @@ class DashboardController extends Controller
     public function indexAction()
     {
         return $this->render('AuderoBackendBundle:Dashboard:index.html.twig', array(
-                // ...
-            ));
+
+        ));
     }
+
+
 }

@@ -19,9 +19,35 @@ class User extends BaseUser
      */
     protected $id;
 
+     /**
+     * @ORM\OneToMany(targetEntity="Audero\ShowphotoBundle\Entity\Application", mappedBy="user")
+     */
+    protected $applications;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Audero\ShowphotoBundle\Entity\Interpretation", mappedBy="user")
+     */
+    protected $interpretations;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Audero\ShowphotoBundle\Entity\Judgement", mappedBy="user")
+     */
+    protected $judgements;
+
     public function __construct()
     {
         parent::__construct();
-        // your own logic
+        $this->applications = new ArrayCollection();
+        $this->interpretations = new ArrayCollection();
+    }
+
+    /**
+     * Get id
+     *
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
     }
 }
