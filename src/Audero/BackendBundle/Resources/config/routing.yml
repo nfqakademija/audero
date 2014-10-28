@@ -5,3 +5,8 @@ audero_dashboard_index:
 audero_user_index:
     path:     /admin/users
     defaults: { _controller: AuderoBackendBundle:User:index }
+
+audero_backend_application:
+    resource: "@AuderoBackendBundle/Controller/ApplicationController.php"
+    type:     annotation
+

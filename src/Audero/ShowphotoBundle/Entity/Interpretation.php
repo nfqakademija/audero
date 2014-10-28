@@ -110,7 +110,7 @@ class Interpretation
     /**
      * Get application
      *
-     * @return \Audero\ShowphotoBundle\Entity\Application 
+     * @return \Audero\ShowphotoBundle\Entity\Application
      */
     public function getApplication()
     {
