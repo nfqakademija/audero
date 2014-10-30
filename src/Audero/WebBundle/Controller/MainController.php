@@ -8,6 +8,7 @@ class MainController extends Controller
 {
     public function indexAction()
     {
+
         return $this->render('AuderoWebBundle:Main:index.html.twig', array(
                 // ...
             ));    }
