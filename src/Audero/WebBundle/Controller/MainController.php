@@ -8,8 +8,12 @@ class MainController extends Controller
 {
     public function indexAction()
     {
+        $pm = $this->get('audero.photos.uploader');
+
+
         return $this->render('AuderoWebBundle:Main:index.html.twig', array(
                 // ...
-            ));    }
+            ));
+    }
 
 }
