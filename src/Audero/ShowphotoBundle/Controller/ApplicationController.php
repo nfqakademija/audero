@@ -56,6 +56,12 @@ class ApplicationController extends Controller
             return $this->redirect($this->generateUrl('request_show', array('id' => $entity->getId())));
         }
 
+        $context = new ZMQContext();
+        $socket = $context->getSocket(ZMQ::SOCKET_PUSH, 'my pusher');
+        $socket->connect("tcp://localhost:5555");
+
+        $socket->send(json_encode(array("text"=>'labas')));
+
         return array(
             'entity' => $entity,
             'form'   => $form->createView(),

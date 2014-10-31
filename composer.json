@@ -19,7 +19,9 @@
         "sensio/framework-extra-bundle": "~3.0",
         "incenteev/composer-parameter-handler": "~2.0",
         "friendsofsymfony/user-bundle": "~2.0@dev",
-        "knplabs/knp-menu-bundle": "~2.0"
+        "knplabs/knp-menu-bundle": "~2.0",
+        "cboden/ratchet": "0.3.*",
+        "react/zmq": "0.2.*|0.3.*"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3"
