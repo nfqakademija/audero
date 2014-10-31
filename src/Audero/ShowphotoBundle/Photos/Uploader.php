@@ -26,7 +26,7 @@ class Uploader {
         curl_setopt($curl, CURLOPT_URL, 'https://api.imgur.com/3/upload');
         curl_setopt($curl, CURLOPT_TIMEOUT, $timeout);
         curl_setopt($curl, CURLOPT_HTTPHEADER, array(
-            'Authorization: Bearer '
+            'Authorization: Bearer 25e9e5b7ee9612b86aabd4559e280f923cd91709'
         ));
         curl_setopt($curl, CURLOPT_POST, 1);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
