@@ -17,7 +17,6 @@ use Audero\ShowphotoBundle\Form\JudgementType;
  */
 class JudgementController extends Controller
 {
-
     /**
      * Lists all Judgement entities.
      *
@@ -35,12 +34,13 @@ class JudgementController extends Controller
             'entities' => $entities,
         );
     }
+
     /**
      * Creates a new Judgement entity.
      *
      * @Route("/", name="judgement_create")
      * @Method("POST")
-     * @Template("AuderoShowphotoBundle:Judgement:new.html.twig")
+     * @Template("AuderoShowphotoBundle:Evaluation:new.html.twig")
      */
     public function createAction(Request $request)
     {

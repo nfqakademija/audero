@@ -1,6 +1,6 @@
 <?php
 
-namespace MyApp;
+namespace Audero\WebBundle\Pusher;
 
 use Ratchet\ConnectionInterface;
 use Ratchet\Wamp\WampServerInterface;

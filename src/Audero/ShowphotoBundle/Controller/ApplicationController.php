@@ -35,6 +35,7 @@ class ApplicationController extends Controller
             'entities' => $entities,
         );
     }
+
     /**
      * Creates a new Application entity.
      *
@@ -48,19 +49,26 @@ class ApplicationController extends Controller
         $form = $this->createCreateForm($entity);
         $form->handleRequest($request);
 
-        if ($form->isValid()) {
+        if($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $em->persist($entity);
             $em->flush();
 
+            $entryData = array(
+                'category' => "kittensCategory",
+                'title'    => "labas",
+                'article'  => "labas",
+                'when'     => "labas"
+            );
+
+            $context = new \ZMQContext();
+            $socket = $context->getSocket(\ZMQ::SOCKET_PUSH, 'my pusher');
+            $socket->connect("tcp://localhost:5555");
+
+            $socket->send(json_encode($entryData));
+
             return $this->redirect($this->generateUrl('request_show', array('id' => $entity->getId())));
         }
-
-        $context = new ZMQContext();
-        $socket = $context->getSocket(ZMQ::SOCKET_PUSH, 'my pusher');
-        $socket->connect("tcp://localhost:5555");
-
-        $socket->send(json_encode(array("text"=>'labas')));
 
         return array(
             'entity' => $entity,
