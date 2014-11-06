@@ -11,5 +11,4 @@ class MainController extends Controller
         return $this->render('AuderoWebBundle:Main:index.html.twig', array(
 
             ));    }
-
 }

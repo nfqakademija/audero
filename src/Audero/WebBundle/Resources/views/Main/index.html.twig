@@ -1,7 +1,6 @@
 {% extends 'AuderoWebBundle::base.html.twig' %}
 {% block body %}
 
-
 <script src="{{ asset('bundles/auderoweb/js/autobahn.min.js') }}"></script>
 <script>
     var conn = new ab.Session('ws://localhost:8080',
@@ -21,4 +20,5 @@
             {'skipSubprotocolCheck': true}
     );
 </script>
+
 {% endblock %}
