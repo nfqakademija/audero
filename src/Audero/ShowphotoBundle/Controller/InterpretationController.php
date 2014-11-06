@@ -54,6 +54,19 @@ class InterpretationController extends Controller
             $em->persist($entity);
             $em->flush();
 
+            $entryData = array(
+                'category' => "test2Category",
+                'title'    => "response",
+                'article'  => "labas",
+                'when'     => "labas"
+            );
+
+            $context = new \ZMQContext();
+            $socket = $context->getSocket(\ZMQ::SOCKET_PUSH, 'my pusher');
+            $socket->connect("tcp://localhost:5555");
+
+            $socket->send(json_encode($entryData));
+
             return $this->redirect($this->generateUrl('game_response_show', array('id' => $entity->getId())));
         }
 

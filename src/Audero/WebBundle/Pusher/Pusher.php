@@ -17,6 +17,7 @@ class Pusher implements WampServerInterface {
     public function onOpen(ConnectionInterface $conn) {
     }
     public function onClose(ConnectionInterface $conn) {
+        
     }
     public function onCall(ConnectionInterface $conn, $id, $topic, array $params) {
         // In this application if clients send data it's because the user hacked around in console
@@ -32,7 +33,7 @@ class Pusher implements WampServerInterface {
     /**
      * @param string JSON'ified string we'll receive from ZeroMQ
      */
-    public function onBlogEntry($entry) {
+    public function onUpdate($entry) {
         $entryData = json_decode($entry, true);
 
         // If the lookup topic object isn't set there is no one to publish to

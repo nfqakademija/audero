@@ -55,8 +55,8 @@ class ApplicationController extends Controller
             $em->flush();
 
             $entryData = array(
-                'category' => "kittensCategory",
-                'title'    => "labas",
+                'category' => "test1Category",
+                'title'    => "request",
                 'article'  => "labas",
                 'when'     => "labas"
             );
