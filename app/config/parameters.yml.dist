@@ -19,3 +19,6 @@ parameters:
     debug_toolbar:          true
     debug_redirects:        false
     use_assetic_controller: true
+    imgur_client_id:    ~
+    imgur_client_secret: ~
+    imgur_refresh_token: ~

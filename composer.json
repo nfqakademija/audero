@@ -4,7 +4,7 @@
     "type": "project",
     "description": "The \"Symfony Standard Edition\" distribution",
     "autoload": {
-        "psr-0": { "": "src/", "SymfonyStandard": "app/" }
+        "psr-0": { "": "src/", "SymfonyStandard": "app/"}
     },
     "require": {
         "php": ">=5.3.3",
@@ -19,7 +19,9 @@
         "sensio/framework-extra-bundle": "~3.0",
         "incenteev/composer-parameter-handler": "~2.0",
         "friendsofsymfony/user-bundle": "~2.0@dev",
-        "knplabs/knp-menu-bundle": "~2.0"
+        "knplabs/knp-menu-bundle": "~2.0",
+        "cboden/ratchet": "0.3.*",
+        "react/zmq": "0.2.*|0.3.*"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3"
