@@ -1,4 +1,7 @@
 services:
-    audero.photos.uploader:
-        class:  Audero\ShowphotoBundle\Photos\Uploader
-        arguments: ["%imgur_client_id%"]
+    audero.uploader.token:
+        class:  Audero\ShowphotoBundle\Uploader\Token
+        arguments: ["%imgur_client_id%", "%imgur_client_secret%", "%imgur_refresh_token%"]
+    audero.uploader:
+        class:  Audero\ShowphotoBundle\Uploader\Uploader
+        arguments: ["@audero.uploader.token"]

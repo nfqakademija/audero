@@ -50,6 +50,11 @@ class InterpretationController extends Controller
         $form->handleRequest($request);
 
         if ($form->isValid()) {
+
+            $uploader = $this->get('audero.uploader');
+            $uploader->uploadFromUrl($entity->getPhoto());
+
+
             $em = $this->getDoctrine()->getManager();
             $em->persist($entity);
             $em->flush();

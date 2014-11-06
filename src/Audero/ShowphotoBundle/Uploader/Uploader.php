@@ -1,21 +1,15 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: rokas
- * Date: 14.10.30
- * Time: 13.21
- */
 
-namespace Audero\ShowphotoBundle\Photos;
+namespace Audero\ShowphotoBundle\Uploader;
 
 
 class Uploader {
 
-    private $client_id;
+    private $token;
 
-    public function __construct($client_id)
+    public function __construct($token)
     {
-        $this->client_id = $client_id;
+        $this->token = $token;
     }
 
 
@@ -26,7 +20,7 @@ class Uploader {
         curl_setopt($curl, CURLOPT_URL, 'https://api.imgur.com/3/upload');
         curl_setopt($curl, CURLOPT_TIMEOUT, $timeout);
         curl_setopt($curl, CURLOPT_HTTPHEADER, array(
-            'Authorization: Bearer 25e9e5b7ee9612b86aabd4559e280f923cd91709'
+            'Authorization: Bearer '.$this->token->get()
         ));
         curl_setopt($curl, CURLOPT_POST, 1);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
