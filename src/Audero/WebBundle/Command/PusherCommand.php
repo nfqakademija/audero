@@ -8,11 +8,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 use React\EventLoop\Factory;
 use React\ZMQ\Context;
 use React\Socket\Server;
-use Audero\WebBundle\Pusher\Pusher;
 use Ratchet\Server\IoServer;
 use Ratchet\Http\HttpServer;
 use Ratchet\WebSocket\WsServer;
 use Ratchet\Wamp\WampServer;
+use Ratchet\Session\SessionProvider;
 
 class PusherCommand extends ContainerAwareCommand
 {
@@ -26,7 +26,7 @@ class PusherCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $loop   = Factory::create();
-        $pusher = new Pusher();
+        $pusher = $this->getContainer()->get('audero.pusher');
 
         // Listen for the web server to make a ZeroMQ push after an ajax request
         $context = new Context($loop);
@@ -42,9 +42,12 @@ class PusherCommand extends ContainerAwareCommand
         $webServer = new IoServer(
             new HttpServer(
                 new WsServer(
-                    new WampServer(
-                        $pusher
+                    new SessionProvider(
+                        new WampServer(
+                            $pusher
+                        ), $this->getContainer()->get('session.handler.pdo')
                     )
+
                 )
             ),
             $webSock

@@ -4,20 +4,26 @@ namespace Audero\WebBundle\Pusher;
 
 use Ratchet\ConnectionInterface;
 use Ratchet\Wamp\WampServerInterface;
+use Symfony\Component\Security\Core\SecurityContext;
 
 class Pusher implements WampServerInterface {
 
     protected $subscribedTopics = array();
+    private $security_context;
+
+    public function __construct(SecurityContext $security_context) {
+        $this->security_context = $security_context;
+    }
 
     public function onSubscribe(ConnectionInterface $conn, $topic) {
         $this->subscribedTopics[$topic->getId()] = $topic;
+        $this->onUpdate(json_encode(array("category"=>"test1Category", $conn->Session)));
     }
     public function onUnSubscribe(ConnectionInterface $conn, $topic) {
     }
     public function onOpen(ConnectionInterface $conn) {
     }
     public function onClose(ConnectionInterface $conn) {
-        
     }
     public function onCall(ConnectionInterface $conn, $id, $topic, array $params) {
         // In this application if clients send data it's because the user hacked around in console
