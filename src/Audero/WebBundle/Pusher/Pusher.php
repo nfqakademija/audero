@@ -17,7 +17,6 @@ class Pusher implements WampServerInterface {
 
     public function onSubscribe(ConnectionInterface $conn, $topic) {
         $this->subscribedTopics[$topic->getId()] = $topic;
-        $this->onUpdate(json_encode(array("category"=>"test1Category", $conn->Session)));
     }
     public function onUnSubscribe(ConnectionInterface $conn, $topic) {
     }
@@ -43,13 +42,14 @@ class Pusher implements WampServerInterface {
         $entryData = json_decode($entry, true);
 
         // If the lookup topic object isn't set there is no one to publish to
-        if (!array_key_exists($entryData['category'], $this->subscribedTopics)) {
+        if (!array_key_exists('channel', $entryData) || !array_key_exists('data', $entryData) ||
+            !array_key_exists($entryData['channel'], $this->subscribedTopics)) {
             return;
         }
 
-        $topic = $this->subscribedTopics[$entryData['category']];
+        $topic = $this->subscribedTopics[$entryData['channel']];
 
         // re-send the data to all the clients subscribed to that category
-        $topic->broadcast($entryData);
+        $topic->broadcast($entryData['data']);
     }
 }

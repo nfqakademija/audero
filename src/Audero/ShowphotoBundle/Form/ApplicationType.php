@@ -16,7 +16,6 @@ class ApplicationType extends AbstractType
     {
         $builder
             ->add('title')
-            ->add('user')
         ;
     }
     

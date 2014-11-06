@@ -1,0 +1,74 @@
+{% extends "AuderoWebBundle::base.html.twig" %}
+
+{% block title %}AuderoShowphotoBundle:Game:index{% endblock %}
+
+{% block body %}
+
+    <div class="col-lg-8">
+        <div class="page-header">
+            <h1>TOKEN</h1>
+            <h2>Requests</h2>
+        </div>
+        <div class="bs-component">
+            <div class="jumbotron">
+                <table id="requests">
+                {% for request in requests %}
+                    <tr>
+                        <td><h2>{{ request.title }}</h2></td>
+                    </tr>
+                {% endfor %}
+                </table>
+            </div>
+        </div>
+        <div class="page-header">
+            <h2>Responses</h2>
+        </div>
+        <div class="bs-component">
+            <div class="jumbotron">
+                <table id="responses">
+                {% for response in responses %}
+                    <tr>
+                        <td><h2><img src="{{ response.photo }}"></h2></td>
+                    </tr>
+                {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4 ">
+        <div class="page-header">
+            <h2>Uploader</h2>
+        </div>
+        <div class="bs-component">
+            <div class="jumbotron">
+                <h3>New request</h3>
+                {{ form(form_request) }}<br/>
+                <h3>New response</h3>
+                {{ form(form_response) }}<br/>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ asset('bundles/auderoweb/js/autobahn.min.js') }}"></script>
+    <script>
+        var conn = new ab.Session('ws://localhost:8080',
+                function() {
+                    conn.subscribe('game_request', function(topic, data) {
+                        // This is where you would add the new article to the DOM (beyond the scope of this tutorial)
+                        $( "#requests" ).append( "<tr><td><h2 style=\"color:green\">"+ data + "</h2></td></tr>" );
+                        console.log('New request');
+                    });
+                    conn.subscribe('game_response', function(topic, data) {
+                        // This is where you would add the new article to the DOM (beyond the scope of this tutorial)
+                        $( "#responses" ).append( "<tr><td><img src=\""+ data + "\"></td></tr>" );
+                        console.log('New response');
+                    });
+                },
+                function() {
+                    console.warn('WebSocket connection closed');
+                },
+                {'skipSubprotocolCheck': true}
+        );
+    </script>
+{% endblock %}

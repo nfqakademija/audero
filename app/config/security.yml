@@ -25,5 +25,6 @@ security:
         # Admin
         - { path: ^/admin$, role: ROLE_ADMIN }
         - { path: ^/admin/, role: ROLE_ADMIN }
-        #
+        # Game
+        - { path: ^/game$, role: ROLE_USER }
         - { path: ^/game/, role: ROLE_USER }

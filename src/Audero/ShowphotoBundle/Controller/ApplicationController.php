@@ -2,6 +2,7 @@
 
 namespace Audero\ShowphotoBundle\Controller;
 
+use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -9,6 +10,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Audero\ShowphotoBundle\Entity\Application;
 use Audero\ShowphotoBundle\Form\ApplicationType;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * Application controller.
@@ -45,35 +47,42 @@ class ApplicationController extends Controller
      */
     public function createAction(Request $request)
     {
-        $entity = new Application();
-        $form = $this->createCreateForm($entity);
-        $form->handleRequest($request);
+        $securityContext = $this->container->get('security.context');
 
-        if($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($entity);
-            $em->flush();
+        if ($securityContext->isGranted('IS_AUTHENTICATED_FULLY')) {
+            $entity = new Application();
+            $form = $this->createCreateForm($entity);
+            $form->handleRequest($request);
 
-            $entryData = array(
-                'category' => "test1Category",
-                'title'    => "request",
-                'article'  => "labas",
-                'when'     => "labas"
+            if($form->isValid()) {
+                $em = $this->getDoctrine()->getManager();
+                $entity->setUser($securityContext->getToken()->getUser());
+                $em->persist($entity);
+                $em->flush();
+
+                $data = array(
+                    'channel' => "game_request",
+                    'data'    => $entity->getTitle()
+                );
+
+                $context = new \ZMQContext();
+                $socket = $context->getSocket(\ZMQ::SOCKET_PUSH, 'my pusher');
+                $socket->connect("tcp://localhost:5555");
+
+                $socket->send(json_encode($data));
+
+                return $this->redirect($this->generateUrl('request_show', array('id' => $entity->getId())));
+            }
+
+            return array(
+                'entity' => $entity,
+                'form'   => $form->createView(),
             );
-
-            $context = new \ZMQContext();
-            $socket = $context->getSocket(\ZMQ::SOCKET_PUSH, 'my pusher');
-            $socket->connect("tcp://localhost:5555");
-
-            $socket->send(json_encode($entryData));
-
-            return $this->redirect($this->generateUrl('request_show', array('id' => $entity->getId())));
         }
 
-        return array(
-            'entity' => $entity,
-            'form'   => $form->createView(),
-        );
+        throw new AccessDeniedException();
+
+
     }
 
     /**

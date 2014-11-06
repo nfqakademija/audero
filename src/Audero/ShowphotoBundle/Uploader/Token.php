@@ -21,6 +21,6 @@ class Token {
      * */
     public function get()
     {
-        return 'c8f0946a9fd3cb65000f9d572ea91c5251018d13';
+        return '8bb822e208f3b6474fc57e6ce48090948baaa920';
     }
 } 

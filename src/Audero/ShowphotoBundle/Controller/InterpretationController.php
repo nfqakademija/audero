@@ -9,6 +9,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Audero\ShowphotoBundle\Entity\Interpretation;
 use Audero\ShowphotoBundle\Form\InterpretationType;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * Interpretation controller.
@@ -44,41 +45,48 @@ class InterpretationController extends Controller
      */
     public function createAction(Request $request)
     {
-        $entity = new Interpretation();
+        $securityContext = $this->container->get('security.context');
 
-        $form = $this->createCreateForm($entity);
-        $form->handleRequest($request);
+        if ($securityContext->isGranted('IS_AUTHENTICATED_FULLY')) {
+            $entity = new Interpretation();
 
-        if ($form->isValid()) {
+            $form = $this->createCreateForm($entity);
+            $form->handleRequest($request);
 
-            $uploader = $this->get('audero.uploader');
-            $uploader->uploadFromUrl($entity->getPhoto());
+            if ($form->isValid()) {
 
+                $uploader = $this->get('audero.uploader');
+                $response = json_decode($uploader->uploadFromUrl($entity->getPhoto()));
 
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($entity);
-            $em->flush();
+                if($response->status == 200) {
+                    $em = $this->getDoctrine()->getManager();
+                    $entity->setUser($securityContext->getToken()->getUser());
+                    $entity->setPhoto($response->data->link);
+                    $em->persist($entity);
+                    $em->flush();
 
-            $entryData = array(
-                'category' => "test2Category",
-                'title'    => "response",
-                'article'  => "labas",
-                'when'     => "labas"
+                    $data = array(
+                        'channel' => "game_response",
+                        'data'    => $entity->getPhoto()
+                    );
+
+                    $context = new \ZMQContext();
+                    $socket = $context->getSocket(\ZMQ::SOCKET_PUSH, 'my pusher');
+                    $socket->connect("tcp://localhost:5555");
+
+                    $socket->send(json_encode($data));
+
+                    return $this->redirect($this->generateUrl('game_response_show', array('id' => $entity->getId())));
+                }
+            }
+
+            return array(
+                'entity' => $entity,
+                'form'   => $form->createView(),
             );
-
-            $context = new \ZMQContext();
-            $socket = $context->getSocket(\ZMQ::SOCKET_PUSH, 'my pusher');
-            $socket->connect("tcp://localhost:5555");
-
-            $socket->send(json_encode($entryData));
-
-            return $this->redirect($this->generateUrl('game_response_show', array('id' => $entity->getId())));
         }
 
-        return array(
-            'entity' => $entity,
-            'form'   => $form->createView(),
-        );
+        throw new AccessDeniedException();
     }
 
     /**
