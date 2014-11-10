@@ -16,6 +16,7 @@ class PhotoRequestType extends AbstractType
     {
         $builder
             ->add('title')
+            ->add('save', 'submit', array('label' => 'Create Task'))
         ;
     }
     

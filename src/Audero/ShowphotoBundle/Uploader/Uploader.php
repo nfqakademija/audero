@@ -5,11 +5,11 @@ namespace Audero\ShowphotoBundle\Uploader;
 
 class Uploader {
 
-    private $token;
+    private $tokenProvider;
 
-    public function __construct($token)
+    public function __construct($tokenProvider)
     {
-        $this->token = $token;
+        $this->tokenProvider = $tokenProvider;
     }
 
     /*
@@ -23,7 +23,7 @@ class Uploader {
         curl_setopt($curl, CURLOPT_URL, 'https://api.imgur.com/3/upload');
         curl_setopt($curl, CURLOPT_TIMEOUT, $timeout);
         curl_setopt($curl, CURLOPT_HTTPHEADER, array(
-            'Authorization: Bearer '.$this->token->get()
+            'Authorization: Bearer '.$this->tokenProvider->getToken()
         ));
         curl_setopt($curl, CURLOPT_POST, 1);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
@@ -37,7 +37,7 @@ class Uploader {
      *  Uploads image to imgur from passed url
      *  Return type JSON
      * */
-    public function uploadFromUrl($url)
+    public function uploadPhotoUrl($url)
     {
         $post   = array(
             'image' => $url,
@@ -46,7 +46,7 @@ class Uploader {
         return $this->upload($post);
     }
 
-    public function uploadFromFile()
+    public function uploadPhotoFile()
     {
 
     }

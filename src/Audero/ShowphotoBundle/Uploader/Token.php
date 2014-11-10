@@ -16,11 +16,36 @@ class Token {
         $this->refresh_token = $refresh_token;
     }
 
+    private function getNewToken() {
+        $timeout = 10;
+        $post = array(
+            'refresh_token' => $this->refresh_token,
+            'client_id' => $this->client_id,
+            'client_secret' => $this->client_secret,
+            'grant_type' => 'refresh_token'
+        );
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, 'https://api.imgur.com/oauth2/token');
+        curl_setopt($curl, CURLOPT_TIMEOUT, $timeout);
+        curl_setopt($curl, CURLOPT_POST, 1);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $post);
+        $response = curl_exec($curl);
+        $data = json_decode($response);
+        curl_close ($curl);
+        if(isset($data->access_token)) //Isset also will make sure $content is set
+        {
+            return $data->access_token;
+        }
+
+        return null;
+    }
+
     /*
      *  Returns Imgur token
      * */
-    public function get()
+    public function getToken()
     {
-        return '8bb822e208f3b6474fc57e6ce48090948baaa920';
+        return $this->getNewToken();
     }
 } 
