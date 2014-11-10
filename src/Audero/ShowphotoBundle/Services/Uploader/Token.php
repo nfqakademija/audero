@@ -1,6 +1,6 @@
 <?php
 
-namespace Audero\ShowphotoBundle\Uploader;
+namespace Audero\ShowphotoBundle\Services\Uploader;
 
 
 class Token {

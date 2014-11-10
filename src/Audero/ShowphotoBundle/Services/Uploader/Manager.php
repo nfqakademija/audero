@@ -1,6 +1,6 @@
 <?php
 
-namespace Audero\ShowphotoBundle\Uploader;
+namespace Audero\ShowphotoBundle\Services\Uploader;
 
 use Audero\ShowphotoBundle\Entity\User;
 use Audero\ShowphotoBundle\Entity\PhotoRequest;

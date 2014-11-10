@@ -1,10 +1,10 @@
 services:
     token.provider:
-        class:  Audero\ShowphotoBundle\Uploader\Token
+        class:  Audero\ShowphotoBundle\Services\Uploader\Token
         arguments: ["%imgur_client_id%", "%imgur_client_secret%", "%imgur_refresh_token%"]
     photo.uploader:
-        class:  Audero\ShowphotoBundle\Uploader\Uploader
+        class:  Audero\ShowphotoBundle\Services\Uploader\Uploader
         arguments: ["@token.provider"]
     upload.manager:
-        class:  Audero\ShowphotoBundle\Uploader\Manager
+        class:  Audero\ShowphotoBundle\Services\Uploader\Manager
         arguments: ["@photo.uploader"]
