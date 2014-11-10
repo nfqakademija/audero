@@ -7,9 +7,9 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="application")
+ * @ORM\Table(name="request")
  */
-class Application
+class PhotoRequest
 {
     /**
      * @var integer
@@ -28,25 +28,25 @@ class Application
     private $title;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Audero\BackendBundle\Entity\User", inversedBy="applications")
+     * @ORM\ManyToOne(targetEntity="Audero\ShowphotoBundle\Entity\User", inversedBy="requests")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
      */
     private $user;
 
     /**
-     * @ORM\OneToMany(targetEntity="Interpretation", mappedBy="application")
+     * @ORM\OneToMany(targetEntity="PhotoResponse", mappedBy="request")
      */
-    private $interpretations;
+    private $responses;
 
     public function __construct()
     {
-        $this->interpretations = new ArrayCollection();
+        $this->responses = new ArrayCollection();
     }
 
     /**
      * Get id
      *
-     * @return integer
+     * @return integer 
      */
     public function getId()
     {
@@ -57,7 +57,7 @@ class Application
      * Set title
      *
      * @param string $title
-     * @return Application
+     * @return PhotoRequest
      */
     public function setTitle($title)
     {
@@ -79,10 +79,10 @@ class Application
     /**
      * Set user
      *
-     * @param \Audero\BackendBundle\Entity\User $user
-     * @return Application
+     * @param \Audero\ShowphotoBundle\Entity\User $user
+     * @return PhotoRequest
      */
-    public function setUser(\Audero\BackendBundle\Entity\User $user = null)
+    public function setUser(\Audero\ShowphotoBundle\Entity\User $user = null)
     {
         $this->user = $user;
 
@@ -92,7 +92,7 @@ class Application
     /**
      * Get user
      *
-     * @return \Audero\BackendBundle\Entity\User 
+     * @return \Audero\ShowphotoBundle\Entity\User
      */
     public function getUser()
     {
@@ -100,35 +100,35 @@ class Application
     }
 
     /**
-     * Add interpretations
+     * Add responses
      *
-     * @param \Audero\ShowphotoBundle\Entity\Interpretation $interpretations
-     * @return Application
+     * @param \Audero\ShowphotoBundle\Entity\PhotoResponse $responses
+     * @return PhotoRequest
      */
-    public function addInterpretation(\Audero\ShowphotoBundle\Entity\Interpretation $interpretations)
+    public function addResponse(\Audero\ShowphotoBundle\Entity\PhotoResponse $responses)
     {
-        $this->interpretations[] = $interpretations;
+        $this->responses[] = $responses;
 
         return $this;
     }
 
     /**
-     * Remove interpretations
+     * Remove responses
      *
-     * @param \Audero\ShowphotoBundle\Entity\Interpretation $interpretations
+     * @param \Audero\ShowphotoBundle\Entity\PhotoResponse $responses
      */
-    public function removeInterpretation(\Audero\ShowphotoBundle\Entity\Interpretation $interpretations)
+    public function removeResponse(\Audero\ShowphotoBundle\Entity\PhotoResponse $responses)
     {
-        $this->interpretations->removeElement($interpretations);
+        $this->responses->removeElement($responses);
     }
 
     /**
-     * Get interpretations
+     * Get responses
      *
      * @return \Doctrine\Common\Collections\Collection 
      */
-    public function getInterpretations()
+    public function getResponses()
     {
-        return $this->interpretations;
+        return $this->responses;
     }
 }

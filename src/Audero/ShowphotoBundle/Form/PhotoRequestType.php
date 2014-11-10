@@ -6,7 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class InterpretationType extends AbstractType
+class PhotoRequestType extends AbstractType
 {
     /**
      * @param FormBuilderInterface $builder
@@ -15,18 +15,17 @@ class InterpretationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('photo')
-            ->add('application','entity', array('class'=>'Audero\ShowphotoBundle\Entity\Application', 'property'=>'id'));
+            ->add('title')
         ;
     }
-
+    
     /**
      * @param OptionsResolverInterface $resolver
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Audero\ShowphotoBundle\Entity\Interpretation'
+            'data_class' => 'Audero\ShowphotoBundle\Entity\PhotoRequest'
         ));
     }
 
@@ -35,6 +34,6 @@ class InterpretationType extends AbstractType
      */
     public function getName()
     {
-        return 'audero_showphotobundle_interpretation';
+        return 'audero_showphotobundle_photorequest';
     }
 }

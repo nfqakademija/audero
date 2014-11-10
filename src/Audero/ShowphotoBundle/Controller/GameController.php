@@ -2,13 +2,13 @@
 
 namespace Audero\ShowphotoBundle\Controller;
 
+use Audero\ShowphotoBundle\Entity\PhotoRequest;
+use Audero\ShowphotoBundle\Entity\PhotoResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Audero\ShowphotoBundle\Entity\Application;
-use Audero\ShowphotoBundle\Entity\Interpretation;
-use Audero\ShowphotoBundle\Form\ApplicationType;
-use Audero\ShowphotoBundle\Form\InterpretationType;
+use Audero\ShowphotoBundle\Form\PhotoRequestType;
+use Audero\ShowphotoBundle\Form\PhotoResponseType;
 
 class GameController extends Controller
 {
@@ -19,11 +19,11 @@ class GameController extends Controller
     public function indexAction()
     {
         $em = $this->getDoctrine()->getManager();
-        $requests = $em->getRepository('AuderoShowphotoBundle:Application')->findAll();
-        $responses = $em->getRepository('AuderoShowphotoBundle:Interpretation')->findAll();
-        $request = new Application();
+        $requests = $em->getRepository('AuderoShowphotoBundle:PhotoRequest')->findAll();
+        $responses = $em->getRepository('AuderoShowphotoBundle:PhotoResponse')->findAll();
+        $request = new PhotoRequest();
         $formRequest = $this->createFormRequest($request);
-        $response = new Interpretation();
+        $response = new PhotoResponse();
         $formResponse = $this->createFormResponse($response);
 
 
@@ -35,22 +35,9 @@ class GameController extends Controller
         );
     }
 
-
-    private function createFormResponse(Interpretation $entity)
+    private function createFormRequest(PhotoRequest $entity)
     {
-        $form = $this->createForm(new InterpretationType(), $entity, array(
-            'action' => $this->generateUrl('game_response_create'),
-            'method' => 'POST',
-        ));
-
-        $form->add('submit', 'submit', array('label' => 'Create'));
-
-        return $form;
-    }
-
-    private function createFormRequest(Application $entity)
-    {
-        $form = $this->createForm(new ApplicationType(), $entity, array(
+        $form = $this->createForm(new PhotoRequestType(), $entity, array(
             'action' => $this->generateUrl('request_create'),
             'method' => 'POST',
         ));
@@ -60,4 +47,15 @@ class GameController extends Controller
         return $form;
     }
 
+    private function createFormResponse(PhotoResponse $entity)
+    {
+        $form = $this->createForm(new PhotoResponseType(), $entity, array(
+            'action' => $this->generateUrl('game_response_create'),
+            'method' => 'POST',
+        ));
+
+        $form->add('submit', 'submit', array('label' => 'Create'));
+
+        return $form;
+    }
 }

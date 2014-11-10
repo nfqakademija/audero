@@ -1,0 +1,66 @@
+<?php
+
+namespace Audero\ShowphotoBundle\Entity;
+
+use FOS\UserBundle\Model\User as BaseUser;
+use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+
+/**
+ * @ORM\Entity
+ * @ORM\Table(name="fos_user")
+ */
+class User extends BaseUser
+{
+    /**
+     * @ORM\Id
+     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    protected $id;
+
+     /**
+     * @ORM\OneToMany(targetEntity="Audero\ShowphotoBundle\Entity\PhotoRequest", mappedBy="user")
+     */
+    protected $requests;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Audero\ShowphotoBundle\Entity\PhotoResponse", mappedBy="user")
+     */
+    protected $responses;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Audero\ShowphotoBundle\Entity\Wish", mappedBy="user")
+     */
+    protected $wishes;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Audero\ShowphotoBundle\Entity\Rating", mappedBy="user")
+     */
+    protected $likes;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Audero\ShowphotoBundle\Entity\Chat", mappedBy="user")
+     */
+    protected $chatMessages;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->requests = new ArrayCollection();
+        $this->responses = new ArrayCollection();
+        $this->likes = new ArrayCollection();
+        $this->wishes = new ArrayCollection();
+        $this->messages = new ArrayCollection();
+    }
+
+    /**
+     * Get id
+     *
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+}
