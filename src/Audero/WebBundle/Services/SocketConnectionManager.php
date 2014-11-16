@@ -14,7 +14,7 @@ class SocketConnectionManager {
     }
 
     public function addSubscriber(ConnectionInterface $conn, $topic) {
-        return false;
+        return true;
     }
 
 } 

@@ -16,6 +16,7 @@ class Pusher implements WampServerInterface {
         $this->connManager = $connManager;
     }
     public function onSubscribe(ConnectionInterface $conn, $topic) {
+        $conn->send(json_encode("labas"));
         // checking if requested topic if available
         if(!in_array($topic->getId(), $this->availableTopics)) {
             return $conn->close();

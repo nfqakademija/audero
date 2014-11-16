@@ -14,7 +14,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 class GameController extends Controller
 {
     /**
-     * @Route("/game", name="audero_game")
+     * @Route("/play", name="showphoto_play")
      * @Template()
      */
     public function indexAction()
@@ -44,6 +44,8 @@ class GameController extends Controller
                     'responses' => $responses
                 );
             }
+
+            return $this->redirect($this->generateUrl('showphoto_spectate'));
         }
 
         throw new AccessDeniedException();

@@ -10,7 +10,12 @@ audero_showphoto_judgement:
     resource: "@AuderoShowphotoBundle/Controller/JudgementController.php"
     type:     annotation
 
-audero_showphoto_game:
+showphoto_game:
     resource: "@AuderoShowphotoBundle/Controller/GameController.php"
     type:     annotation
+
+showphoto_spectate:
+    resource: "@AuderoShowphotoBundle/Controller/SpectateController.php"
+    type:     annotation
+
 
