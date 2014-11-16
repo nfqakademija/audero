@@ -1,10 +1,25 @@
 services:
-    token.provider:
-        class:  Audero\ShowphotoBundle\Services\Uploader\Token
+    #Uploader services
+    uploader.token.provider:
+        class:  Audero\ShowphotoBundle\Services\Uploader\TokenProvider
         arguments: ["%imgur_client_id%", "%imgur_client_secret%", "%imgur_refresh_token%"]
-    photo.uploader:
-        class:  Audero\ShowphotoBundle\Services\Uploader\Uploader
-        arguments: ["@token.provider"]
-    upload.manager:
+        public: false;
+    uploader.imgur:
+        class:  Audero\ShowphotoBundle\Services\Uploader\Imgur
+        arguments: ["@uploader.token.provider"]
+    uploader.manager:
         class:  Audero\ShowphotoBundle\Services\Uploader\Manager
-        arguments: ["@photo.uploader"]
+        arguments: ["@uploader.imgur"]
+    #Game services
+    game.request.provider:
+        class:  Audero\ShowphotoBundle\Services\Game\RequestProvider
+        arguments: ["@doctrine.orm.entity_manager"]
+    game.winner.queue:
+        class:  Audero\ShowphotoBundle\Services\Game\WinnerQueue
+        arguments: ["@doctrine.orm.entity_manager"]
+    game.manager:
+        class:  Audero\ShowphotoBundle\Services\Game\GameManager
+        arguments: ["@doctrine.orm.entity_manager", "@game.request.provider"]
+    game.player.manager:
+        class:  Audero\ShowphotoBundle\Services\Game\PlayerManager
+        arguments: ["@doctrine.orm.entity_manager"]

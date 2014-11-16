@@ -16,6 +16,10 @@ class Manager {
 
     public function createResponse(User $user, PhotoRequest $request)
     {
+        // check token
 
+        // upload full image
+
+        // upload
     }
 }

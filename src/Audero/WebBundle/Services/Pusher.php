@@ -1,6 +1,6 @@
 <?php
 
-namespace Audero\WebBundle\Pusher;
+namespace Audero\WebBundle\Services;
 
 use Ratchet\ConnectionInterface;
 use Ratchet\Wamp\WampServerInterface;
@@ -8,15 +8,28 @@ use Symfony\Component\Security\Core\SecurityContext;
 
 class Pusher implements WampServerInterface {
 
+    private $connManager;
+    private $availableTopics = array('game_request', 'game_response', 'game_chat');
     protected $subscribedTopics = array();
-    private $security_context;
 
-    public function __construct(SecurityContext $security_context) {
-        $this->security_context = $security_context;
+    public function __construct(SocketConnectionManager $connManager) {
+        $this->connManager = $connManager;
     }
-
     public function onSubscribe(ConnectionInterface $conn, $topic) {
-        $this->subscribedTopics[$topic->getId()] = $topic;
+        // checking if requested topic if available
+        if(!in_array($topic->getId(), $this->availableTopics)) {
+            return $conn->close();
+        }
+
+        // checking if user has right permissions
+        if(!$this->connManager->addSubscriber($conn, $topic)) {
+            return $conn->close();
+        }
+
+        // adding to subscribed topics
+        if(!isset($this->subscribedTopics[$topic->getId()])) {
+            $this->subscribedTopics[$topic->getId()] = $topic;
+        }
     }
     public function onUnSubscribe(ConnectionInterface $conn, $topic) {
     }
@@ -38,7 +51,7 @@ class Pusher implements WampServerInterface {
     /**
      * @param string JSON'ified string we'll receive from ZeroMQ
      */
-    public function onUpdate($entry) {
+    public function onPush($entry) {
         $entryData = json_decode($entry, true);
 
         // If the lookup topic object isn't set there is no one to publish to

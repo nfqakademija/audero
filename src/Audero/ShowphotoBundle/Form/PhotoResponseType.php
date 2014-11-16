@@ -15,8 +15,8 @@ class PhotoResponseType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('photo')
-            ->add('photo','entity', array('class'=>'Audero\ShowphotoBundle\Entity\PhotoRequest', 'property'=>'id'));
+            ->add('photo','text')
+            ->add('Upload', 'button');
         ;
     }
 

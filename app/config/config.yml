@@ -24,6 +24,8 @@ framework:
         handler_id: session.handler.pdo
     fragments:       ~
     http_method_override: true
+    serializer:
+        enabled: true
 
 # Twig Configuration
 twig:

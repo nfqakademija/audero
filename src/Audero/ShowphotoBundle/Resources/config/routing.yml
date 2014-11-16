@@ -2,8 +2,8 @@ audero_showphoto_application:
     resource: "@AuderoShowphotoBundle/Controller/ApplicationController.php"
     type:     annotation
 
-audero_showphoto_interpretation:
-    resource: "@AuderoShowphotoBundle/Controller/InterpretationController.php"
+audero_showphoto_response:
+    resource: "@AuderoShowphotoBundle/Controller/PhotoResponseController.php"
     type:     annotation
 
 audero_showphoto_judgement:

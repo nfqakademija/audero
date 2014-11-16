@@ -1,13 +1,20 @@
 <?php
 
-namespace Audero\ShowphotoBundle\Form;
+namespace Audero\BackendBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\Routing\Router;
 
-class JudgementType extends AbstractType
+class OptionsType extends AbstractType
 {
+    private $router;
+
+    public function __construct(Router $router) {
+        $this->router = $router;
+    }
+
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
@@ -15,9 +22,9 @@ class JudgementType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('decision')
-            ->add('interpretation','entity', array('class'=>'Audero\ShowphotoBundle\Entity\Interpretation', 'property'=>'id'))
-            ->add('user')
+            ->add('timeForResponse', 'integer')
+            ->add('playersInOneRoom', 'integer')
+            ->add('save', 'submit')
         ;
     }
     
@@ -27,7 +34,7 @@ class JudgementType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Audero\ShowphotoBundle\Entity\Judgement'
+            'data_class' => 'Audero\BackendBundle\Entity\Options'
         ));
     }
 
@@ -36,6 +43,6 @@ class JudgementType extends AbstractType
      */
     public function getName()
     {
-        return 'audero_showphotobundle_judgement';
+        return 'audero_backendbundle_options';
     }
 }

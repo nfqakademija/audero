@@ -6,11 +6,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     {% block stylesheets %}
         {% stylesheets
-        '@AuderoWebBundle/Resources/public/css/bootstrap.css'
+        '@AuderoWebBundle/Resources/public/css/bootstrap.min.css'
         '@AuderoWebBundle/Resources/public/assets/css/bootswatch.min.css'
         %}
         <link rel="stylesheet" href="{{ asset_url }}" />
         {% endstylesheets %}
+    {% block javascripts %}
+        {% javascripts
+        '@AuderoWebBundle/Resources/public/js/jquery-1.10.2.min.js'
+        '@AuderoWebBundle/Resources/public/js/jquery.form.js'
+        '@AuderoWebBundle/Resources/public/bower_components/bootstrap/dist/js/bootstrap.min.js'
+        '@AuderoWebBundle/Resources/public/assets/js/bootswatch.js'
+        %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+    {% endblock %}
     {% endblock %}
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -47,14 +57,6 @@
       </footer>
 
     </div>
-    {% block javascripts %}
-        {% javascripts
-        '@AuderoWebBundle/Resources/public/js/jquery-1.10.2.min.js'
-        '@AuderoWebBundle/Resources/public/bower_components/bootstrap/dist/js/bootstrap.min.js'
-        '@AuderoWebBundle/Resources/public/assets/js/bootswatch.js'
-        %}
-        <script src="{{ asset_url }}"></script>
-        {% endjavascripts %}
-    {% endblock %}
+
   </body>
 </html>

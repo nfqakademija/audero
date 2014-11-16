@@ -8,8 +8,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Audero\ShowphotoBundle\Entity\Application;
-use Audero\ShowphotoBundle\Form\ApplicationType;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**

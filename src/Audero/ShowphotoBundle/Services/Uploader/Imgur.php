@@ -6,8 +6,10 @@ namespace Audero\ShowphotoBundle\Services\Uploader;
 class Uploader {
 
     private $tokenProvider;
+    private $minSize = '300x200';
+    private $imgSizes = array('300x200', '400x300');
 
-    public function __construct($tokenProvider)
+    public function __construct(TokenProvider $tokenProvider)
     {
         $this->tokenProvider = $tokenProvider;
     }

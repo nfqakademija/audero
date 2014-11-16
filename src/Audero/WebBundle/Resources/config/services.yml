@@ -1,4 +1,7 @@
 services:
-    audero.pusher:
-        class:  Audero\WebBundle\Pusher\Pusher
-        arguments: ["@security.context"]
+    socket.connection.manager:
+        class:  Audero\WebBundle\Services\SocketConnectionManager
+        arguments: ["@doctrine.orm.entity_manager"]
+    pusher:
+        class:  Audero\WebBundle\Services\Pusher
+        arguments: ["@socket.connection.manager"]

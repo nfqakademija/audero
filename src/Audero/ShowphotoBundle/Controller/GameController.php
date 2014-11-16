@@ -9,6 +9,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Audero\ShowphotoBundle\Form\PhotoRequestType;
 use Audero\ShowphotoBundle\Form\PhotoResponseType;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class GameController extends Controller
 {
@@ -19,21 +20,75 @@ class GameController extends Controller
     public function indexAction()
     {
         $em = $this->getDoctrine()->getManager();
-        $requests = $em->getRepository('AuderoShowphotoBundle:PhotoRequest')->findAll();
-        $responses = $em->getRepository('AuderoShowphotoBundle:PhotoResponse')->findAll();
-        $request = new PhotoRequest();
-        $formRequest = $this->createFormRequest($request);
-        $response = new PhotoResponse();
-        $formResponse = $this->createFormResponse($response);
 
+        if($user = $this->getUser()) {
 
-        return array(
-            'form_request'   => $formRequest->createView(),
-            'form_response'   => $formResponse->createView(),
-            'requests' => $requests,
-            'responses' => $responses
-        );
+            // adding user to players list
+            if(!($player = $user->getPlayer())) {
+                $player = $this->get('game.player.manager')->add($user);
+            }
+
+            // if user was successfully added to players list
+            if($player) {
+                $requests = $em->getRepository('AuderoShowphotoBundle:PhotoRequest')->findAll();
+                $responses = $em->getRepository('AuderoShowphotoBundle:PhotoResponse')->findAll();
+                $request = new PhotoRequest();
+                $formRequest = $this->createFormRequest($request);
+                $response = new PhotoResponse();
+                $formResponse = $this->createFormResponse($response);
+
+                return array(
+                    'form_request'   => $formRequest->createView(),
+                    'form_response'   => $formResponse->createView(),
+                    'requests' => $requests,
+                    'responses' => $responses
+                );
+            }
+        }
+
+        throw new AccessDeniedException();
     }
+
+    /**
+     * @Route("/game", name="audero_game_timeLeft")
+     * @Template()
+     */
+    public function createRequestAction()
+    {
+        $em = $this->getDoctrine()->getManager();
+        $requests = $em->getRepository('AuderoShowphotoBundle:PhotoRequest');
+    }
+
+    /**
+     * @Route("/game", name="audero_game_timeLeft")
+     * @Template()
+     */
+    public function createResponseAction()
+    {
+        $em = $this->getDoctrine()->getManager();
+        $requests = $em->getRepository('AuderoShowphotoBundle:PhotoRequest');
+    }
+
+    /**
+     * @Route("/game", name="audero_game_timeLeft")
+     * @Template()
+     */
+    public function timeLeftAction()
+    {
+        $em = $this->getDoctrine()->getManager();
+        $requests = $em->getRepository('AuderoShowphotoBundle:PhotoRequest');
+    }
+
+    /**
+     * @Route("/game", name="audero_game_timeLeft")
+     * @Template()
+     */
+    public function lastRequestAction()
+    {
+        $em = $this->getDoctrine()->getManager();
+        $requests = $em->getRepository('AuderoShowphotoBundle:PhotoRequest');
+    }
+
 
     private function createFormRequest(PhotoRequest $entity)
     {
@@ -51,8 +106,6 @@ class GameController extends Controller
             'action' => $this->generateUrl('game_response_create'),
             'method' => 'POST',
         ));
-
-        $form->add('submit', 'submit', array('label' => 'Create'));
 
         return $form;
     }

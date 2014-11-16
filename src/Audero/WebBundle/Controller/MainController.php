@@ -8,8 +8,8 @@ class MainController extends Controller
 {
     public function indexAction()
     {
-        $uploader = $this->get('photo.uploader');
-        //$uploader->uploadFromUrl("asasas");
+        var_dump($this->getDoctrine()->getManager()->getRepository("AuderoBackendBundle:OptionsRecord")->findCurrent());
+        die;
 
         return $this->render('AuderoWebBundle:Main:index.html.twig', array(
 

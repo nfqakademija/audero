@@ -5,10 +5,10 @@ namespace Audero\ShowphotoBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity
- * @ORM\Table(name="chat")
+ * @ORM\Table(name="player")
+ * @ORM\Entity(repositoryClass="Audero\ShowphotoBundle\Repository\PlayerRepository")
  */
-class Chat
+class Player
 {
     /**
      * @var integer
@@ -20,18 +20,10 @@ class Chat
     private $id;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="text", type="string", length=255)
-     */
-    private $text;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="Audero\ShowphotoBundle\Entity\User", inversedBy="chatMessages")
+     * @ORM\OneToOne(targetEntity="Audero\ShowphotoBundle\Entity\User", inversedBy="player")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
-     */
+     **/
     private $user;
-
 
     /**
      * Get id
@@ -44,33 +36,10 @@ class Chat
     }
 
     /**
-     * Set message
-     *
-     * @param string $text
-     * @return Chat
-     */
-    public function setText($text)
-    {
-        $this->text = $text;
-
-        return $this;
-    }
-
-    /**
-     * Get message
-     *
-     * @return string 
-     */
-    public function getText()
-    {
-        return $this->text;
-    }
-
-    /**
      * Set user
      *
      * @param \Audero\ShowphotoBundle\Entity\User $user
-     * @return Chat
+     * @return Player
      */
     public function setUser(\Audero\ShowphotoBundle\Entity\User $user = null)
     {

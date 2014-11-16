@@ -44,6 +44,11 @@ class User extends BaseUser
      */
     protected $chatMessages;
 
+    /**
+     * @ORM\OneToOne(targetEntity="Audero\ShowphotoBundle\Entity\Player", mappedBy="user")
+     **/
+    protected $player;
+
     public function __construct()
     {
         parent::__construct();
@@ -227,5 +232,28 @@ class User extends BaseUser
     public function getChatMessages()
     {
         return $this->chatMessages;
+    }
+
+    /**
+     * Set player
+     *
+     * @param \Audero\ShowphotoBundle\Entity\Player $player
+     * @return User
+     */
+    public function setPlayer(\Audero\ShowphotoBundle\Entity\Player $player = null)
+    {
+        $this->player = $player;
+
+        return $this;
+    }
+
+    /**
+     * Get player
+     *
+     * @return \Audero\ShowphotoBundle\Entity\Player 
+     */
+    public function getPlayer()
+    {
+        return $this->player;
     }
 }

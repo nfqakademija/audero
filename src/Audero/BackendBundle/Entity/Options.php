@@ -2,19 +2,30 @@
 
 namespace Audero\BackendBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-
 class Options
 {
-    private $photoUploadInterval;
+    private $timeForResponse;
 
-    public function setPhotoUploadInterval($photoUploadInterval)
+    private $playersInOneRoom;
+
+    public function setTimeForResponse($timeForResponse)
     {
-        $this->photoUploadInterval = $photoUploadInterval;
+        $this->timeForResponse = $timeForResponse;
     }
 
-    public function getPhotoUploadInterval()
+    public function getTimeForResponse()
     {
-        return $this->photoUploadInterval;
+        return $this->timeForResponse;
+    }
+
+    public function setPlayersInOneRoom($playersInOneRoom)
+    {
+        $this->playersInOneRoom = $playersInOneRoom;
+    }
+
+    public function getPlayersInOneRoom()
+    {
+        return $this->playersInOneRoom;
     }
 }
+

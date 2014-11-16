@@ -6,8 +6,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * @ORM\Entity
- * @ORM\Table(name="sp_request")
+ * @ORM\Table(name="request")
+ * @ORM\Entity(repositoryClass="Audero\ShowphotoBundle\Repository\PhotoRequestRepository")
  */
 class PhotoRequest
 {

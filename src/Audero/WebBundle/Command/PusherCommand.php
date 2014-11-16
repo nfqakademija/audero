@@ -26,13 +26,13 @@ class PusherCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $loop   = Factory::create();
-        $pusher = $this->getContainer()->get('audero.pusher');
+        $pusher = $this->getContainer()->get('pusher');
 
         // Listen for the web server to make a ZeroMQ push after an ajax request
         $context = new Context($loop);
         $pull = $context->getSocket(\ZMQ::SOCKET_PULL);
         $pull->bind('tcp://127.0.0.1:5555'); // Binding to 127.0.0.1 means the only client that can connect is itself
-        $pull->on('message', array($pusher, 'onUpdate'));
+        $pull->on('message', array($pusher, 'onPush'));
 
 
         // Set up our WebSocket server for clients wanting real-time updates

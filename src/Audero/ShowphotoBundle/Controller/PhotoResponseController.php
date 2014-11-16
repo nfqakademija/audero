@@ -2,6 +2,8 @@
 
 namespace Audero\ShowphotoBundle\Controller;
 
+use Audero\ShowphotoBundle\Entity\PhotoResponse;
+use Audero\ShowphotoBundle\Form\PhotoResponseType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -9,14 +11,15 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Audero\ShowphotoBundle\Entity\Interpretation;
 use Audero\ShowphotoBundle\Form\InterpretationType;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
- * Interpretation controller.
+ * PhotoResponse controller.
  *
  * @Route("/game/response")
  */
-class InterpretationController extends Controller
+class PhotoResponseController extends Controller
 {
 
     /**
@@ -30,34 +33,32 @@ class InterpretationController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entities = $em->getRepository('AuderoShowphotoBundle:Interpretation')->findAll();
+        $entities = $em->getRepository('AuderoShowphotoBundle:PhotoRequest')->findAll();
 
         return array(
             'entities' => $entities,
         );
     }
     /**
-     * Creates a new Interpretation entity.
+     * Creates a new Response entity.
      *
      * @Route("/", name="game_response_create")
      * @Method("POST")
-     * @Template("AuderoShowphotoBundle:Interpretation:new.html.twig")
      */
     public function createAction(Request $request)
     {
         $securityContext = $this->container->get('security.context');
 
         if ($securityContext->isGranted('IS_AUTHENTICATED_FULLY')) {
-            $entity = new Interpretation();
+            $entity = new PhotoResponse();
 
-            $form = $this->createCreateForm($entity);
+            $form = $this->createForm(new PhotoResponseType(), $entity);
             $form->handleRequest($request);
 
             if ($form->isValid()) {
 
-                $uploader = $this->get('audero.uploader');
-                $response = json_decode($uploader->uploadFromUrl($entity->getPhoto()));
-
+                $uploader = $this->get('photo.uploader');
+                $response = json_decode($uploader->uploadPhotoUrl($entity->getPhoto()));
                 if($response->status == 200) {
                     $em = $this->getDoctrine()->getManager();
                     $entity->setUser($securityContext->getToken()->getUser());
@@ -76,14 +77,11 @@ class InterpretationController extends Controller
 
                     $socket->send(json_encode($data));
 
-                    return $this->redirect($this->generateUrl('game_response_show', array('id' => $entity->getId())));
+                    return new Response('Success');
                 }
             }
 
-            return array(
-                'entity' => $entity,
-                'form'   => $form->createView(),
-            );
+            return new Response('Invalid form');
         }
 
         throw new AccessDeniedException();

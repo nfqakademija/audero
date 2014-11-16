@@ -3,7 +3,7 @@
 namespace Audero\ShowphotoBundle\Services\Uploader;
 
 
-class Token {
+class TokenProvider {
 
     private $client_id;
     private $client_secret;
