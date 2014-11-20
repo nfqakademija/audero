@@ -1,0 +1,93 @@
+{% extends "AuderoWebBundle::base.html.twig" %}
+
+{% block title %}AuderoShowphotoBundle:Game:index{% endblock %}
+
+{% block body %}
+
+    <div class="col-lg-8">
+        <div class="page-header">
+        </div>
+        <div class="bs-component">
+            <div class="jumbotron">
+                <div id="request" style="color:green; font-size: 30px">
+                </div>
+            </div>
+        </div>
+        <div class="page-header">
+        </div>
+        <div class="bs-component">
+            <div class="jumbotron">
+                <div id="responses">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4 ">
+        <div class="page-header">
+        </div>
+        <div class="bs-component">
+            <div class="jumbotron">
+                <h3>TimeLeft: <span id="timer"></span></h3>
+                {{ form(form_response) }}<br/>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script>
+        $( "#audero_showphotobundle_photoresponse_Upload" ).click(function() {
+
+            var form = $('form[name="audero_showphotobundle_photoresponse"]');
+
+            $.ajax( {
+                type: "POST",
+                url: form.attr( 'action' ),
+                data: form.serialize(),
+                success: function( response ) {
+                    console.log( response );
+                }
+            } );
+        });
+    </script>
+
+    <script src="{{ asset('bundles/auderoweb/js/autobahn.min.js') }}"></script>
+
+    <script>
+        var count= 30;
+        var counter= setInterval(timer, 1000); //1000 will run it every 1 second
+
+        function timer()
+        {
+            count=count-1;
+            if (count < 0)
+            {
+                clearInterval(counter);
+                //counter ended, do something here
+                return;
+            }
+
+            document.getElementById("timer").innerHTML=count + " secs"; // watch for spelling
+        }
+
+        var conn = new ab.Session('ws://127.0.0.1:8080',
+                function() {
+                    conn.subscribe('game_request', function(topic, data) {
+                        // This is where you would add the new article to the DOM (beyond the scope of this tutorial)
+                        $( "#request" ).text(data);
+                        console.log("New request"); count = 30;
+                    });
+                    conn.subscribe('game_response', function(topic, data) {
+                        // This is where you would add the new article to the DOM (beyond the scope of this tutorial)
+                        $( "#responses" ).append( "<tr><td><img width=\"300px\" src=\""+ data + "\"></td></tr>" );
+                        console.log('New response');
+                    });
+                },
+                function() {
+                    console.warn('WebSocket connection closed');
+                },
+                {'skipSubprotocolCheck': true}
+        );
+    </script>
+{% endblock %}

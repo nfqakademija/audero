@@ -1,4 +1,8 @@
 
-index:
-    path:     /
-    defaults: { _controller: AuderoWebBundle:Main:index }
+
+web_page:
+    resource: "@AuderoWebBundle/Controller/PageController.php"
+    type:     annotation
+web_profile:
+    resource: "@AuderoWebBundle/Controller/ProfileController.php"
+    type:     annotation

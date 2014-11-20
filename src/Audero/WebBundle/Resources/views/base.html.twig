@@ -2,87 +2,74 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Bootswatch: United</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     {% block stylesheets %}
         {% stylesheets
         '@AuderoWebBundle/Resources/public/css/bootstrap.css'
-        '@AuderoWebBundle/Resources/public/assets/css/bootswatch.min.css'
+        '@AuderoWebBundle/Resources/public/css/bootswatch.min.css'
+        '@AuderoWebBundle/Resources/public/css/custom.css'
         %}
         <link rel="stylesheet" href="{{ asset_url }}" />
         {% endstylesheets %}
+    {% block javascripts %}
+        {% javascripts
+        '@AuderoWebBundle/Resources/public/js/jquery-1.10.2.min.js'
+        '@AuderoWebBundle/Resources/public/js/jquery.form.js'
+        '@AuderoWebBundle/Resources/public/js/bootstrap.min.js'
+        '@AuderoWebBundle/Resources/public/js/bootswatch.js'
+        '@AuderoWebBundle/Resources/public/js/autobahn.min.js'
+        %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
     {% endblock %}
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    {% endblock %}
+
+      <link rel="stylesheet" href="{{ asset('jquery-ui-1.11.2/jquery-ui.min.css') }}" />
+      <script type="text/javascript" src="{{ asset('jquery-ui-1.11.2/jquery-ui.js') }}"></script>
+
+      <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
       <script src="../bower_components/html5shiv/dist/html5shiv.js"></script>
       <script src="../bower_components/respond/dest/respond.min.js"></script>
     <![endif]-->
+
   </head>
   <body>
-    <div class="navbar navbar-inverse navbar-fixed-top">
+  <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
-        <div class="navbar-header">
-          <a href="../" class="navbar-brand">ShowPhoto</a>
-          <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-main">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-        </div>
-        <div class="navbar-collapse collapse" id="navbar-main">
-          <ul class="nav navbar-nav">
-            <li class="dropdown">
-              <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="themes">Themes <span class="caret"></span></a>
-              <ul class="dropdown-menu" aria-labelledby="themes">
-                <li><a href="../default/">Default</a></li>
-                <li class="divider"></li>
-                <li><a href="../cerulean/">Cerulean</a></li>
-                <li><a href="../cosmo/">Cosmo</a></li>
-                <li><a href="../cyborg/">Cyborg</a></li>
-                <li><a href="../darkly/">Darkly</a></li>
-                <li><a href="../flatly/">Flatly</a></li>
-                <li><a href="../journal/">Journal</a></li>
-                <li><a href="../lumen/">Lumen</a></li>
-                <li><a href="../paper/">Paper</a></li>
-                <li><a href="../readable/">Readable</a></li>
-                <li><a href="../sandstone/">Sandstone</a></li>
-                <li><a href="../simplex/">Simplex</a></li>
-                <li><a href="../slate/">Slate</a></li>
-                <li><a href="../spacelab/">Spacelab</a></li>
-                <li><a href="../superhero/">Superhero</a></li>
-                <li><a href="../united/">United</a></li>
-                <li><a href="../yeti/">Yeti</a></li>
-              </ul>
-            </li>
-            <li>
-              <a href="../help/">Help</a>
-            </li>
-            <li>
-              <a href="http://news.bootswatch.com">Blog</a>
-            </li>
-            <li class="dropdown">
-              <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="download">Download <span class="caret"></span></a>
-              <ul class="dropdown-menu" aria-labelledby="download">
-                <li><a href="#labas">bootstrap.min.css</a></li>
-                <li class="divider"></li>
-              </ul>
-            </li>
-          </ul>
-          <form class="navbar-form navbar-left">
-            <input type="text" class="form-control col-lg-8" placeholder="Search">
-          </form>
-          <ul class="nav navbar-nav navbar-right">
-            <li><a href="http://builtwithbootstrap.com/" target="_blank">Built With Bootstrap</a></li>
-            <li><a href="https://wrapbootstrap.com/?ref=bsw" target="_blank">WrapBootstrap</a></li>
-          </ul>
+          <div class="navbar-header">
+              <a href="../"  class="navbar-brand"><img src="{{ asset('img/logo.png') }}" alt="ShowPhoto.me"/></a>
+              <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-main">
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+              </button>
+          </div>
+          <div class="navbar-collapse collapse" id="navbar-main">
+              <ul class="nav navbar-nav navbar-right">
+                  <li><a href="#" target="_blank">Play game</a></li>
+                  <li><a href="#" target="_blank">How to use?</a></li>
+                  <li><a href="#" target="_blank">About Us</a></li>
+                  <li><a style="background-color: greenyellow" href="#" target="_blank">Spectate</a></li>
+                  <li><a style="background-color: green" href="#" target="_blank">Play</a></li>
+                  <li class="dropdown">
+                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Login <b class="caret"></b></a>
+                      <ul class="dropdown-menu">
+                          <li><a href="#">Profile</a></li>
+                          <li><a href="#">Photo requests</a></li>
+                          <li class="divider"></li>
+                          <li><a href="#">Logout</a></li>
+                      </ul>
+                  </li>
 
-        </div>
+              </ul>
+          </div>
       </div>
-    </div>
+  </div>
 
     <div class="container">
       {% block body%}
-      {%endblock%}
+      {% endblock %}
 
       <footer>
       <div class="row">
@@ -91,14 +78,7 @@
       </footer>
 
     </div>
-        {% block javascripts %}
-        {% javascripts
-        '@AuderoWebBundle/Resources/public/js/jquery-1.10.2.min.js'
-        '@AuderoWebBundle/Resources/public/bower_components/bootstrap/dist/js/bootstrap.min.js'
-        '@AuderoWebBundle/Resources/public/assets/js/bootswatch.js'
-        %}
-        <script src="{{ asset_url }}"></script>
-        {% endjavascripts %}
+    {% block scripts %}
     {% endblock %}
   </body>
 </html>

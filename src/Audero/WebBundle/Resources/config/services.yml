@@ -1,3 +1,14 @@
 services:
     chat:
         class: Audero\WebBundle\Chat\Chat
+    web.form.type.wish.list:
+        class: Audero\WebBundle\Form\WishListType
+        arguments: [ @router ]
+        tags:
+            - { name: form.type, alias: wish_list}
+    socket.connection.manager:
+        class:  Audero\WebBundle\Services\SocketConnectionManager
+        arguments: ["@doctrine.orm.entity_manager"]
+    pusher:
+        class:  Audero\WebBundle\Services\Pusher
+        arguments: ["@socket.connection.manager"]

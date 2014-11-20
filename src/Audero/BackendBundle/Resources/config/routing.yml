@@ -1,4 +1,4 @@
-audero_dashboard_index:
+backend_index:
     path: /admin
     defaults: { _controller: AuderoBackendBundle:Dashboard:index }
 
@@ -8,5 +8,9 @@ audero_user_index:
 
 audero_backend_application:
     resource: "@AuderoBackendBundle/Controller/ApplicationController.php"
+    type:     annotation
+
+audero_backend_options:
+    resource: "@AuderoBackendBundle/Controller/OptionsController.php"
     type:     annotation
 

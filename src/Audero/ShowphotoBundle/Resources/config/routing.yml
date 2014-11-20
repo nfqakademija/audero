@@ -1,12 +1,20 @@
-audero_showphoto_application:
-    resource: "@AuderoShowphotoBundle/Controller/ApplicationController.php"
+showphoto_photo_request:
+    resource: "@AuderoShowphotoBundle/Controller/PhotoRequestController.php"
+    type:     annotation
+showphoto_photo_response:
+    resource: "@AuderoShowphotoBundle/Controller/PhotoResponseController.php"
+    type:     annotation
+showphoto_wish_list:
+    resource: "@AuderoShowphotoBundle/Controller/WishListController.php"
+    type:     annotation
+showphoto_rating:
+    resource: "@AuderoShowphotoBundle/Controller/RatingController.php"
+    type:     annotation
+showphoto_game:
+    resource: "@AuderoShowphotoBundle/Controller/GameController.php"
+    type:     annotation
+showphoto_spectate:
+    resource: "@AuderoShowphotoBundle/Controller/SpectateController.php"
     type:     annotation
 
-audero_showphoto_interpretation:
-    resource: "@AuderoShowphotoBundle/Controller/InterpretationController.php"
-    type:     annotation
-
-audero_showphoto_judgement:
-    resource: "@AuderoShowphotoBundle/Controller/JudgementController.php"
-    type:     annotation
 
