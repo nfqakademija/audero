@@ -28,6 +28,13 @@ class PhotoRequest
     private $title;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="slug", type="string", length=255)
+     */
+    private $slug;
+
+    /**
      * @ORM\ManyToOne(targetEntity="Audero\ShowphotoBundle\Entity\User", inversedBy="requests")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
      */

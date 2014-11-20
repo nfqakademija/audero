@@ -6,7 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * @ORM\Table(name="request")
+ * @ORM\Table(name="photo_request")
  * @ORM\Entity(repositoryClass="Audero\ShowphotoBundle\Repository\PhotoRequestRepository")
  */
 class PhotoRequest
@@ -26,6 +26,13 @@ class PhotoRequest
      * @ORM\Column(name="title", type="string", length=255)
      */
     private $title;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="slug", type="string", length=255)
+     */
+    private $slug;
 
     /**
      * @ORM\ManyToOne(targetEntity="Audero\ShowphotoBundle\Entity\User", inversedBy="requests")
@@ -130,5 +137,28 @@ class PhotoRequest
     public function getResponses()
     {
         return $this->responses;
+    }
+
+    /**
+     * Set slug
+     *
+     * @param string $slug
+     * @return PhotoRequest
+     */
+    public function setSlug($slug)
+    {
+        $this->slug = $slug;
+
+        return $this;
+    }
+
+    /**
+     * Get slug
+     *
+     * @return string 
+     */
+    public function getSlug()
+    {
+        return $this->slug;
     }
 }

@@ -3,7 +3,7 @@
 namespace Audero\ShowphotoBundle\Services\Uploader;
 
 
-class Uploader {
+class Imgur {
 
     private $tokenProvider;
     private $minSize = '300x200';

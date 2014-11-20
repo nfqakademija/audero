@@ -22,7 +22,8 @@
         "friendsofsymfony/user-bundle": "~2.0@dev",
         "knplabs/knp-menu-bundle": "~2.0",
         "cboden/ratchet": "0.3.*",
-        "react/zmq": "0.2.*|0.3.*"
+        "react/zmq": "0.2.*|0.3.*",
+        "cocur/slugify": "@stable"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3"

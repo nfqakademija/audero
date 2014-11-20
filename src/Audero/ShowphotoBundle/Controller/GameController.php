@@ -30,6 +30,7 @@ class GameController extends Controller
 
             // if user was successfully added to players list
             if($player) {
+
                 $requests = $em->getRepository('AuderoShowphotoBundle:PhotoRequest')->findAll();
                 $responses = $em->getRepository('AuderoShowphotoBundle:PhotoResponse')->findAll();
                 $request = new PhotoRequest();

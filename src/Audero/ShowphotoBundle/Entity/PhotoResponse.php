@@ -7,7 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="response")
+ * @ORM\Table(name="photo_response")
  */
 class PhotoResponse
 {
@@ -40,9 +40,16 @@ class PhotoResponse
     private $request;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="slug", type="string", length=255)
+     */
+    private $slug;
+
+    /**
      * @ORM\OneToMany(targetEntity="Rating", mappedBy="response")
      */
-    private $likes;
+    private $ratings;
 
     /**
      * Constructor
@@ -132,35 +139,58 @@ class PhotoResponse
     }
 
     /**
-     * Add likes
+     * Add ratings
      *
-     * @param \Audero\ShowphotoBundle\Entity\Rating $likes
+     * @param \Audero\ShowphotoBundle\Entity\Rating $ratings
      * @return PhotoResponse
      */
-    public function addLike(\Audero\ShowphotoBundle\Entity\Rating $likes)
+    public function addRating(\Audero\ShowphotoBundle\Entity\Rating $ratings)
     {
-        $this->likes[] = $likes;
+        $this->ratings[] = $ratings;
 
         return $this;
     }
 
     /**
-     * Remove likes
+     * Remove ratings
      *
-     * @param \Audero\ShowphotoBundle\Entity\Rating $likes
+     * @param \Audero\ShowphotoBundle\Entity\Rating $ratings
      */
-    public function removeLike(\Audero\ShowphotoBundle\Entity\Rating $likes)
+    public function removeRating(\Audero\ShowphotoBundle\Entity\Rating $ratings)
     {
-        $this->likes->removeElement($likes);
+        $this->ratings->removeElement($ratings);
     }
 
     /**
-     * Get likes
+     * Get ratings
      *
      * @return \Doctrine\Common\Collections\Collection 
      */
-    public function getLikes()
+    public function getRatings()
     {
-        return $this->likes;
+        return $this->ratings;
+    }
+
+    /**
+     * Set slug
+     *
+     * @param string $slug
+     * @return PhotoResponse
+     */
+    public function setSlug($slug)
+    {
+        $this->slug = $slug;
+
+        return $this;
+    }
+
+    /**
+     * Get slug
+     *
+     * @return string 
+     */
+    public function getSlug()
+    {
+        return $this->slug;
     }
 }

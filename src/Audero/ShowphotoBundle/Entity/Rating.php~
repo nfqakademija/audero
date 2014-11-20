@@ -27,8 +27,8 @@ class Rating
     private $like;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Audero\ShowphotoBundle\Entity\PhotoResponse", inversedBy="likes")
-     * @ORM\JoinColumn(name="like_id", referencedColumnName="id")
+     * @ORM\ManyToOne(targetEntity="Audero\ShowphotoBundle\Entity\PhotoResponse", inversedBy="ratings")
+     * @ORM\JoinColumn(name="response_id", referencedColumnName="id")
      */
     private $response;
 

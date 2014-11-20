@@ -9,10 +9,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Audero\ShowphotoBundle\Entity\Interpretation;
-use Audero\ShowphotoBundle\Form\InterpretationType;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Cocur\Slugify\Slugify;
 
 /**
  * PhotoResponse controller.
@@ -50,19 +49,62 @@ class PhotoResponseController extends Controller
         $securityContext = $this->container->get('security.context');
 
         if ($securityContext->isGranted('IS_AUTHENTICATED_FULLY')) {
+
+            $entity = new PhotoResponse();
+            $form = $this->createForm(new PhotoResponseType(), $entity);
+            $form->handleRequest($request);
+
+            if ($form->isValid()) {
+                $slugify = new Slugify();
+                $uploader = $this->get('uploader');
+                $response = json_decode($uploader->uploadPhotoUrl($entity->getPhoto()));
+                if($response->status == 200) {
+                    $em = $this->getDoctrine()->getManager();
+                    $entity->setUser($securityContext->getToken()->getUser());
+                    $entity->setPhoto($response->data->link);
+                    $entity->setSlug($slugify->slugify(""));
+
+                    $em->persist($entity);
+                    $em->flush();
+
+                    $data = array(
+                        'channel' => "game_response",
+                        'data'    => $entity->getPhoto()
+                    );
+
+                    $context = new \ZMQContext();
+                    $socket = $context->getSocket(\ZMQ::SOCKET_PUSH, 'my pusher');
+                    $socket->connect("tcp://127.0.0.1:5555");
+
+                    $socket->send(json_encode($data));
+
+                    return new Response('Success');
+                }
+
+                return new Response('Upload failed');
+            }
+
+            return new Response('Invalid form');
+        }
+
+        throw new AccessDeniedException();
+
+        if ($securityContext->isGranted('IS_AUTHENTICATED_FULLY')) {
             $entity = new PhotoResponse();
 
             $form = $this->createForm(new PhotoResponseType(), $entity);
             $form->handleRequest($request);
 
             if ($form->isValid()) {
-
-                $uploader = $this->get('photo.uploader');
+                $slugify = new Slugify();
+                $uploader = $this->get('uploader.imgur');
                 $response = json_decode($uploader->uploadPhotoUrl($entity->getPhoto()));
                 if($response->status == 200) {
                     $em = $this->getDoctrine()->getManager();
                     $entity->setUser($securityContext->getToken()->getUser());
                     $entity->setPhoto($response->data->link);
+                    $entity->setSlug($slugify->slugify(""));
+
                     $em->persist($entity);
                     $em->flush();
 
@@ -79,6 +121,8 @@ class PhotoResponseController extends Controller
 
                     return new Response('Success');
                 }
+
+                return new Response('Upload failed');
             }
 
             return new Response('Invalid form');

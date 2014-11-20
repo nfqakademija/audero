@@ -1,4 +1,9 @@
 services:
+    web.form.type.wish.list:
+        class: Audero\WebBundle\Form\WishListType
+        arguments: [ @router ]
+        tags:
+            - { name: form.type, alias: wish_list}
     socket.connection.manager:
         class:  Audero\WebBundle\Services\SocketConnectionManager
         arguments: ["@doctrine.orm.entity_manager"]
