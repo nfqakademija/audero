@@ -30,7 +30,7 @@ class User extends BaseUser
     protected $responses;
 
     /**
-     * @ORM\OneToMany(targetEntity="Audero\ShowphotoBundle\Entity\Wish", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="Audero\ShowphotoBundle\Entity\Wish", cascade={"persist"}, mappedBy="user")
      */
     protected $wishes;
 

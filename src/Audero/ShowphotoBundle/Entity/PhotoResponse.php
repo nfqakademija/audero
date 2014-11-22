@@ -28,6 +28,16 @@ class PhotoResponse
     private $photo;
 
     /**
+     * @var string
+     */
+    private $photoUrl;
+
+    /**
+     * @var string
+     */
+    private $photoFile;
+    
+    /**
      * @ORM\ManyToOne(targetEntity="Audero\ShowphotoBundle\Entity\User", inversedBy="responses")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
      */
@@ -192,5 +202,47 @@ class PhotoResponse
     public function getSlug()
     {
         return $this->slug;
+    }
+
+    /**
+     * Set photoUrl
+     *
+     * @param string $url
+     * @return PhotoResponse
+     */
+    public function setPhotoUrl($url)
+    {
+        $this->photoUrl = $url;
+
+        return $this;
+    }
+
+    /**
+     * Get photoUrl
+     *
+     * @return string
+     */
+    public function getPhotoUrl()
+    {
+        return $this->photoUrl;
+    }
+
+    /**
+     * Set photoFile
+     * @return PhotoResponse
+     */
+    public function setPhotoFile($file)
+    {
+        $this->photoFile = $file;
+
+        return $this;
+    }
+
+    /**
+     * Get photoFile
+     */
+    public function getPhotoFile()
+    {
+        return $this->photoFile;
     }
 }

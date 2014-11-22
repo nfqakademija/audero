@@ -40,7 +40,7 @@ class User extends BaseUser
     protected $likes;
 
     /**
-     * @ORM\OneToMany(targetEntity="Audero\ShowphotoBundle\Entity\Chat", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="Audero\ShowphotoBundle\Entity\ChatMessage", mappedBy="user")
      */
     protected $chatMessages;
 

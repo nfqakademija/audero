@@ -13,6 +13,7 @@
                 </div>
             </div>
         </div>
+        {{ form(form_response) }}
         <div class="page-header">
         </div>
         <div class="bs-component">
@@ -27,23 +28,26 @@
         <div class="page-header">
         </div>
         <div class="bs-component">
-            <div class="jumbotron">
+            <div>
                 <h3>TimeLeft: <span id="timer"></span></h3>
-                {{ form(form_response) }}<br/>
+            </div>
+            <div class="bs-component">
+                <div class="jumbotron">
+                    <h3>Chat</h3>
+                    {{ render(controller('AuderoShowphotoBundle:Chat:index')) }}
+                </div>
             </div>
         </div>
     </div>
 
-
-
     <script>
-        $( "#audero_showphotobundle_photoresponse_Upload" ).click(function() {
+        $( "#audero_showphotobundle_chat_Send" ).click(function() {
 
-            var form = $('form[name="audero_showphotobundle_photoresponse"]');
+            var form = $('form[name="audero_showphotobundle_chat"]');
 
             $.ajax( {
                 type: "POST",
-                url: form.attr( 'action' ),
+                url: form.attr('action'),
                 data: form.serialize(),
                 success: function( response ) {
                     console.log( response );
@@ -68,11 +72,14 @@
                 return;
             }
 
-            document.getElementById("timer").innerHTML=count + " secs"; // watch for spelling
+            document.getElementById("timer").innerHTML=count; // watch for spelling
         }
 
         var conn = new ab.Session('ws://127.0.0.1:8080',
                 function() {
+                    conn.subscribe('chat', function(topic, data) {
+                       console.log(data);
+                    });
                     conn.subscribe('game_request', function(topic, data) {
                         // This is where you would add the new article to the DOM (beyond the scope of this tutorial)
                         $( "#request" ).text(data);

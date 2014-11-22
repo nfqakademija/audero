@@ -1,0 +1,3 @@
+Audero\ShowphotoBundle\Entity\PhotoResponse:
+    constraints:
+        - Audero\ShowphotoBundle\Validator\Constraints\SinglePhotoIsSet: ~

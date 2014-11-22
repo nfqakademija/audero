@@ -9,21 +9,14 @@ use Symfony\Component\Security\Core\SecurityContext;
 class Pusher implements WampServerInterface {
 
     private $connManager;
-    private $availableTopics = array('game_request', 'game_response', 'game_chat');
     protected $subscribedTopics = array();
 
     public function __construct(SocketConnectionManager $connManager) {
         $this->connManager = $connManager;
     }
     public function onSubscribe(ConnectionInterface $conn, $topic) {
-        $conn->send(json_encode("labas"));
-        // checking if requested topic if available
-        if(!in_array($topic->getId(), $this->availableTopics)) {
-            return $conn->close();
-        }
-
         // checking if user has right permissions
-        if(!$this->connManager->addSubscriber($conn, $topic)) {
+        if(!$this->connManager->hasPermissions($conn, $topic)) {
             return $conn->close();
         }
 

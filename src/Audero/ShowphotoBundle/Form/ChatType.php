@@ -6,7 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class PhotoResponseType extends AbstractType
+class ChatType extends AbstractType
 {
     /**
      * @param FormBuilderInterface $builder
@@ -15,18 +15,18 @@ class PhotoResponseType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('photoUrl','url', array('required' => false))
-            ->add('photoFile','file', array('required' => false))
-            ->add('Upload', 'submit');
+            ->add('text')
+            ->add('Send', 'button')
+        ;
     }
-
+    
     /**
      * @param OptionsResolverInterface $resolver
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Audero\ShowphotoBundle\Entity\PhotoResponse'
+            'data_class' => 'Audero\ShowphotoBundle\Entity\ChatMessage'
         ));
     }
 
@@ -35,6 +35,6 @@ class PhotoResponseType extends AbstractType
      */
     public function getName()
     {
-        return 'audero_showphotobundle_photoresponse';
+        return 'audero_showphotobundle_chat';
     }
 }

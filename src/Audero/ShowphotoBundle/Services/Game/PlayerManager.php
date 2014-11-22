@@ -50,4 +50,17 @@ class PlayerManager {
 
     }
 
+    public function isPlayer(User $user) {
+        if (!is_object($user)) {
+            return false;
+        }
+
+        $player = $this->em->getRepository("AuderoShowphotoBundle:Player")->findOneBy(array("user" => $user->getId()));
+        if (!is_object($player)) {
+            return false;
+        }
+
+        return true;
+    }
+
 } 

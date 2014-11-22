@@ -2,12 +2,11 @@
 
 namespace Audero\ShowphotoBundle\Services\Uploader;
 
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class Imgur {
 
     private $tokenProvider;
-    private $minSize = '300x200';
-    private $imgSizes = array('300x200', '400x300');
 
     public function __construct(TokenProvider $tokenProvider)
     {
@@ -36,21 +35,29 @@ class Imgur {
     }
 
     /*
-     *  Uploads image to imgur from passed url
+     *  Passes image's url to imgur
      *  Return type JSON
      * */
-    public function uploadPhotoUrl($url)
+    public function uploadUrl($image)
     {
-        $post   = array(
-            'image' => $url,
-            'type'  =>'url');
+        $post = array(
+            'image' => $image
+        );
 
         return $this->upload($post);
     }
 
-    public function uploadPhotoFile()
+    /*
+     *  Passes file to imgur
+     *  Return type JSON
+     * */
+    public function uploadFile(UploadedFile $file)
     {
+        $post = array(
+            'image' => '@'.$file->getPath().'/'.$file->getBasename()
+        );
 
+        return $this->upload($post);
     }
 
 } 

@@ -5,8 +5,8 @@ namespace Audero\ShowphotoBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity
  * @ORM\Table(name="chat")
+ * @ORM\Entity(repositoryClass="Audero\ShowphotoBundle\Repository\ChatRepository")
  */
 class Chat
 {
@@ -27,11 +27,21 @@ class Chat
     private $text;
 
     /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="date", type="datetime")
+     */
+    private $date;
+
+    /**
      * @ORM\ManyToOne(targetEntity="Audero\ShowphotoBundle\Entity\User", inversedBy="chatMessages")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
      */
     private $user;
 
+    public function __construct() {
+        $this->date = new \DateTime('now');
+    }
 
     /**
      * Get id
@@ -42,50 +52,5 @@ class Chat
     {
         return $this->id;
     }
-
-    /**
-     * Set message
-     *
-     * @param string $text
-     * @return Chat
-     */
-    public function setText($text)
-    {
-        $this->text = $text;
-
-        return $this;
-    }
-
-    /**
-     * Get message
-     *
-     * @return string 
-     */
-    public function getText()
-    {
-        return $this->text;
-    }
-
-    /**
-     * Set user
-     *
-     * @param \Audero\ShowphotoBundle\Entity\User $user
-     * @return Chat
-     */
-    public function setUser(\Audero\ShowphotoBundle\Entity\User $user = null)
-    {
-        $this->user = $user;
-
-        return $this;
-    }
-
-    /**
-     * Get user
-     *
-     * @return \Audero\ShowphotoBundle\Entity\User 
-     */
-    public function getUser()
-    {
-        return $this->user;
-    }
+    
 }

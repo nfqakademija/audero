@@ -1,0 +1,10 @@
+{% extends "::base.html.twig" %}
+
+{% block title %}AuderoShowphotoBundle:Chat:index{% endblock %}
+
+{% block body %}
+    {% for message in messages %}
+        {{ message.user.username }}: {{message.text}} <br/>
+    {% endfor %}
+    {{ form(chat) }}
+{% endblock %}

@@ -47,107 +47,47 @@ class PhotoResponseController extends Controller
     public function createAction(Request $request)
     {
         $securityContext = $this->container->get('security.context');
-
-        if ($securityContext->isGranted('IS_AUTHENTICATED_FULLY')) {
-
-            $entity = new PhotoResponse();
-            $form = $this->createForm(new PhotoResponseType(), $entity);
-            $form->handleRequest($request);
-
-            if ($form->isValid()) {
-                $slugify = new Slugify();
-                $uploader = $this->get('uploader');
-                $response = json_decode($uploader->uploadPhotoUrl($entity->getPhoto()));
-                if($response->status == 200) {
-                    $em = $this->getDoctrine()->getManager();
-                    $entity->setUser($securityContext->getToken()->getUser());
-                    $entity->setPhoto($response->data->link);
-                    $entity->setSlug($slugify->slugify(""));
-
-                    $em->persist($entity);
-                    $em->flush();
-
-                    $data = array(
-                        'channel' => "game_response",
-                        'data'    => $entity->getPhoto()
-                    );
-
-                    $context = new \ZMQContext();
-                    $socket = $context->getSocket(\ZMQ::SOCKET_PUSH, 'my pusher');
-                    $socket->connect("tcp://127.0.0.1:5555");
-
-                    $socket->send(json_encode($data));
-
-                    return new Response('Success');
-                }
-
-                return new Response('Upload failed');
-            }
-
-            return new Response('Invalid form');
+        if (!$securityContext->isGranted('IS_AUTHENTICATED_FULLY')
+            || !$this->get('game.player.manager')->isPlayer($this->getUser())) {
+            throw new AccessDeniedException();
         }
 
-        throw new AccessDeniedException();
+        $entity = new PhotoResponse();
+        $form = $this->createForm(new PhotoResponseType(), $entity);
+        $form->handleRequest($request);
 
-        if ($securityContext->isGranted('IS_AUTHENTICATED_FULLY')) {
-            $entity = new PhotoResponse();
+        if ($form->isValid()) {
+            $slugify = new Slugify();
+            if($entity->getPhotoUrl())
+            $uploader = $this->get('uploader');
+            $response = json_decode($uploader->uploadFile($entity->getPhotoFile()));
+            if ($response->status == 200) {
+                $em = $this->getDoctrine()->getManager();
+                $entity->setUser($securityContext->getToken()->getUser());
+                $entity->setPhoto($response->data->link);
+                $entity->setSlug($slugify->slugify(""));
 
-            $form = $this->createForm(new PhotoResponseType(), $entity);
-            $form->handleRequest($request);
+                $em->persist($entity);
+                $em->flush();
 
-            if ($form->isValid()) {
-                $slugify = new Slugify();
-                $uploader = $this->get('uploader.imgur');
-                $response = json_decode($uploader->uploadPhotoUrl($entity->getPhoto()));
-                if($response->status == 200) {
-                    $em = $this->getDoctrine()->getManager();
-                    $entity->setUser($securityContext->getToken()->getUser());
-                    $entity->setPhoto($response->data->link);
-                    $entity->setSlug($slugify->slugify(""));
+                $data = array(
+                    'channel' => "game_response",
+                    'data' => $entity->getPhoto()
+                );
 
-                    $em->persist($entity);
-                    $em->flush();
+                $context = new \ZMQContext();
+                $socket = $context->getSocket(\ZMQ::SOCKET_PUSH, 'my pusher');
+                $socket->connect("tcp://127.0.0.1:5555");
 
-                    $data = array(
-                        'channel' => "game_response",
-                        'data'    => $entity->getPhoto()
-                    );
+                $socket->send(json_encode($data));
 
-                    $context = new \ZMQContext();
-                    $socket = $context->getSocket(\ZMQ::SOCKET_PUSH, 'my pusher');
-                    $socket->connect("tcp://localhost:5555");
-
-                    $socket->send(json_encode($data));
-
-                    return new Response('Success');
-                }
-
-                return new Response('Upload failed');
+                return new Response('Success');
             }
 
-            return new Response('Invalid form');
+            return new Response('Upload failed');
         }
 
-        throw new AccessDeniedException();
-    }
-
-    /**
-     * Creates a form to create a Interpretation entity.
-     *
-     * @param Interpretation $entity The entity
-     *
-     * @return \Symfony\Component\Form\Form The form
-     */
-    private function createCreateForm(Interpretation $entity)
-    {
-        $form = $this->createForm(new InterpretationType(), $entity, array(
-            'action' => $this->generateUrl('game_response_create'),
-            'method' => 'POST',
-        ));
-
-        $form->add('submit', 'submit', array('label' => 'Create'));
-
-        return $form;
+        return new Response($form->getErrors());
     }
 
     /**

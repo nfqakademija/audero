@@ -4,11 +4,10 @@ namespace Audero\ShowphotoBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
-use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="response")
+ * @ORM\Table(name="photo_response")
  */
 class PhotoResponse
 {
@@ -28,6 +27,16 @@ class PhotoResponse
      */
     private $photo;
 
+    /**
+     * @var string
+     */
+    private $photoUrl;
+
+    /**
+     * @var string
+     */
+    private $photoFile;
+    
     /**
      * @ORM\ManyToOne(targetEntity="Audero\ShowphotoBundle\Entity\User", inversedBy="responses")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
@@ -170,5 +179,28 @@ class PhotoResponse
     public function getRatings()
     {
         return $this->ratings;
+    }
+
+    /**
+     * Set slug
+     *
+     * @param string $slug
+     * @return PhotoResponse
+     */
+    public function setSlug($slug)
+    {
+        $this->slug = $slug;
+
+        return $this;
+    }
+
+    /**
+     * Get slug
+     *
+     * @return string 
+     */
+    public function getSlug()
+    {
+        return $this->slug;
     }
 }
