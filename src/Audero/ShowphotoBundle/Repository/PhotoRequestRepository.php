@@ -12,10 +12,31 @@ use Doctrine\ORM\EntityRepository;
  */
 class PhotoRequestRepository extends EntityRepository
 {
-    public function findAllOrderedByName()
+    public function findLast()
     {
-/*        return $this->getEntityManager()
-            ->createQuery('SELECT p FROM symBundle:Register p ORDER BY p.name ASC')
-            ->getResult();*/
+        $result = $this->getEntityManager()
+            ->createQuery('SELECT r FROM AuderoShowphotoBundle:PhotoRequest r ORDER BY r.date ASC')
+            ->getResult();
+
+        if(count($result) > 0) {
+            return $result[0];
+        }
+
+        return null;
+    }
+
+    public function findOneBySlug($slug)
+    {
+        $result = $this->getEntityManager()
+            ->createQuery('SELECT r FROM AuderoShowphotoBundle:PhotoRequest r WHERE r.slug = ?1')
+            ->setMaxResults(1)
+            ->setParameter(1, $slug)
+            ->getResult();
+
+        if(count($result) > 0) {
+            return $result[0];
+        }
+
+        return null;
     }
 }

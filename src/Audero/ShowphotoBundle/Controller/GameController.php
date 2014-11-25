@@ -34,14 +34,11 @@ class GameController extends Controller
                 $requests = $em->getRepository('AuderoShowphotoBundle:PhotoRequest')->findAll();
                 $responses = $em->getRepository('AuderoShowphotoBundle:PhotoResponse')->findAll();
                 $request = new PhotoRequest();
-                $formRequest = $this->createFormRequest($request);
                 $response = new PhotoResponse();
                 $formResponse = $this->createFormResponse($response);
 
                 return array(
-                    'form_request'   => $formRequest->createView(),
                     'form_response'   => $formResponse->createView(),
-                    'requests' => $requests,
                     'responses' => $responses
                 );
             }

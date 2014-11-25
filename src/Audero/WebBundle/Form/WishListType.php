@@ -10,9 +10,7 @@ class WishListType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('wishes', 'collection', array('type' => new WishType(), 'allow_add'=> true,'allow_delete' => true))
-                ->add('submit', 'submit')
-                ->setMethod('POST');
+        $builder->add('wishes', 'collection', array('type' => new WishType(), 'allow_add'=> true,'allow_delete' => true));
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver)

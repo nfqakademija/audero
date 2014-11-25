@@ -15,7 +15,6 @@ class PlayerManager {
     }
 
     public function add(User $user) {
-        $options = $this->em->getRepository("AuderoBackendBundle:OptionsRecord")->findCurrent();
         $playersRepo = $this->em->getRepository("AuderoShowphotoBundle:Player");
 
         // checking if player is already checked in
@@ -24,6 +23,7 @@ class PlayerManager {
         }
 
         // adding user to players list
+        $options = $this->em->getRepository("AuderoBackendBundle:OptionsRecord")->findCurrent();
         if($options) {
            $maxPlayers = $options->getPlayersInOneRoom();
            if($playersRepo->getPlayersCount() < $maxPlayers) {
@@ -38,8 +38,24 @@ class PlayerManager {
         return null;
     }
 
-    public function remove(User $user) {
+    public function remove(Player $player) {
+        if($player) {
+            $this->em->remove($player);
+            $this->em->flush();
+            return true;
+        }
 
+        return false;
+    }
+
+    public function removeWithoutWishes() {
+        $players = $this->em->getRepository("AuderoShowphotoBundle:Player")->findAll();
+
+        foreach($players as $player) {
+            if(count($player->getWishes()) == 0) {
+                $this->remove($player);
+            }
+        }
     }
 
     public function getFreeSlots() {

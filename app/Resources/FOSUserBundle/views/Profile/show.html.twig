@@ -2,26 +2,42 @@
 
 {% block body %}
     <h1>NORAI</h1>
-    <ul class="wishes" data-prototype="{{ form_widget(wish_list_form.wishes.vars.prototype)|e }}">
+
+    <ul class="wish" data-prototype="{{ form_widget(wish_list_form.wishes.vars.prototype)|e }}"></ul>
+    {{ form_start(wish_list_form) }}
+    <ul>
+        {# iterate over each existing tag and render its only field: name #}
+        {% for wish in wish_list_form.wishes %}
+            <li>{{ form_widget(wish.title) }}</li>
+        {% endfor %}
+    </ul>
+    {{ form_end(wish_list_form) }}
+    <script>
+        $('form[name="web_wish_list"] :input').blur(function() {
+            alert('kuku');
+        });
+    </script>
+    <h1>PRASYMAI</h1>
+    <ul>
+        {% for request in app.user.requests %}
+            <li>{{ request.title }}</li>
+        {% endfor %}
     </ul>
 
-    {{ form_start(wish_list_form) }}
-        <div id="wishList">
-            {% for wish in wish_list_form.wishes %}
-                <li>{{ form_widget(wish.title) }} {{ form_widget(wish.position) }}</li>
-            {% endfor %}
-        </div>
-        {{ form_widget(wish_list_form.submit) }}
-    {{ form_end(wish_list_form) }}
+    <h1>Atsakymai</h1>
+    <ul>
+        {% for response in app.user.responses %}
+            <li>{{ response.request.title }} </li>
+            <li>{{ response.photo }}</li>
+        {% endfor %}
+    </ul>
 
-    <div class="input_fields_wrap">
-        <button class="add_field_button">Add More Fields</button>
-    </div>
 
-<ul id="sortable">
-    <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 1</li>
-    <li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>Item 2</li>
-</ul>
+
+    <script>
+
+    </script>
+
 {% endblock %}
 
 {% block scripts %}

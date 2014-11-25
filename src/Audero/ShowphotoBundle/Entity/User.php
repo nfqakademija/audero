@@ -49,6 +49,11 @@ class User extends BaseUser
      **/
     protected $player;
 
+    /**
+     * @ORM\OneToMany(targetEntity="Audero\ShowphotoBundle\Entity\Win", mappedBy="user")
+     **/
+    protected $wins;
+
     public function __construct()
     {
         parent::__construct();
@@ -57,6 +62,7 @@ class User extends BaseUser
         $this->likes = new ArrayCollection();
         $this->wishes = new ArrayCollection();
         $this->messages = new ArrayCollection();
+        $this->wins = new ArrayCollection();
     }
 
     /**
@@ -202,39 +208,6 @@ class User extends BaseUser
     }
 
     /**
-     * Add chatMessages
-     *
-     * @param \Audero\ShowphotoBundle\Entity\Chat $chatMessages
-     * @return User
-     */
-    public function addChatMessage(\Audero\ShowphotoBundle\Entity\Chat $chatMessages)
-    {
-        $this->chatMessages[] = $chatMessages;
-
-        return $this;
-    }
-
-    /**
-     * Remove chatMessages
-     *
-     * @param \Audero\ShowphotoBundle\Entity\Chat $chatMessages
-     */
-    public function removeChatMessage(\Audero\ShowphotoBundle\Entity\Chat $chatMessages)
-    {
-        $this->chatMessages->removeElement($chatMessages);
-    }
-
-    /**
-     * Get chatMessages
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getChatMessages()
-    {
-        return $this->chatMessages;
-    }
-
-    /**
      * Set player
      *
      * @param \Audero\ShowphotoBundle\Entity\Player $player
@@ -255,5 +228,71 @@ class User extends BaseUser
     public function getPlayer()
     {
         return $this->player;
+    }
+
+    /**
+     * Add wins
+     *
+     * @param \Audero\ShowphotoBundle\Entity\Win $wins
+     * @return User
+     */
+    public function addWin(\Audero\ShowphotoBundle\Entity\Win $wins)
+    {
+        $this->wins[] = $wins;
+
+        return $this;
+    }
+
+    /**
+     * Remove wins
+     *
+     * @param \Audero\ShowphotoBundle\Entity\Win $wins
+     */
+    public function removeWin(\Audero\ShowphotoBundle\Entity\Win $wins)
+    {
+        $this->wins->removeElement($wins);
+    }
+
+    /**
+     * Get wins
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getWins()
+    {
+        return $this->wins;
+    }
+
+    /**
+     * Add chatMessages
+     *
+     * @param \Audero\ShowphotoBundle\Entity\ChatMessage $chatMessages
+     * @return User
+     */
+    public function addChatMessage(\Audero\ShowphotoBundle\Entity\ChatMessage $chatMessages)
+    {
+        $this->chatMessages[] = $chatMessages;
+
+        return $this;
+    }
+
+    /**
+     * Remove chatMessages
+     *
+     * @param \Audero\ShowphotoBundle\Entity\ChatMessage $chatMessages
+     */
+    public function removeChatMessage(\Audero\ShowphotoBundle\Entity\ChatMessage $chatMessages)
+    {
+        $this->chatMessages->removeElement($chatMessages);
+    }
+
+    /**
+     * Get chatMessages
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getChatMessages()
+    {
+        return $this->chatMessages;
     }
 }

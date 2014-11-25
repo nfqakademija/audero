@@ -6,8 +6,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * @ORM\Entity
  * @ORM\Table(name="photo_response")
+ * @ORM\Entity(repositoryClass="Audero\ShowphotoBundle\Repository\PhotoResponseRepository")
  */
 class PhotoResponse
 {
@@ -19,6 +19,13 @@ class PhotoResponse
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="date", type="datetime")
+     */
+    private $date;
 
     /**
      * @var string
@@ -50,16 +57,15 @@ class PhotoResponse
     private $request;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="slug", type="string", length=255)
-     */
-    private $slug;
-
-    /**
      * @ORM\OneToMany(targetEntity="Rating", mappedBy="response")
      */
     private $ratings;
+
+    /**
+     * @ORM\OneToOne(targetEntity="Audero\ShowphotoBundle\Entity\Win", mappedBy="response")
+     */
+    private $win;
+
 
     /**
      * Constructor
@@ -67,6 +73,7 @@ class PhotoResponse
     public function __construct()
     {
         $this->likes = new ArrayCollection();
+        $this->date = new \DateTime('now');
     }
 
     /**
@@ -182,29 +189,6 @@ class PhotoResponse
     }
 
     /**
-     * Set slug
-     *
-     * @param string $slug
-     * @return PhotoResponse
-     */
-    public function setSlug($slug)
-    {
-        $this->slug = $slug;
-
-        return $this;
-    }
-
-    /**
-     * Get slug
-     *
-     * @return string 
-     */
-    public function getSlug()
-    {
-        return $this->slug;
-    }
-
-    /**
      * Set photoUrl
      *
      * @param string $url
@@ -244,5 +228,85 @@ class PhotoResponse
     public function getPhotoFile()
     {
         return $this->photoFile;
+    }
+
+    /**
+     * Set win
+     *
+     * @param \Audero\ShowphotoBundle\Entity\Win $win
+     * @return PhotoResponse
+     */
+    public function setWin(\Audero\ShowphotoBundle\Entity\Win $win = null)
+    {
+        $this->win = $win;
+
+        return $this;
+    }
+
+    /**
+     * Get win
+     *
+     * @return \Audero\ShowphotoBundle\Entity\Win 
+     */
+    public function getWin()
+    {
+        return $this->win;
+    }
+
+    /**
+     * Set date
+     *
+     * @param \DateTime $date
+     * @return PhotoResponse
+     */
+    public function setDate($date)
+    {
+        $this->date = $date;
+
+        return $this;
+    }
+
+    /**
+     * Get date
+     *
+     * @return \DateTime 
+     */
+    public function getDate()
+    {
+        return $this->date;
+    }
+
+    /**
+     * Get positive ratings
+     *
+     * @return array
+     */
+    public function getPositiveRatingsCount()
+    {
+        $count = 0;
+        foreach($this->ratings as $rating) {
+            if($rating->getRate() == 1) {
+                $count++;
+            }
+        }
+
+        return $count;
+    }
+
+    /**
+     * Get positive ratings
+     *
+     * @return array
+     */
+    public function getNegativeRatingsCount()
+    {
+        $count = 0;
+        foreach($this->ratings as $rating) {
+            if($rating->getRate() == 0) {
+                $count++;
+            }
+        }
+
+        return $count;
     }
 }

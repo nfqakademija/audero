@@ -16,8 +16,13 @@ class WinnerQueue {
         $this->container = $container;
     }
 
-    public function get() {
-       return $this->container->get('fos_user.user_manager')->findUsers();
+    public function generate() {
+
+        $request = $this->em->getRepository("AuderoShowphotoBundle:PhotoRequest")->findLast();
+        if($request) {
+
+        }
+        return $this->container->get('fos_user.user_manager')->findUsers();
     }
 
 }

@@ -10,8 +10,7 @@ class WishType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('title')
-                ->add('position');
+        $builder->add('title');
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver)

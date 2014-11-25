@@ -17,13 +17,15 @@ class Pusher implements WampServerInterface {
     public function onSubscribe(ConnectionInterface $conn, $topic) {
         // checking if user has right permissions
         if(!$this->connManager->hasPermissions($conn, $topic)) {
-            return $conn->close();
+            return;
         }
 
         // adding to subscribed topics
         if(!isset($this->subscribedTopics[$topic->getId()])) {
             $this->subscribedTopics[$topic->getId()] = $topic;
         }
+        $user = unserialize($conn->Session->all()['_security_main'])->getUser();
+        var_dump($user); die;
     }
     public function onUnSubscribe(ConnectionInterface $conn, $topic) {
     }

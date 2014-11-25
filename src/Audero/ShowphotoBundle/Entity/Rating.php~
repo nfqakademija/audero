@@ -22,9 +22,9 @@ class Rating
     /**
      * @var boolean
      *
-     * @ORM\Column(name="like", type="boolean")
+     * @ORM\Column(name="rate", type="boolean")
      */
-    private $like;
+    private $rate;
 
     /**
      * @ORM\ManyToOne(targetEntity="Audero\ShowphotoBundle\Entity\PhotoResponse", inversedBy="ratings")
@@ -46,29 +46,6 @@ class Rating
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set like
-     *
-     * @param boolean $like
-     * @return Rating
-     */
-    public function setLike($like)
-    {
-        $this->like = $like;
-
-        return $this;
-    }
-
-    /**
-     * Get like
-     *
-     * @return boolean 
-     */
-    public function getLike()
-    {
-        return $this->like;
     }
 
     /**
@@ -116,4 +93,5 @@ class Rating
     {
         return $this->user;
     }
+
 }

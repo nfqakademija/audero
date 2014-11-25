@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Cocur\Slugify\Slugify;
 /**
  * Page controller.
  *
@@ -21,6 +22,7 @@ class PageController extends Controller
      */
     public function indexAction()
     {
+        $slugify = new Slugify();
         $requests = $this->getDoctrine()->getManager()->getRepository("AuderoShowphotoBundle:PhotoRequest")->findAll();
         return $this->render('AuderoWebBundle:Page:index.html.twig', array(
             'requests' => $requests

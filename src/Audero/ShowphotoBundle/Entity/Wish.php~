@@ -5,8 +5,8 @@ namespace Audero\ShowphotoBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity
  * @ORM\Table(name="wish")
+ * @ORM\Entity(repositoryClass="Audero\ShowphotoBundle\Repository\WishRepository")
  */
 class Wish
 {

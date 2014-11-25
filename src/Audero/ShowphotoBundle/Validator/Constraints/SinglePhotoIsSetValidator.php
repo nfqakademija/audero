@@ -11,7 +11,7 @@ class SinglePhotoIsSetValidator extends ConstraintValidator
     {
         if($protocol->getPhotoUrl() != '' && $protocol->getPhotoFile() != null ||
             trim($protocol->getPhotoUrl()) == '' && $protocol->getPhotoFile() == null ) {
-            $this->context->addViolationAt(
+            $this->context->buildViolation(
                 'photo',
                 $constraint->message,
                 array(),

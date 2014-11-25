@@ -6,8 +6,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * @ORM\Entity
  * @ORM\Table(name="photo_response")
+ * @ORM\Entity(repositoryClass="Audero\ShowphotoBundle\Repository\PhotoResponseRepository")
  */
 class PhotoResponse
 {
@@ -19,6 +19,13 @@ class PhotoResponse
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="date", type="datetime")
+     */
+    private $date;
 
     /**
      * @var string
@@ -60,6 +67,12 @@ class PhotoResponse
      * @ORM\OneToMany(targetEntity="Rating", mappedBy="response")
      */
     private $ratings;
+
+    /**
+     * @ORM\OneToOne(targetEntity="Audero\ShowphotoBundle\Entity\Win", mappedBy="response")
+     */
+    private $win;
+
 
     /**
      * Constructor
@@ -202,5 +215,93 @@ class PhotoResponse
     public function getSlug()
     {
         return $this->slug;
+    }
+
+    /**
+     * Set photoUrl
+     *
+     * @param string $url
+     * @return PhotoResponse
+     */
+    public function setPhotoUrl($url)
+    {
+        $this->photoUrl = $url;
+
+        return $this;
+    }
+
+    /**
+     * Get photoUrl
+     *
+     * @return string
+     */
+    public function getPhotoUrl()
+    {
+        return $this->photoUrl;
+    }
+
+    /**
+     * Set photoFile
+     * @return PhotoResponse
+     */
+    public function setPhotoFile($file)
+    {
+        $this->photoFile = $file;
+
+        return $this;
+    }
+
+    /**
+     * Get photoFile
+     */
+    public function getPhotoFile()
+    {
+        return $this->photoFile;
+    }
+
+    /**
+     * Set win
+     *
+     * @param \Audero\ShowphotoBundle\Entity\Win $win
+     * @return PhotoResponse
+     */
+    public function setWin(\Audero\ShowphotoBundle\Entity\Win $win = null)
+    {
+        $this->win = $win;
+
+        return $this;
+    }
+
+    /**
+     * Get win
+     *
+     * @return \Audero\ShowphotoBundle\Entity\Win 
+     */
+    public function getWin()
+    {
+        return $this->win;
+    }
+
+    /**
+     * Set date
+     *
+     * @param \DateTime $date
+     * @return PhotoResponse
+     */
+    public function setDate($date)
+    {
+        $this->date = $date;
+
+        return $this;
+    }
+
+    /**
+     * Get date
+     *
+     * @return \DateTime 
+     */
+    public function getDate()
+    {
+        return $this->date;
     }
 }

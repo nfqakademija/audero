@@ -56,7 +56,6 @@
         });
     </script>
 
-    <script src="{{ asset('bundles/auderoweb/js/autobahn.min.js') }}"></script>
 
     <script>
         var count= 30;
@@ -77,8 +76,12 @@
 
         var conn = new ab.Session('ws://127.0.0.1:8080',
                 function() {
+                    conn._websocket.onmessage = function (e){
+                        data = JSON.parse(e.data);
+                        console.log(data);
+                    };
                     conn.subscribe('chat', function(topic, data) {
-                       console.log(data);
+                        console.log("kuku");
                     });
                     conn.subscribe('game_request', function(topic, data) {
                         // This is where you would add the new article to the DOM (beyond the scope of this tutorial)
@@ -96,5 +99,7 @@
                 },
                 {'skipSubprotocolCheck': true}
         );
+
+
     </script>
 {% endblock %}

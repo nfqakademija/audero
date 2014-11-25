@@ -8,15 +8,15 @@ services:
         class:  Audero\ShowphotoBundle\Services\Uploader\Imgur
         arguments: ["@uploader.token.provider"]
     #Game services
-    game.request.provider:
-        class:  Audero\ShowphotoBundle\Services\Game\RequestProvider
+    game.photo.request:
+        class:  Audero\ShowphotoBundle\Services\Game\PhotoRequest
         arguments: ["@doctrine.orm.entity_manager"]
     game.winner.queue:
         class:  Audero\ShowphotoBundle\Services\Game\WinnerQueue
         arguments: ["@doctrine.orm.entity_manager"]
-    game.manager:
-        class:  Audero\ShowphotoBundle\Services\Game\Manager
-        arguments: ["@doctrine.orm.entity_manager", "@game.request.provider"]
     game.player.manager:
         class:  Audero\ShowphotoBundle\Services\Game\PlayerManager
         arguments: ["@doctrine.orm.entity_manager"]
+    game.manager:
+        class:  Audero\ShowphotoBundle\Services\Game\Manager
+        arguments: ["@doctrine.orm.entity_manager", "@game.photo.request", "@game.player.manager"]
