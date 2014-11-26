@@ -5,10 +5,10 @@ namespace Audero\ShowphotoBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Table(name="win")
- * @ORM\Entity(repositoryClass="Audero\ShowphotoBundle\Repository\WinRepository")
+ * @ORM\Table(name="winners")
+ * @ORM\Entity(repositoryClass="Audero\ShowphotoBundle\Repository\WinnerRepository")
  */
-class Win
+class Winner
 {
     /**
      * @var integer
@@ -27,7 +27,7 @@ class Win
     private $date;
 
     /**
-     * @ORM\OneToOne(targetEntity="Audero\ShowphotoBundle\Entity\PhotoResponse", inversedBy="win")
+     * @ORM\OneToOne(targetEntity="Audero\ShowphotoBundle\Entity\PhotoResponse")
      * @ORM\JoinColumn(name="response_id", referencedColumnName="id")
      */
     private $response;

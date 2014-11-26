@@ -19,6 +19,11 @@ class User extends BaseUser
      */
     protected $id;
 
+    /**
+     * @ORM\Column(name="conn_id", type="integer")
+     */
+    protected $connId;
+
      /**
      * @ORM\OneToMany(targetEntity="Audero\ShowphotoBundle\Entity\PhotoRequest", mappedBy="user")
      */
@@ -37,7 +42,7 @@ class User extends BaseUser
     /**
      * @ORM\OneToMany(targetEntity="Audero\ShowphotoBundle\Entity\Rating", mappedBy="user")
      */
-    protected $likes;
+    protected $ratings;
 
     /**
      * @ORM\OneToMany(targetEntity="Audero\ShowphotoBundle\Entity\ChatMessage", mappedBy="user")
@@ -50,7 +55,7 @@ class User extends BaseUser
     protected $player;
 
     /**
-     * @ORM\OneToMany(targetEntity="Audero\ShowphotoBundle\Entity\Win", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="Audero\ShowphotoBundle\Entity\Winner", mappedBy="user")
      **/
     protected $wins;
 
@@ -59,20 +64,48 @@ class User extends BaseUser
         parent::__construct();
         $this->requests = new ArrayCollection();
         $this->responses = new ArrayCollection();
-        $this->likes = new ArrayCollection();
+        $this->ratings = new ArrayCollection();
         $this->wishes = new ArrayCollection();
         $this->messages = new ArrayCollection();
         $this->wins = new ArrayCollection();
     }
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $likes;
+
 
     /**
      * Get id
      *
-     * @return integer
+     * @return integer 
      */
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Set connId
+     *
+     * @param integer $connId
+     * @return User
+     */
+    public function setConnId($connId)
+    {
+        $this->connId = $connId;
+
+        return $this;
+    }
+
+    /**
+     * Get connId
+     *
+     * @return integer 
+     */
+    public function getConnId()
+    {
+        return $this->connId;
     }
 
     /**
@@ -208,6 +241,39 @@ class User extends BaseUser
     }
 
     /**
+     * Add chatMessages
+     *
+     * @param \Audero\ShowphotoBundle\Entity\ChatMessage $chatMessages
+     * @return User
+     */
+    public function addChatMessage(\Audero\ShowphotoBundle\Entity\ChatMessage $chatMessages)
+    {
+        $this->chatMessages[] = $chatMessages;
+
+        return $this;
+    }
+
+    /**
+     * Remove chatMessages
+     *
+     * @param \Audero\ShowphotoBundle\Entity\ChatMessage $chatMessages
+     */
+    public function removeChatMessage(\Audero\ShowphotoBundle\Entity\ChatMessage $chatMessages)
+    {
+        $this->chatMessages->removeElement($chatMessages);
+    }
+
+    /**
+     * Get chatMessages
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getChatMessages()
+    {
+        return $this->chatMessages;
+    }
+
+    /**
      * Set player
      *
      * @param \Audero\ShowphotoBundle\Entity\Player $player
@@ -261,38 +327,5 @@ class User extends BaseUser
     public function getWins()
     {
         return $this->wins;
-    }
-
-    /**
-     * Add chatMessages
-     *
-     * @param \Audero\ShowphotoBundle\Entity\ChatMessage $chatMessages
-     * @return User
-     */
-    public function addChatMessage(\Audero\ShowphotoBundle\Entity\ChatMessage $chatMessages)
-    {
-        $this->chatMessages[] = $chatMessages;
-
-        return $this;
-    }
-
-    /**
-     * Remove chatMessages
-     *
-     * @param \Audero\ShowphotoBundle\Entity\ChatMessage $chatMessages
-     */
-    public function removeChatMessage(\Audero\ShowphotoBundle\Entity\ChatMessage $chatMessages)
-    {
-        $this->chatMessages->removeElement($chatMessages);
-    }
-
-    /**
-     * Get chatMessages
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getChatMessages()
-    {
-        return $this->chatMessages;
     }
 }

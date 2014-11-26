@@ -85,8 +85,8 @@
                     });
                     conn.subscribe('game_request', function(topic, data) {
                         // This is where you would add the new article to the DOM (beyond the scope of this tutorial)
-                        $( "#request" ).text(data);
-                        console.log("New request"); count = 30;
+                        //$( "#request" ).text(data);
+                        console.log(data); count = 30;
                     });
                     conn.subscribe('game_response', function(topic, data) {
                         // This is where you would add the new article to the DOM (beyond the scope of this tutorial)

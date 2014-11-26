@@ -30,20 +30,52 @@ class PhotoResponse
     /**
      * @var string
      *
-     * @ORM\Column(name="photo", type="string", length=255)
+     * @ORM\Column(name="photo_id", type="string", length=255, unique=true)
      */
-    private $photo;
+    private $photoId;
 
     /**
      * @var string
+     *
+     * @ORM\Column(name="delete_hash", type="string", length=255, unique=true)
      */
-    private $photoUrl;
+    private $deleteHash;
 
     /**
      * @var string
+     *
+     * @ORM\Column(name="link", type="string", length=255, unique=true)
      */
-    private $photoFile;
-    
+    private $photoLink;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="height", type="integer")
+     */
+    private $height;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="width", type="integer")
+     */
+    private $width;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="size", type="integer")
+     */
+    private $size;
+
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="animated", type="boolean")
+     */
+    private $animated;
+
     /**
      * @ORM\ManyToOne(targetEntity="Audero\ShowphotoBundle\Entity\User", inversedBy="responses")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
@@ -57,21 +89,19 @@ class PhotoResponse
     private $request;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="slug", type="string", length=255)
-     */
-    private $slug;
-
-    /**
      * @ORM\OneToMany(targetEntity="Rating", mappedBy="response")
      */
     private $ratings;
 
     /**
-     * @ORM\OneToOne(targetEntity="Audero\ShowphotoBundle\Entity\Win", mappedBy="response")
+     * @var string
      */
-    private $win;
+    private $photoUrl;
+
+    /**
+     * @var string
+     */
+    private $photoFile;
 
 
     /**
@@ -79,13 +109,19 @@ class PhotoResponse
      */
     public function __construct()
     {
-        $this->likes = new ArrayCollection();
+        $this->ratings = new ArrayCollection();
+        $this->date = new \DateTime('now');
     }
+    /**
+     * @var \Audero\ShowphotoBundle\Entity\Win
+     */
+    private $win;
+
 
     /**
      * Get id
      *
-     * @return integer
+     * @return integer 
      */
     public function getId()
     {
@@ -93,26 +129,95 @@ class PhotoResponse
     }
 
     /**
-     * Set photo
+     * Set date
      *
-     * @param string $photo
+     * @param \DateTime $date
      * @return PhotoResponse
      */
-    public function setPhoto($photo)
+    public function setDate($date)
     {
-        $this->photo = $photo;
+        $this->date = $date;
 
         return $this;
     }
 
     /**
-     * Get photo
+     * Get date
+     *
+     * @return \DateTime 
+     */
+    public function getDate()
+    {
+        return $this->date;
+    }
+
+    /**
+     * Set photoId
+     *
+     * @param string $photoId
+     * @return PhotoResponse
+     */
+    public function setPhotoId($photoId)
+    {
+        $this->photoId = $photoId;
+
+        return $this;
+    }
+
+    /**
+     * Get photoId
      *
      * @return string 
      */
-    public function getPhoto()
+    public function getPhotoId()
     {
-        return $this->photo;
+        return $this->photoId;
+    }
+
+    /**
+     * Set deleteHash
+     *
+     * @param string $deleteHash
+     * @return PhotoResponse
+     */
+    public function setDeleteHash($deleteHash)
+    {
+        $this->deleteHash = $deleteHash;
+
+        return $this;
+    }
+
+    /**
+     * Get deleteHash
+     *
+     * @return string 
+     */
+    public function getDeleteHash()
+    {
+        return $this->deleteHash;
+    }
+
+    /**
+     * Set photoLink
+     *
+     * @param string $photoLink
+     * @return PhotoResponse
+     */
+    public function setPhotoLink($photoLink)
+    {
+        $this->photoLink = $photoLink;
+
+        return $this;
+    }
+
+    /**
+     * Get photoLink
+     *
+     * @return string 
+     */
+    public function getPhotoLink()
+    {
+        return $this->photoLink;
     }
 
     /**
@@ -131,7 +236,7 @@ class PhotoResponse
     /**
      * Get user
      *
-     * @return \Audero\ShowphotoBundle\Entity\User
+     * @return \Audero\ShowphotoBundle\Entity\User 
      */
     public function getUser()
     {
@@ -195,71 +300,6 @@ class PhotoResponse
     }
 
     /**
-     * Set slug
-     *
-     * @param string $slug
-     * @return PhotoResponse
-     */
-    public function setSlug($slug)
-    {
-        $this->slug = $slug;
-
-        return $this;
-    }
-
-    /**
-     * Get slug
-     *
-     * @return string 
-     */
-    public function getSlug()
-    {
-        return $this->slug;
-    }
-
-    /**
-     * Set photoUrl
-     *
-     * @param string $url
-     * @return PhotoResponse
-     */
-    public function setPhotoUrl($url)
-    {
-        $this->photoUrl = $url;
-
-        return $this;
-    }
-
-    /**
-     * Get photoUrl
-     *
-     * @return string
-     */
-    public function getPhotoUrl()
-    {
-        return $this->photoUrl;
-    }
-
-    /**
-     * Set photoFile
-     * @return PhotoResponse
-     */
-    public function setPhotoFile($file)
-    {
-        $this->photoFile = $file;
-
-        return $this;
-    }
-
-    /**
-     * Get photoFile
-     */
-    public function getPhotoFile()
-    {
-        return $this->photoFile;
-    }
-
-    /**
      * Set win
      *
      * @param \Audero\ShowphotoBundle\Entity\Win $win
@@ -280,28 +320,5 @@ class PhotoResponse
     public function getWin()
     {
         return $this->win;
-    }
-
-    /**
-     * Set date
-     *
-     * @param \DateTime $date
-     * @return PhotoResponse
-     */
-    public function setDate($date)
-    {
-        $this->date = $date;
-
-        return $this;
-    }
-
-    /**
-     * Get date
-     *
-     * @return \DateTime 
-     */
-    public function getDate()
-    {
-        return $this->date;
     }
 }

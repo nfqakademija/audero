@@ -2,6 +2,7 @@
 
 namespace Audero\ShowphotoBundle\Repository;
 
+use Audero\ShowphotoBundle\Entity\PhotoRequest;
 use Doctrine\ORM\EntityRepository;
 
 /**
@@ -12,26 +13,15 @@ use Doctrine\ORM\EntityRepository;
  */
 class PhotoResponseRepository extends EntityRepository
 {
+
     /**
-     * @param $requestId
-     * @return array|null
+     * @param PhotoRequest $request
+     * @return array
      */
-    public function findOrderedByLikes($requestId) {
-            return $this->getEntityManager()
-                ->createQuery("SELECT res AS response, SUM(CASE WHEN rat.like = 1 THEN 1 ELSE -1 END) AS rating FROM AuderoShowphotoBundle:PhotoResponse res JOIN res.ratings rat WHERE res.request = ?1 ORDER BY rating, res.date")
-                ->setParameter(1, $requestId)
-                ->getResult();
-    }
-
-    // TODO setFirstResult() escape
-    public function findOneByNr($request, $nr) {
-            $result= $this->getEntityManager()
-                ->createQuery("SELECT res FROM AuderoShowphotoBundle:PhotoResponse res WHERE res.request = ?1 ORDER BY res.date")
-                ->setMaxResults(1)
-                ->setFirstResult($nr)
-                ->setParameter(1, $request)
-                ->getResult();
-
-            return count($result) > 0 ? $result[0] : null;
+    public function findBestResponses(PhotoRequest $request) {
+        return $this->getEntityManager()
+            ->createQuery("SELECT res AS response, SUM(CASE WHEN rat.rate = 1 THEN 1 ELSE -1 END) AS rating FROM AuderoShowphotoBundle:PhotoResponse res JOIN res.ratings rat WHERE res.request = ?1 ORDER BY rating, res.date")
+            ->setParameter(1, $request)
+            ->getResult();
     }
 }

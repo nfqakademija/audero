@@ -28,16 +28,11 @@ class RatingController extends Controller
         if($user = $this->getUser()) {
             $entity = new Rating();
 
-            $slug = $request->get('slug');
-            $nr = $request->get('nr');
+            $photoId = $request->get('photo_id');
             $rate = $request->get('rate') == 1 ? 1 : 0;
 
-            $request = $this->getDoctrine()->getRepository("AuderoShowphotoBundle:PhotoRequest")->findOneBySlug($slug);
-            if(!$request) {
-                return new JsonResponse("Photo Request not found");
-            }
 
-            $response = $this->getDoctrine()->getRepository("AuderoShowphotoBundle:PhotoResponse")->findOneByNr($request, $nr);
+            $response = $this->getDoctrine()->getRepository("AuderoShowphotoBundle:PhotoResponse")->findOneByPhotoId($photoId);
             if(!$response) {
                 return new JsonResponse("Photo Response not found");
             }

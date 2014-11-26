@@ -1,31 +1,39 @@
 <?php
 
-namespace Audero\WebBundle\Services;
+namespace Audero\WebBundle\Services\Pusher;
 
 use Ratchet\ConnectionInterface;
 use Ratchet\Wamp\WampServerInterface;
 use Symfony\Component\Security\Core\SecurityContext;
 
-class Pusher implements WampServerInterface {
+class PusherServer implements WampServerInterface {
 
-    private $connManager;
     protected $subscribedTopics = array();
+    private $cm;
 
-    public function __construct(SocketConnectionManager $connManager) {
-        $this->connManager = $connManager;
+    public function __construct(ConnectionManager $cm) {
+        $this->cm = $cm;
     }
+
     public function onSubscribe(ConnectionInterface $conn, $topic) {
         // checking if user has right permissions
-        if(!$this->connManager->hasPermissions($conn, $topic)) {
-            return;
+        if(!$this->cm->hasPermissions($conn, $topic)) {
+            $conn->close(); return;
         }
+
+/*        $security_main = unserialize($conn->Session->get('_security_main'));
+        if($security_main) {
+            $user = $security_main->getUser();
+            $this->cm->setUserConnId($user, $conn->resourceId);
+        }*/
 
         // adding to subscribed topics
         if(!isset($this->subscribedTopics[$topic->getId()])) {
             $this->subscribedTopics[$topic->getId()] = $topic;
         }
-        $user = unserialize($conn->Session->all()['_security_main'])->getUser();
-        var_dump($user); die;
+/*
+        $user = unserialize($conn->Session->all())->getUser();
+        var_dump($user); die;*/
     }
     public function onUnSubscribe(ConnectionInterface $conn, $topic) {
     }
@@ -42,23 +50,5 @@ class Pusher implements WampServerInterface {
         $conn->close();
     }
     public function onError(ConnectionInterface $conn, \Exception $e) {
-    }
-
-    /**
-     * @param string JSON'ified string we'll receive from ZeroMQ
-     */
-    public function onPush($entry) {
-        $entryData = json_decode($entry, true);
-
-        // If the lookup topic object isn't set there is no one to publish to
-        if (!array_key_exists('channel', $entryData) || !array_key_exists('data', $entryData) ||
-            !array_key_exists($entryData['channel'], $this->subscribedTopics)) {
-            return;
-        }
-
-        $topic = $this->subscribedTopics[$entryData['channel']];
-
-        // re-send the data to all the clients subscribed to that category
-        $topic->broadcast($entryData['data']);
     }
 }

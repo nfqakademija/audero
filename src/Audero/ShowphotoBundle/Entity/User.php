@@ -19,6 +19,11 @@ class User extends BaseUser
      */
     protected $id;
 
+    /**
+     * @ORM\Column(name="conn_id", type="integer")
+     */
+    protected $connId;
+
      /**
      * @ORM\OneToMany(targetEntity="Audero\ShowphotoBundle\Entity\PhotoRequest", mappedBy="user")
      */
@@ -37,7 +42,7 @@ class User extends BaseUser
     /**
      * @ORM\OneToMany(targetEntity="Audero\ShowphotoBundle\Entity\Rating", mappedBy="user")
      */
-    protected $likes;
+    protected $ratings;
 
     /**
      * @ORM\OneToMany(targetEntity="Audero\ShowphotoBundle\Entity\ChatMessage", mappedBy="user")
@@ -50,7 +55,7 @@ class User extends BaseUser
     protected $player;
 
     /**
-     * @ORM\OneToMany(targetEntity="Audero\ShowphotoBundle\Entity\Win", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="Audero\ShowphotoBundle\Entity\Winner", mappedBy="user")
      **/
     protected $wins;
 
@@ -59,20 +64,48 @@ class User extends BaseUser
         parent::__construct();
         $this->requests = new ArrayCollection();
         $this->responses = new ArrayCollection();
-        $this->likes = new ArrayCollection();
+        $this->ratings = new ArrayCollection();
         $this->wishes = new ArrayCollection();
         $this->messages = new ArrayCollection();
         $this->wins = new ArrayCollection();
     }
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $likes;
+
 
     /**
      * Get id
      *
-     * @return integer
+     * @return integer 
      */
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Set connId
+     *
+     * @param integer $connId
+     * @return User
+     */
+    public function setConnId($connId)
+    {
+        $this->connId = $connId;
+
+        return $this;
+    }
+
+    /**
+     * Get connId
+     *
+     * @return integer 
+     */
+    public function getConnId()
+    {
+        return $this->connId;
     }
 
     /**
@@ -208,62 +241,6 @@ class User extends BaseUser
     }
 
     /**
-     * Set player
-     *
-     * @param \Audero\ShowphotoBundle\Entity\Player $player
-     * @return User
-     */
-    public function setPlayer(\Audero\ShowphotoBundle\Entity\Player $player = null)
-    {
-        $this->player = $player;
-
-        return $this;
-    }
-
-    /**
-     * Get player
-     *
-     * @return \Audero\ShowphotoBundle\Entity\Player 
-     */
-    public function getPlayer()
-    {
-        return $this->player;
-    }
-
-    /**
-     * Add wins
-     *
-     * @param \Audero\ShowphotoBundle\Entity\Win $wins
-     * @return User
-     */
-    public function addWin(\Audero\ShowphotoBundle\Entity\Win $wins)
-    {
-        $this->wins[] = $wins;
-
-        return $this;
-    }
-
-    /**
-     * Remove wins
-     *
-     * @param \Audero\ShowphotoBundle\Entity\Win $wins
-     */
-    public function removeWin(\Audero\ShowphotoBundle\Entity\Win $wins)
-    {
-        $this->wins->removeElement($wins);
-    }
-
-    /**
-     * Get wins
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getWins()
-    {
-        return $this->wins;
-    }
-
-    /**
      * Add chatMessages
      *
      * @param \Audero\ShowphotoBundle\Entity\ChatMessage $chatMessages
@@ -294,5 +271,94 @@ class User extends BaseUser
     public function getChatMessages()
     {
         return $this->chatMessages;
+    }
+
+    /**
+     * Set player
+     *
+     * @param \Audero\ShowphotoBundle\Entity\Player $player
+     * @return User
+     */
+    public function setPlayer(\Audero\ShowphotoBundle\Entity\Player $player = null)
+    {
+        $this->player = $player;
+
+        return $this;
+    }
+
+    /**
+     * Get player
+     *
+     * @return \Audero\ShowphotoBundle\Entity\Player 
+     */
+    public function getPlayer()
+    {
+        return $this->player;
+    }
+
+    /**
+     * Add wins
+     *
+     * @param \Audero\ShowphotoBundle\Entity\Winner $wins
+     * @return User
+     */
+    public function addWin(\Audero\ShowphotoBundle\Entity\Winner $wins)
+    {
+        $this->wins[] = $wins;
+
+        return $this;
+    }
+
+    /**
+     * Remove wins
+     *
+     * @param \Audero\ShowphotoBundle\Entity\Winner $wins
+     */
+    public function removeWin(\Audero\ShowphotoBundle\Entity\Winner $wins)
+    {
+        $this->wins->removeElement($wins);
+    }
+
+    /**
+     * Get wins
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getWins()
+    {
+        return $this->wins;
+    }
+
+    /**
+     * Add ratings
+     *
+     * @param \Audero\ShowphotoBundle\Entity\Rating $ratings
+     * @return User
+     */
+    public function addRating(\Audero\ShowphotoBundle\Entity\Rating $ratings)
+    {
+        $this->ratings[] = $ratings;
+
+        return $this;
+    }
+
+    /**
+     * Remove ratings
+     *
+     * @param \Audero\ShowphotoBundle\Entity\Rating $ratings
+     */
+    public function removeRating(\Audero\ShowphotoBundle\Entity\Rating $ratings)
+    {
+        $this->ratings->removeElement($ratings);
+    }
+
+    /**
+     * Get ratings
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getRatings()
+    {
+        return $this->ratings;
     }
 }

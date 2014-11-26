@@ -5,10 +5,10 @@ namespace Audero\ShowphotoBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity
- * @ORM\Table(name="rating")
+ * @ORM\Table(name="winners")
+ * @ORM\Entity(repositoryClass="Audero\ShowphotoBundle\Repository\WinnerRepository")
  */
-class Rating
+class Winner
 {
     /**
      * @var integer
@@ -20,20 +20,20 @@ class Rating
     private $id;
 
     /**
-     * @var boolean
+     * @var \DateTime
      *
-     * @ORM\Column(name="rate", type="boolean")
+     * @ORM\Column(name="date", type="datetime")
      */
-    private $rate;
+    private $date;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Audero\ShowphotoBundle\Entity\PhotoResponse", inversedBy="ratings")
+     * @ORM\OneToOne(targetEntity="Audero\ShowphotoBundle\Entity\PhotoResponse")
      * @ORM\JoinColumn(name="response_id", referencedColumnName="id")
      */
     private $response;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Audero\ShowphotoBundle\Entity\User", inversedBy="likes")
+     * @ORM\ManyToOne(targetEntity="Audero\ShowphotoBundle\Entity\User", inversedBy="wins")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
      */
     private $user;
@@ -49,10 +49,33 @@ class Rating
     }
 
     /**
+     * Set date
+     *
+     * @param \DateTime $date
+     * @return Winner
+     */
+    public function setDate($date)
+    {
+        $this->date = $date;
+
+        return $this;
+    }
+
+    /**
+     * Get date
+     *
+     * @return \DateTime 
+     */
+    public function getDate()
+    {
+        return $this->date;
+    }
+
+    /**
      * Set response
      *
      * @param \Audero\ShowphotoBundle\Entity\PhotoResponse $response
-     * @return Rating
+     * @return Win
      */
     public function setResponse(\Audero\ShowphotoBundle\Entity\PhotoResponse $response = null)
     {
@@ -75,7 +98,7 @@ class Rating
      * Set user
      *
      * @param \Audero\ShowphotoBundle\Entity\User $user
-     * @return Rating
+     * @return Win
      */
     public function setUser(\Audero\ShowphotoBundle\Entity\User $user = null)
     {
@@ -87,34 +110,10 @@ class Rating
     /**
      * Get user
      *
-     * @return \Audero\ShowphotoBundle\Entity\User
+     * @return \Audero\ShowphotoBundle\Entity\User 
      */
     public function getUser()
     {
         return $this->user;
-    }
-
-
-    /**
-     * Set rate
-     *
-     * @param boolean $rate
-     * @return Rating
-     */
-    public function setRate($rate)
-    {
-        $this->rate = $rate;
-
-        return $this;
-    }
-
-    /**
-     * Get rate
-     *
-     * @return boolean 
-     */
-    public function getRate()
-    {
-        return $this->rate;
     }
 }

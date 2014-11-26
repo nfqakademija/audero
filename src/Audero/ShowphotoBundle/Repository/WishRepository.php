@@ -14,23 +14,10 @@ use Doctrine\ORM\EntityRepository;
 class WishRepository extends EntityRepository
 {
     public function findUserFirstWish(User $user) {
-        if(is_object($user)) {
-             $result = $this->getEntityManager()
-                        ->createQueryBuilder()
-                            ->select('wish')
-                            ->from('AuderoShowphotoBundle:Wish', 'wish')
-                            ->where('wish.user = ?1')
-                            ->orderBy('wish.position')
-                            ->setParameter(1, $user->getId())
-                            ->setMaxResults(1)
-                        ->getQuery()
-                        ->getResult();
-
-            if($result) {
-                return $result[0];
-            }
-        }
-
-        return null;
+        return $this->getEntityManager()
+            ->createQuery('SELECT wish FROM AuderoShowphotoBundle:Wish wish WHERE wish.user = ?1 ORDER BY wish.position ASC')
+            ->setMaxResults(1)
+            ->setParameter(1, $user)
+            ->getOneOrNullResult();
     }
 }

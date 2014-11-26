@@ -12,31 +12,19 @@ use Doctrine\ORM\EntityRepository;
  */
 class PhotoRequestRepository extends EntityRepository
 {
-    public function findLast()
+    public function findNewestRequest()
     {
-        $result = $this->getEntityManager()
-            ->createQuery('SELECT r FROM AuderoShowphotoBundle:PhotoRequest r ORDER BY r.date ASC')
-            ->getResult();
-
-        if(count($result) > 0) {
-            return $result[0];
-        }
-
-        return null;
+        return $this->getEntityManager()
+            ->createQuery('SELECT r FROM AuderoShowphotoBundle:PhotoRequest r ORDER BY r.date DESC')
+            ->setMaxResults(1)
+            ->getOneOrNullResult();
     }
 
     public function findOneBySlug($slug)
     {
-        $result = $this->getEntityManager()
+        return $this->getEntityManager()
             ->createQuery('SELECT r FROM AuderoShowphotoBundle:PhotoRequest r WHERE r.slug = ?1')
-            ->setMaxResults(1)
             ->setParameter(1, $slug)
-            ->getResult();
-
-        if(count($result) > 0) {
-            return $result[0];
-        }
-
-        return null;
+            ->getOneOrNullResult();
     }
 }

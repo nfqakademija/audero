@@ -6,9 +6,9 @@ services:
         arguments: [ @router ]
         tags:
             - { name: form.type, alias: wish_list}
-    socket.connection.manager:
-        class:  Audero\WebBundle\Services\SocketConnectionManager
-        arguments: ["@doctrine.orm.entity_manager"]
+    pusher.connection.manager:
+        class:  Audero\WebBundle\Services\Pusher\ConnectionManager
+        arguments: ["@doctrine.orm.default_entity_manager"]
     pusher:
-        class:  Audero\WebBundle\Services\Pusher
-        arguments: ["@socket.connection.manager"]
+        class:  Audero\WebBundle\Services\Pusher\Pusher
+        arguments: ["@pusher.connection.manager"]
