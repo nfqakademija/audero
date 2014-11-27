@@ -44,7 +44,7 @@ class Manager {
             $data = array(
                 'command' => 'push',
                 'data' => array(
-                    'channel' => "game_request",
+                    'topic' => "game_request",
                     'data'    => array(
                         'request' => $request->getTitle(),
                         'validUntil' => $validUntil,
@@ -54,7 +54,7 @@ class Manager {
 
             $context = new \ZMQContext();
             $socket = $context->getSocket(\ZMQ::SOCKET_PUSH, 'pusher');
-            $socket->connect("tcp://127.0.0.1:5555");
+            $socket->connect("tcp://127.0.0.1:5557");
             $socket->send(json_encode($data));
             sleep(30);
         }

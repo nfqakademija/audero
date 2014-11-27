@@ -19,11 +19,6 @@ class User extends BaseUser
      */
     protected $id;
 
-    /**
-     * @ORM\Column(name="conn_id", type="integer")
-     */
-    protected $connId;
-
      /**
      * @ORM\OneToMany(targetEntity="Audero\ShowphotoBundle\Entity\PhotoRequest", mappedBy="user")
      */
@@ -55,6 +50,11 @@ class User extends BaseUser
     protected $player;
 
     /**
+     * @ORM\OneToMany(targetEntity="Audero\WebBundle\Entity\UserConnection", mappedBy="user")
+     **/
+    protected $connections;
+
+    /**
      * @ORM\OneToMany(targetEntity="Audero\ShowphotoBundle\Entity\Winner", mappedBy="user")
      **/
     protected $wins;
@@ -67,13 +67,9 @@ class User extends BaseUser
         $this->ratings = new ArrayCollection();
         $this->wishes = new ArrayCollection();
         $this->messages = new ArrayCollection();
+        $this->connections = new ArrayCollection();
         $this->wins = new ArrayCollection();
     }
-    /**
-     * @var \Doctrine\Common\Collections\Collection
-     */
-    private $likes;
-
 
     /**
      * Get id
@@ -83,29 +79,6 @@ class User extends BaseUser
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set connId
-     *
-     * @param integer $connId
-     * @return User
-     */
-    public function setConnId($connId)
-    {
-        $this->connId = $connId;
-
-        return $this;
-    }
-
-    /**
-     * Get connId
-     *
-     * @return integer 
-     */
-    public function getConnId()
-    {
-        return $this->connId;
     }
 
     /**
@@ -205,39 +178,6 @@ class User extends BaseUser
     public function getWishes()
     {
         return $this->wishes;
-    }
-
-    /**
-     * Add likes
-     *
-     * @param \Audero\ShowphotoBundle\Entity\Rating $likes
-     * @return User
-     */
-    public function addLike(\Audero\ShowphotoBundle\Entity\Rating $likes)
-    {
-        $this->likes[] = $likes;
-
-        return $this;
-    }
-
-    /**
-     * Remove likes
-     *
-     * @param \Audero\ShowphotoBundle\Entity\Rating $likes
-     */
-    public function removeLike(\Audero\ShowphotoBundle\Entity\Rating $likes)
-    {
-        $this->likes->removeElement($likes);
-    }
-
-    /**
-     * Get likes
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getLikes()
-    {
-        return $this->likes;
     }
 
     /**
@@ -360,5 +300,71 @@ class User extends BaseUser
     public function getRatings()
     {
         return $this->ratings;
+    }
+
+    /**
+     * Add connections
+     *
+     * @param \Audero\WebBundle\Entity\UserConnection $connections
+     * @return User
+     */
+    public function addConnection(\Audero\WebBundle\Entity\UserConnection $connections)
+    {
+        $this->connections[] = $connections;
+
+        return $this;
+    }
+
+    /**
+     * Remove connections
+     *
+     * @param \Audero\WebBundle\Entity\UserConnection $connections
+     */
+    public function removeConnection(\Audero\WebBundle\Entity\UserConnection $connections)
+    {
+        $this->connections->removeElement($connections);
+    }
+
+    /**
+     * Get connections
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getConnections()
+    {
+        return $this->connections;
+    }
+
+    /**
+     * Add subscriptions
+     *
+     * @param \Audero\WebBundle\Entity\UserSubscription $subscriptions
+     * @return User
+     */
+    public function addSubscription(\Audero\WebBundle\Entity\UserSubscription $subscriptions)
+    {
+        $this->subscriptions[] = $subscriptions;
+
+        return $this;
+    }
+
+    /**
+     * Remove subscriptions
+     *
+     * @param \Audero\WebBundle\Entity\UserSubscription $subscriptions
+     */
+    public function removeSubscription(\Audero\WebBundle\Entity\UserSubscription $subscriptions)
+    {
+        $this->subscriptions->removeElement($subscriptions);
+    }
+
+    /**
+     * Get subscriptions
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getSubscriptions()
+    {
+        return $this->subscriptions;
     }
 }

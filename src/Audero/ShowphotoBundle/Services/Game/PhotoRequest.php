@@ -43,23 +43,18 @@ class PhotoRequest {
         return $this->generatePlayersRequest();
     }
 
+    private function generatePlayersRequest() {
+        return null;
+    }
+
     private function createRequest(Wish $wish) {
         $slugify = new Slugify();
 
         $request = new Request();
         $request->setTitle($wish->getTitle())
-                ->setUser($wish->getUser())
-                ->setSlug($slugify->slugify($wish->getTitle()));
+            ->setUser($wish->getUser())
+            ->setSlug($slugify->slugify($wish->getTitle()));
 
         return $request;
     }
-
-    private function getPlayersWish() {
-        return null;
-    }
-
-    private function generatePlayersRequest() {
-        return null;
-    }
-
 } 

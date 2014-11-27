@@ -2,6 +2,9 @@
 
 namespace Audero\WebBundle\Services\Pusher;
 
+use React\Socket\ConnectionInterface;
+use Ratchet\Wamp\ServerProtocol as WAMP;
+
 class Pusher extends PusherServer {
 
     public function __construct(ConnectionManager $cm) {
@@ -22,7 +25,7 @@ class Pusher extends PusherServer {
                 $this->push($packet->data);
                 break;
             case 'send':
-                $this->send($packet->data);
+               // $this->send($packet->data);
                 break;
         }
     }
@@ -32,18 +35,18 @@ class Pusher extends PusherServer {
             echo "Pusher push: null data revieved \n"; return;
         }
 
-        if(!isset($data->channel) || !isset($data->data)) {
+        if(!isset($data->topic) || !isset($data->data)) {
             echo "Pusher push: Received data is not properly formatted \n"; return;
         }
-        
-        if(array_key_exists($data->channel, $this->subscribedTopics)) {
-            $topic = $this->subscribedTopics[$data->channel];
-            $topic->broadcast($data->data);
+
+        if(!($topic = $this->cm->getTopicById($data->topic))) {
+            echo "Pusher push: Topic ".$data->topic." is unavailable \n"; return;
         }
 
+        $topic->broadcast($data->data);
     }
 
-    private function send($parameters) {
-
+    private function send(ConnectionInterface $conn, $topic, $data) {
+        $conn->send(json_encode(array(WAMP::MSG_EVENT, (string) $topic, $data)));
     }
 }

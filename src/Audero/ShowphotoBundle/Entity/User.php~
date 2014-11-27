@@ -19,11 +19,6 @@ class User extends BaseUser
      */
     protected $id;
 
-    /**
-     * @ORM\Column(name="conn_id", type="integer")
-     */
-    protected $connId;
-
      /**
      * @ORM\OneToMany(targetEntity="Audero\ShowphotoBundle\Entity\PhotoRequest", mappedBy="user")
      */
@@ -55,6 +50,16 @@ class User extends BaseUser
     protected $player;
 
     /**
+     * @ORM\OneToMany(targetEntity="Audero\WebBundle\Entity\UserConnection", mappedBy="user")
+     **/
+    protected $connections;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Audero\WebBundle\Entity\UserSubscription", mappedBy="user")
+     **/
+    protected $subscriptions;
+
+    /**
      * @ORM\OneToMany(targetEntity="Audero\ShowphotoBundle\Entity\Winner", mappedBy="user")
      **/
     protected $wins;
@@ -67,13 +72,10 @@ class User extends BaseUser
         $this->ratings = new ArrayCollection();
         $this->wishes = new ArrayCollection();
         $this->messages = new ArrayCollection();
+        $this->connections = new ArrayCollection();
+        $this->subscriptions = new ArrayCollection();
         $this->wins = new ArrayCollection();
     }
-    /**
-     * @var \Doctrine\Common\Collections\Collection
-     */
-    private $likes;
-
 
     /**
      * Get id
@@ -83,29 +85,6 @@ class User extends BaseUser
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set connId
-     *
-     * @param integer $connId
-     * @return User
-     */
-    public function setConnId($connId)
-    {
-        $this->connId = $connId;
-
-        return $this;
-    }
-
-    /**
-     * Get connId
-     *
-     * @return integer 
-     */
-    public function getConnId()
-    {
-        return $this->connId;
     }
 
     /**
@@ -208,39 +187,6 @@ class User extends BaseUser
     }
 
     /**
-     * Add likes
-     *
-     * @param \Audero\ShowphotoBundle\Entity\Rating $likes
-     * @return User
-     */
-    public function addLike(\Audero\ShowphotoBundle\Entity\Rating $likes)
-    {
-        $this->likes[] = $likes;
-
-        return $this;
-    }
-
-    /**
-     * Remove likes
-     *
-     * @param \Audero\ShowphotoBundle\Entity\Rating $likes
-     */
-    public function removeLike(\Audero\ShowphotoBundle\Entity\Rating $likes)
-    {
-        $this->likes->removeElement($likes);
-    }
-
-    /**
-     * Get likes
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getLikes()
-    {
-        return $this->likes;
-    }
-
-    /**
      * Add chatMessages
      *
      * @param \Audero\ShowphotoBundle\Entity\ChatMessage $chatMessages
@@ -299,10 +245,10 @@ class User extends BaseUser
     /**
      * Add wins
      *
-     * @param \Audero\ShowphotoBundle\Entity\Win $wins
+     * @param \Audero\ShowphotoBundle\Entity\Winner $wins
      * @return User
      */
-    public function addWin(\Audero\ShowphotoBundle\Entity\Win $wins)
+    public function addWin(\Audero\ShowphotoBundle\Entity\Winner $wins)
     {
         $this->wins[] = $wins;
 
@@ -312,9 +258,9 @@ class User extends BaseUser
     /**
      * Remove wins
      *
-     * @param \Audero\ShowphotoBundle\Entity\Win $wins
+     * @param \Audero\ShowphotoBundle\Entity\Winner $wins
      */
-    public function removeWin(\Audero\ShowphotoBundle\Entity\Win $wins)
+    public function removeWin(\Audero\ShowphotoBundle\Entity\Winner $wins)
     {
         $this->wins->removeElement($wins);
     }
@@ -327,5 +273,38 @@ class User extends BaseUser
     public function getWins()
     {
         return $this->wins;
+    }
+
+    /**
+     * Add ratings
+     *
+     * @param \Audero\ShowphotoBundle\Entity\Rating $ratings
+     * @return User
+     */
+    public function addRating(\Audero\ShowphotoBundle\Entity\Rating $ratings)
+    {
+        $this->ratings[] = $ratings;
+
+        return $this;
+    }
+
+    /**
+     * Remove ratings
+     *
+     * @param \Audero\ShowphotoBundle\Entity\Rating $ratings
+     */
+    public function removeRating(\Audero\ShowphotoBundle\Entity\Rating $ratings)
+    {
+        $this->ratings->removeElement($ratings);
+    }
+
+    /**
+     * Get ratings
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getRatings()
+    {
+        return $this->ratings;
     }
 }
