@@ -2,62 +2,111 @@
 
 namespace Audero\ShowphotoBundle\Controller;
 
+use Audero\ShowphotoBundle\Entity\PhotoRequest;
+use Audero\ShowphotoBundle\Entity\PhotoResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Audero\ShowphotoBundle\Entity\Application;
-use Audero\ShowphotoBundle\Entity\Interpretation;
-use Audero\ShowphotoBundle\Form\ApplicationType;
-use Audero\ShowphotoBundle\Form\InterpretationType;
+use Audero\ShowphotoBundle\Form\PhotoRequestType;
+use Audero\ShowphotoBundle\Form\PhotoResponseType;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class GameController extends Controller
 {
     /**
-     * @Route("/game", name="audero_game")
+     * @Route("/play", name="showphoto_play")
      * @Template()
      */
     public function indexAction()
     {
         $em = $this->getDoctrine()->getManager();
-        $requests = $em->getRepository('AuderoShowphotoBundle:Application')->findAll();
-        $responses = $em->getRepository('AuderoShowphotoBundle:Interpretation')->findAll();
-        $request = new Application();
-        $formRequest = $this->createFormRequest($request);
-        $response = new Interpretation();
-        $formResponse = $this->createFormResponse($response);
 
+        if($user = $this->getUser()) {
 
-        return array(
-            'form_request'   => $formRequest->createView(),
-            'form_response'   => $formResponse->createView(),
-            'requests' => $requests,
-            'responses' => $responses
-        );
+            // adding user to players list
+            if(!($player = $user->getPlayer())) {
+                $player = $this->get('game.player.manager')->add($user);
+            }
+
+            // if user was successfully added to players list
+            if($player) {
+
+                $requests = $em->getRepository('AuderoShowphotoBundle:PhotoRequest')->findAll();
+                $responses = $em->getRepository('AuderoShowphotoBundle:PhotoResponse')->findAll();
+                $request = new PhotoRequest();
+                $response = new PhotoResponse();
+                $formResponse = $this->createFormResponse($response);
+
+                return array(
+                    'form_response'   => $formResponse->createView(),
+                    'responses' => $responses
+                );
+            }
+
+            return $this->redirect($this->generateUrl('showphoto_spectate'));
+        }
+
+        throw new AccessDeniedException();
+    }
+
+    /**
+     * @Route("/game", name="audero_game_timeLeft")
+     * @Template()
+     */
+    public function createRequestAction()
+    {
+        $em = $this->getDoctrine()->getManager();
+        $requests = $em->getRepository('AuderoShowphotoBundle:PhotoRequest');
+    }
+
+    /**
+     * @Route("/game", name="audero_game_timeLeft")
+     * @Template()
+     */
+    public function createResponseAction()
+    {
+        $em = $this->getDoctrine()->getManager();
+        $requests = $em->getRepository('AuderoShowphotoBundle:PhotoRequest');
+    }
+
+    /**
+     * @Route("/game", name="audero_game_timeLeft")
+     * @Template()
+     */
+    public function timeLeftAction()
+    {
+        $em = $this->getDoctrine()->getManager();
+        $requests = $em->getRepository('AuderoShowphotoBundle:PhotoRequest');
+    }
+
+    /**
+     * @Route("/game", name="audero_game_timeLeft")
+     * @Template()
+     */
+    public function lastRequestAction()
+    {
+        $em = $this->getDoctrine()->getManager();
+        $requests = $em->getRepository('AuderoShowphotoBundle:PhotoRequest');
     }
 
 
-    private function createFormResponse(Interpretation $entity)
+    private function createFormRequest(PhotoRequest $entity)
     {
-        $form = $this->createForm(new InterpretationType(), $entity, array(
-            'action' => $this->generateUrl('game_response_create'),
-            'method' => 'POST',
-        ));
-
-        $form->add('submit', 'submit', array('label' => 'Create'));
-
-        return $form;
-    }
-
-    private function createFormRequest(Application $entity)
-    {
-        $form = $this->createForm(new ApplicationType(), $entity, array(
+        $form = $this->createForm(new PhotoRequestType(), $entity, array(
             'action' => $this->generateUrl('request_create'),
             'method' => 'POST',
         ));
 
-        $form->add('submit', 'submit', array('label' => 'Create'));
-
         return $form;
     }
 
+    private function createFormResponse(PhotoResponse $entity)
+    {
+        $form = $this->createForm(new PhotoResponseType(), $entity, array(
+            'action' => $this->generateUrl('game_response_create'),
+            'method' => 'POST',
+        ));
+
+        return $form;
+    }
 }

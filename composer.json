@@ -9,6 +9,7 @@
     "require": {
         "php": ">=5.3.3",
         "symfony/symfony": "2.5.*",
+        "symfony/serializer": "~2.5",
         "doctrine/orm": "~2.2,>=2.2.3",
         "doctrine/doctrine-bundle": "~1.2",
         "twig/extensions": "~1.0",
@@ -21,7 +22,8 @@
         "friendsofsymfony/user-bundle": "~2.0@dev",
         "knplabs/knp-menu-bundle": "~2.0",
         "cboden/ratchet": "0.3.*",
-        "react/zmq": "0.2.*|0.3.*"
+        "react/zmq": "0.2.*|0.3.*",
+        "cocur/slugify": "@stable"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3"

@@ -16,10 +16,23 @@
         '@AuderoBackendBundle/Resources/public/css/bootstrap.min.css'
         '@AuderoBackendBundle/Resources/public/css/sb-admin.css'
         '@AuderoBackendBundle/Resources/public/css/plugins/morris.css'
-        'font-awesome-4.1.0/css/font-awesome.min.css' %}
+        'font-awesome-4.1.0/css/font-awesome.min.css'
+        'bootstrap-table/bootstrap-table.css'%}
         <link rel="stylesheet" href="{{ asset_url }}" />
         {% endstylesheets %}
+
     {% endblock %}
+
+    {% block javascripts %}
+    {% javascripts
+    '@AuderoBackendBundle/Resources/public/js/jquery-1.11.0.js'
+    '@AuderoBackendBundle/Resources/public/js/bootstrap.min.js'
+    '@AuderoBackendBundle/Resources/public/js/plugins/morris/raphael.min.js'
+    '@AuderoBackendBundle/Resources/public/js/plugins/morris/morris.min.js'
+    '@AuderoBackendBundle/Resources/public/js/plugins/morris/morris-data.js'
+    'bootstrap-table/bootstrap-table.js' %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
 
 
 
@@ -151,13 +164,16 @@
             <div class="collapse navbar-collapse navbar-ex1-collapse">
                 <ul class="nav navbar-nav side-nav">
                     <li>
-                        <a href="{{ path('audero_dashboard_index') }}"><i class="fa fa-fw fa-dashboard"></i> Pagrindinis</a>
+                        <a href="{{ path('backend_index') }}"><i class="fa fa-fw fa-dashboard"></i> Pagrindinis</a>
                     </li>
                     <li>
                         <a href="{{ path('audero_user_index') }}"><i class="fa fa-fw fa-dashboard"></i>Vartotojai</a>
                     </li>
                     <li>
                         <a href="{{ path('audero_backend_requests') }}"><i class="fa fa-fw fa-dashboard"></i>Prasymai</a>
+                    </li>
+                    <li>
+                        <a href="{{ path('backend_options') }}"><i class="fa fa-fw fa-dashboard"></i>Nustatymai</a>
                     </li>
                 </ul>
             </div>
@@ -195,15 +211,7 @@
 
     </div>
     <!-- /#wrapper -->
-    {% block javascripts %}
-        {% javascripts
-        '@AuderoBackendBundle/Resources/public/js/jquery-1.11.0.js'
-        '@AuderoBackendBundle/Resources/public/js/bootstrap.min.js'
-        '@AuderoBackendBundle/Resources/public/js/plugins/morris/raphael.min.js'
-        '@AuderoBackendBundle/Resources/public/js/plugins/morris/morris.min.js'
-        '@AuderoBackendBundle/Resources/public/js/plugins/morris/morris-data.js' %}
-        <script src="{{ asset_url }}"></script>
-        {% endjavascripts %}
+
     {% endblock %}
 
 </body>

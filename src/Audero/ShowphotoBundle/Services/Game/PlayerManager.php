@@ -1,0 +1,82 @@
+<?php
+
+namespace Audero\ShowphotoBundle\Services\Game;
+
+use Audero\ShowphotoBundle\Entity\Player;
+use Audero\ShowphotoBundle\Entity\User;
+use Doctrine\ORM\EntityManager;
+
+class PlayerManager {
+
+    private $em;
+
+    public function __construct(EntityManager $em) {
+        $this->em = $em;
+    }
+
+    public function add(User $user) {
+        $playersRepo = $this->em->getRepository("AuderoShowphotoBundle:Player");
+
+        // checking if player is already checked in
+        if($player = $playersRepo->findOneBy(array('user'=>$user->getId()))) {
+            return $player;
+        }
+
+        // adding user to players list
+        $options = $this->em->getRepository("AuderoBackendBundle:OptionsRecord")->findCurrent();
+        if($options) {
+           $maxPlayers = $options->getPlayersInOneRoom();
+           if($playersRepo->getPlayersCount() < $maxPlayers) {
+               $player = new Player();
+               $player->setUser($user);
+               $this->em->persist($player);
+               $this->em->flush();
+               return $player;
+           }
+        }
+
+        return null;
+    }
+
+    public function remove(Player $player) {
+        if($player) {
+            $this->em->remove($player);
+            $this->em->flush();
+            return true;
+        }
+
+        return false;
+    }
+
+    public function removeWithoutWishes() {
+        $players = $this->em->getRepository("AuderoShowphotoBundle:Player")->findAll();
+
+        foreach($players as $player) {
+            if(count($player->getWishes()) == 0) {
+                $this->remove($player);
+            }
+        }
+    }
+
+    public function getFreeSlots() {
+
+    }
+
+    public function getPlayersCount() {
+
+    }
+
+    public function isPlayer(User $user) {
+        if (!is_object($user)) {
+            return false;
+        }
+
+        $player = $this->em->getRepository("AuderoShowphotoBundle:Player")->findOneBy(array("user" => $user->getId()));
+        if (!is_object($player)) {
+            return false;
+        }
+
+        return true;
+    }
+
+} 

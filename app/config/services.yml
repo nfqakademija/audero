@@ -1,4 +1,5 @@
 imports:
+  - { resource: "@AuderoBackendBundle/Resources/config/services.yml" }
   - { resource: "@AuderoShowphotoBundle/Resources/config/services.yml" }
   - { resource: "@AuderoWebBundle/Resources/config/services.yml" }
 
@@ -14,3 +15,7 @@ services:
   session.handler.pdo:
       class:     Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler
       arguments: ["@pdo", "%pdo.db_options%"]
+  get_set_method_normalizer:
+        class: Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer
+        tags:
+           - { name: serializer.normalizer }

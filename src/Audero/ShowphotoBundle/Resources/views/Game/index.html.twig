@@ -6,62 +6,87 @@
 
     <div class="col-lg-8">
         <div class="page-header">
-            <h1>TOKEN</h1>
-            <h2>Requests</h2>
         </div>
         <div class="bs-component">
             <div class="jumbotron">
-                <table id="requests">
-                {% for request in requests %}
-                    <tr>
-                        <td><h2>{{ request.title }}</h2></td>
-                    </tr>
-                {% endfor %}
-                </table>
+                <div id="request" style="color:green; font-size: 30px">
+                </div>
             </div>
         </div>
+        {{ form(form_response) }}
         <div class="page-header">
-            <h2>Responses</h2>
         </div>
         <div class="bs-component">
             <div class="jumbotron">
-                <table id="responses">
-                {% for response in responses %}
-                    <tr>
-                        <td><h2><img src="{{ response.photo }}"></h2></td>
-                    </tr>
-                {% endfor %}
-                </table>
+                <div id="responses">
+                </div>
             </div>
         </div>
     </div>
 
     <div class="col-lg-4 ">
         <div class="page-header">
-            <h2>Uploader</h2>
         </div>
         <div class="bs-component">
-            <div class="jumbotron">
-                <h3>New request</h3>
-                {{ form(form_request) }}<br/>
-                <h3>New response</h3>
-                {{ form(form_response) }}<br/>
+            <div>
+                <h3>TimeLeft: <span id="timer"></span></h3>
+            </div>
+            <div class="bs-component">
+                <div class="jumbotron">
+                    <h3>Chat</h3>
+                    {{ render(controller('AuderoShowphotoBundle:Chat:index')) }}
+                </div>
             </div>
         </div>
     </div>
 
-    <script src="{{ asset('bundles/auderoweb/js/autobahn.min.js') }}"></script>
     <script>
-        var conn = new ab.Session('ws://localhost:8080',
+        $( "#audero_showphotobundle_chat_Send" ).click(function() {
+
+            var form = $('form[name="audero_showphotobundle_chat"]');
+
+            $.ajax( {
+                type: "POST",
+                url: form.attr('action'),
+                data: form.serialize(),
+                success: function( response ) {
+                    console.log( response );
+                }
+            } );
+        });
+    </script>
+
+
+    <script>
+        var count= 30;
+        var counter= setInterval(timer, 1000); //1000 will run it every 1 second
+
+        function timer()
+        {
+            count=count-1;
+            if (count < 0)
+            {
+                clearInterval(counter);
+                //counter ended, do something here
+                return;
+            }
+
+            document.getElementById("timer").innerHTML=count; // watch for spelling
+        }
+
+        var conn = new ab.Session('ws://127.0.0.1:8080',
                 function() {
+                    conn.subscribe('chat', function(topic, data) {
+                        console.log(data);
+                    });
                     conn.subscribe('game_request', function(topic, data) {
                         // This is where you would add the new article to the DOM (beyond the scope of this tutorial)
-                        $( "#requests" ).append( "<tr><td><h2 style=\"color:green\">"+ data + "</h2></td></tr>" );
-                        console.log('New request');
+                        //$( "#request" ).text(data);
+                        console.log(data); count = 30;
                     });
                     conn.subscribe('game_response', function(topic, data) {
                         // This is where you would add the new article to the DOM (beyond the scope of this tutorial)
-                        $( "#responses" ).append( "<tr><td><img src=\""+ data + "\"></td></tr>" );
+                         //$( "#responses" ).append( "<tr><td><img width=\"300px\" src=\""+ data + "\"></td></tr>" );
                         console.log('New response');
                     });
                 },
@@ -70,5 +95,7 @@
                 },
                 {'skipSubprotocolCheck': true}
         );
+
+
     </script>
 {% endblock %}

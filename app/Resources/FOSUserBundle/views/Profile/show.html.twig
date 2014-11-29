@@ -1,0 +1,45 @@
+{% extends 'AuderoWebBundle::base.html.twig' %}
+
+{% block body %}
+    <h1>NORAI</h1>
+
+    <ul class="wish" data-prototype="{{ form_widget(wish_list_form.wishes.vars.prototype)|e }}"></ul>
+    {{ form_start(wish_list_form) }}
+    <ul>
+        {# iterate over each existing tag and render its only field: name #}
+        {% for wish in wish_list_form.wishes %}
+            <li>{{ form_widget(wish.title) }}</li>
+        {% endfor %}
+    </ul>
+    {{ form_end(wish_list_form) }}
+    <script>
+        $('form[name="web_wish_list"] :input').blur(function() {
+            alert('kuku');
+        });
+    </script>
+    <h1>PRASYMAI</h1>
+    <ul>
+        {% for request in app.user.requests %}
+            <li>{{ request.title }}</li>
+        {% endfor %}
+    </ul>
+
+    <h1>Atsakymai</h1>
+    <ul>
+        {% for response in app.user.responses %}
+            <li>{{ response.request.title }} </li>
+            <li>{{ response.photo }}</li>
+        {% endfor %}
+    </ul>
+
+
+
+    <script>
+
+    </script>
+
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ asset('bundles/auderoweb/js/profile.js') }}" type="text/javascript"></script>
+{% endblock %}
