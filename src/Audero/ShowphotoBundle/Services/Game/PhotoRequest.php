@@ -27,12 +27,9 @@ class PhotoRequest {
 
         // finding it's best responses
         $responses = $this->em->getRepository('AuderoShowphotoBundle:PhotoResponse')->findBestResponses($request);
-        // TODO FIX THIS
-        if(!$responses[0]['response']->getId()) {
+        if (!$responses) {
             return $this->generatePlayersRequest();
         }
-        //
-
         foreach($responses as $response) {
             $wish = $this->em->getRepository('AuderoShowphotoBundle:Wish')->findUserFirstWish($response['response']->getUser());
             if($wish) {

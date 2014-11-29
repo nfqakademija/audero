@@ -7,12 +7,34 @@ use Audero\WebBundle\Entity\UserSubscription;
 use Doctrine\ORM\EntityManager;
 use Ratchet\ConnectionInterface;
 use Ratchet\Wamp\Topic;
+use Symfony\Component\Config\Definition\Exception\Exception;
 
+/**
+ * Class ConnectionManager
+ * @package Audero\WebBundle\Services\Pusher
+ */
 class ConnectionManager {
 
+    /**
+     * @var EntityManager
+     */
     private $em;
+
+    /**
+     * @var array
+     */
     private $topics;
+
+    /**
+     * @var array
+     */
     protected $connections = array();
+
+    /**
+     * @param EntityManager $em
+     *
+     *
+     */
 
     public function  __construct(EntityManager $em) {
         $this->em = $em;
@@ -25,18 +47,19 @@ class ConnectionManager {
         $this->clearConnectionsFromDatabase();
     }
 
+    /**
+     * @param ConnectionInterface $conn
+     * @param Topic $topic
+     * @return bool
+     */
     public function hasPermissions(ConnectionInterface $conn, Topic $topic =null) {
         return true;
     }
 
-    public function isAvailable(Topic $topic) {
-        if(array_key_exists($topic->getId(), $this->topics)) {
-            return $this->topics[$topic->getId()];
-        }
-
-        return null;
-    }
-
+    /**
+     * @param $id
+     * @return null|Topic $topic
+     */
     public function getTopicById($id) {
         if(is_string($id)) {
             return array_key_exists($id, $this->topics) ? $this->topics[$id] : null;
@@ -45,12 +68,32 @@ class ConnectionManager {
         return null;
     }
 
+    /**
+     * @param ConnectionInterface $conn
+     * @return null|UserConnection
+     */
     public function addConnection(ConnectionInterface $conn) {
-        $userConnection = new UserConnection();
-        $userConnection->setUser($this->extractUserFromSession($conn))
-                       ->setResourceId($conn->resourceId);
+        // check if one is already stored
 
-        $this->store($userConnection);
+        $userConnection = new UserConnection();
+        $userConnection->setResourceId($conn->resourceId);
+
+        $userSession = $this->extractUserFromSession($conn);
+        if($userSession){
+            $user = $this->em->getRepository("AuderoShowphotoBundle:user")->findOneBy(array('id'=>$userSession->getId()));
+            if($user){
+                $this->em->persist($user);
+                $userConnection->setUser($user);
+            }
+        }
+
+        try{
+            $this->em->persist($userConnection);
+            $this->em->flush();
+        }catch (\Exception $e) {
+            var_dump($e->getMessage());
+        }
+
         return $userConnection;
     }
 
@@ -58,6 +101,8 @@ class ConnectionManager {
      * Removing connection from all the topics
      * Removing connection from database
      * Closing connection
+     *
+     * @param ConnectionInterface $conn
      * */
     public function removeConnection(ConnectionInterface $conn) {
         foreach($this->topics as $id => $topic) {
@@ -66,15 +111,26 @@ class ConnectionManager {
 
         $connection = $this->em->getRepository("AuderoWebBundle:UserConnection")->findOneBy(array('resourceId'=>$conn->resourceId));
         if($connection) {
-            $this->em->remove($connection);
-            $this->em->flush();
+            var_dump("remove conn id: ".$connection->getResourceId());
+            try{
+                $this->em->remove($connection);
+                $this->em->flush();
+            }catch (\Exception $e) {
+                return null;
+            }
+
         }
 
         $conn->close();
     }
 
+    /**
+     * @param ConnectionInterface $conn
+     * @param Topic $topic
+     * @return null|UserSubscription
+     */
     public function addSubscriber(ConnectionInterface $conn, Topic $topic) {
-        $topic = $this->isAvailable($topic);
+        $topic = $this->getTopicById($topic->getId());
         if(!$topic) {
             return null;
         }
@@ -86,33 +142,32 @@ class ConnectionManager {
 
         // adding connection to requested topic
         $topic->add($conn);
-        // setting new subscription entity
+
+        // storing new subscription entity
         $userSubscription = new UserSubscription();
         $userSubscription->setConnection($storedConn)
                          ->setTopic($topic->getId());
-        // TODO FIX REMOVE CASCADE
-        $this->store($userSubscription);
+
+        $storedConn->addSubscription($userSubscription);
+        $this->em->persist($storedConn);
+        $this->em->flush();
 
         return $userSubscription;
     }
 
-    private function store($entity) {
-        $this->em->persist($entity);
-        $this->em->flush();
-    }
-
+    /**
+     *  Removing all connections from database
+     */
     public function clearConnectionsFromDatabase() {
         $this->em->createQuery('DELETE FROM AuderoWebBundle:UserConnection conn')
              ->execute();
     }
 
-
-
     /* *
      * Removing connection from topic's connections list
      * Removing from database
      * */
-    public function removeSubscription(ConnectionInterface $conn, Topic $topic) {
+/*    public function removeSubscription(ConnectionInterface $conn, Topic $topic) {
         $topic = $this->isAvailable($topic);
         if(!$topic) {
             return null;
@@ -129,8 +184,12 @@ class ConnectionManager {
             $this->em->remove($subscription);
             $this->em->flush();
         }
-    }
+    }*/
 
+    /**
+     * @param ConnectionInterface $conn
+     * @return null|object
+     */
     private function extractUserFromSession(ConnectionInterface $conn) {
         $security_main = unserialize($conn->Session->get('_security_main'));
         if($security_main) {

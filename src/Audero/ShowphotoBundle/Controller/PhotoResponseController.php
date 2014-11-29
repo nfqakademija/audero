@@ -58,13 +58,12 @@ class PhotoResponseController extends Controller
 
         if ($form->isValid()) {
             $slugify = new Slugify();
-            if($entity->getPhotoUrl())
             $uploader = $this->get('uploader');
             $response = json_decode($uploader->uploadFile($entity->getPhotoFile()));
             if ($response->status == 200) {
                 $em = $this->getDoctrine()->getManager();
                 $entity->setUser($securityContext->getToken()->getUser());
-                $entity->setPhoto($response->data->link);
+                $entity->setPhotoLink($response->data->link);
                 $entity->setSlug($slugify->slugify(""));
 
                 $em->persist($entity);

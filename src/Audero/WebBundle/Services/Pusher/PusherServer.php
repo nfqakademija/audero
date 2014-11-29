@@ -7,9 +7,8 @@ use Ratchet\ConnectionInterface;
 use Ratchet\Wamp\Topic;
 use Ratchet\Wamp\WampServerInterface;
 use Symfony\Component\Security\Core\SecurityContext;
-use Ratchet\Wamp\ServerProtocol as WAMP;
 
-class PusherServer implements WampServerInterface {
+class PusherServer implements WampServerInterface, OutputInterface {
 
     protected $cm;
 
@@ -17,41 +16,37 @@ class PusherServer implements WampServerInterface {
         $this->cm = $cm;
     }
 
-    public function onSubscribe(ConnectionInterface $conn, $topic) {
-        if(!$this->cm->isAvailable($topic)) {
-            echo "User tried to subscribe to not existing topic (".$topic->getId().")\n"; return;
-        }
-
-        if(!$this->cm->hasPermissions($conn, $topic)) {
-            echo "User tried to subscribe to topic (".$topic->getId() .") without having right permissions \n"; return;
-        }
-
-        $newConn = $this->cm->addSubscriber($conn, $topic);
-        if($newConn) {
-            echo "Added new subscription \n";
-        }else{
-            echo "Refused subscription \n";
-        }
-    }
-    public function onUnSubscribe(ConnectionInterface $conn, $topic) {
-        $this->cm->removeSubscription($conn, $topic);
-    }
     public function onOpen(ConnectionInterface $conn) {
         if(!$this->cm->hasPermissions($conn)) {
-            echo "Connection doesn't have right permissions \n";
-            $conn->close();
+            $this->error("Rejected connection (Permissions)");
+            $conn->close(); return;
         }
 
         if($this->cm->addConnection($conn)) {
-            echo "Added new connection \n";
+            $this->notification("Added new connection");
         }else{
-            echo "Failed to add new connection \n";
+            $this->error("Rejected connection");
             $conn->close();
         }
     }
     public function onClose(ConnectionInterface $conn) {
-        echo "Closing connection \n";
+        $this->notification("Closing connection");
         $this->cm->removeConnection($conn);
+    }
+    public function onSubscribe(ConnectionInterface $conn, $topic) {
+        if(!$this->cm->hasPermissions($conn, $topic)) {
+            $this->error("Rejected subscription");
+            $conn->close(); return;
+        }
+
+        if($this->cm->addSubscriber($conn, $topic)) {
+            $this->notification("Added new subscription");
+        }else{
+            $this->error("Refused subscription");
+        }
+    }
+    public function onUnSubscribe(ConnectionInterface $conn, $topic) {
+        //$this->cm->removeSubscription($conn, $topic);
     }
     public function onCall(ConnectionInterface $conn, $id, $topic, array $params) {
         // In this application if clients send data it's because the user hacked around in console
@@ -62,5 +57,15 @@ class PusherServer implements WampServerInterface {
         $conn->close();
     }
     public function onError(ConnectionInterface $conn, \Exception $e) {
+    }
+
+    public function error($text)
+    {
+        echo "Error: ".$text."\n";
+    }
+
+    public function notification($text)
+    {
+        echo $text."\n";
     }
 }

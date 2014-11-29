@@ -2,6 +2,7 @@
 
 namespace Audero\WebBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -20,10 +21,10 @@ class UserConnection
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Audero\ShowphotoBundle\Entity\User", inversedBy="connections")
+     * @ORM\ManyToOne(targetEntity="Audero\ShowphotoBundle\Entity\User", inversedBy="connections", cascade={"persist"})
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
      **/
-    private $user = null;
+    private $user;
 
     /**
      * @var integer
@@ -33,7 +34,7 @@ class UserConnection
     private $resourceId;
 
     /**
-     * @ORM\OneToMany(targetEntity="Audero\WebBundle\Entity\UserSubscription", mappedBy="connection", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="Audero\WebBundle\Entity\UserSubscription", mappedBy="connection", cascade={"persist","remove"})
      */
     private $subscriptions;
 
@@ -45,6 +46,7 @@ class UserConnection
     private $connected;
 
     public function __construct() {
+        $this->subscriptions = new ArrayCollection();
         $this->connected = new \DateTime('now');
     }
 

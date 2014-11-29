@@ -50,7 +50,7 @@ class User extends BaseUser
     protected $player;
 
     /**
-     * @ORM\OneToMany(targetEntity="Audero\WebBundle\Entity\UserConnection", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="Audero\WebBundle\Entity\UserConnection", mappedBy="user", cascade={"persist", "remove"})
      **/
     protected $connections;
 

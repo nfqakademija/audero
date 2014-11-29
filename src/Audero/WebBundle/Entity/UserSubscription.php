@@ -20,7 +20,7 @@ class UserSubscription
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Audero\WebBundle\Entity\UserConnection", inversedBy="subscriptions")
+     * @ORM\ManyToOne(targetEntity="Audero\WebBundle\Entity\UserConnection", inversedBy="subscriptions", cascade={"persist"})
      * @ORM\JoinColumn(name="connection_id", referencedColumnName="id", onDelete="CASCADE")
      **/
     private $connection;
