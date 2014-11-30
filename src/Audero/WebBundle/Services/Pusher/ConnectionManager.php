@@ -68,68 +68,67 @@ class ConnectionManager {
         return null;
     }
 
+
     /**
      * @param ConnectionInterface $conn
-     * @return null|UserConnection
+     * @return UserConnection
+     * @throws \Exception
      */
     public function addConnection(ConnectionInterface $conn) {
-        // check if one is already stored
+        $user = $this->extractUserFromSession($conn);
 
         $userConnection = new UserConnection();
         $userConnection->setResourceId($conn->resourceId);
-
-        $userSession = $this->extractUserFromSession($conn);
-        if($userSession){
-            $user = $this->em->getRepository("AuderoShowphotoBundle:user")->findOneBy(array('id'=>$userSession->getId()));
-            if($user){
-                $this->em->persist($user);
-                $userConnection->setUser($user);
-            }
-        }
+        $userConnection->setUser($user);
 
         try{
             $this->em->persist($userConnection);
             $this->em->flush();
         }catch (\Exception $e) {
-            var_dump($e->getMessage());
+            throw new \Exception($e->getMessage());
+        }
+
+
+        if(!$this->em->getRepository("AuderoWebBundle:UserConnection")->findOneBy(array("resourceId"=>$conn->resourceId, "user"=>$user))) {
+            throw new \Exception('Failed to store new connection in database');
         }
 
         return $userConnection;
     }
 
-    /* *
+    /**
      * Removing connection from all the topics
      * Removing connection from database
      * Closing connection
      *
      * @param ConnectionInterface $conn
-     * */
+     * @throws \Exception
+     */
     public function removeConnection(ConnectionInterface $conn) {
         foreach($this->topics as $id => $topic) {
             $topic->remove($conn);
         }
 
         $connection = $this->em->getRepository("AuderoWebBundle:UserConnection")->findOneBy(array('resourceId'=>$conn->resourceId));
-        if($connection) {
-            var_dump("remove conn id: ".$connection->getResourceId());
-            try{
-                $this->em->remove($connection);
-                $this->em->flush();
-            }catch (\Exception $e) {
-                return null;
-            }
+        if(!$connection) {
+            throw new \Exception("User wanted to disconnect, but no connection was found in database");
+        }
 
+        try{
+            $this->em->remove($connection);
+            $this->em->flush();
+        }catch (\Exception $e) {
+            throw new \Exception($e->getMessage());
+        }
+
+        if($this->em->getRepository("AuderoWebBundle:UserConnection")->findOneBy(array('resourceId'=>$conn->resourceId))) {
+            throw new \Exception("Failed to delete connection from database");
         }
 
         $conn->close();
     }
 
-    /**
-     * @param ConnectionInterface $conn
-     * @param Topic $topic
-     * @return null|UserSubscription
-     */
-    public function addSubscriber(ConnectionInterface $conn, Topic $topic) {
+    public function addSubscription(ConnectionInterface $conn, Topic $topic) {
         $topic = $this->getTopicById($topic->getId());
         if(!$topic) {
             return null;
@@ -137,20 +136,26 @@ class ConnectionManager {
 
         $storedConn = $this->em->getRepository("AuderoWebBundle:UserConnection")->findOneBy(array('resourceId' => $conn->resourceId));
         if(!$storedConn) {
-            return null;
+            throw new \Exception("Connection for user's subscription was not found in database");
         }
 
-        // adding connection to requested topic
         $topic->add($conn);
 
-        // storing new subscription entity
         $userSubscription = new UserSubscription();
         $userSubscription->setConnection($storedConn)
                          ->setTopic($topic->getId());
-
         $storedConn->addSubscription($userSubscription);
-        $this->em->persist($storedConn);
-        $this->em->flush();
+
+        try{
+            $this->em->persist($storedConn);
+            $this->em->flush();
+        }catch(\Exception $e) {
+            throw new \Exception($e->getMessage());
+        }
+
+        if(!$this->em->getRepository("AuderoWebBundle:UserSubscription")->findOneBy(array('topic' => $topic->getId(), 'connection'=>$storedConn))) {
+            throw new \Exception("Failed to store user's subscription in database");
+        }
 
         return $userSubscription;
     }

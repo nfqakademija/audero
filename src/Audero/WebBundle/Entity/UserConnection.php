@@ -29,7 +29,7 @@ class UserConnection
     /**
      * @var integer
      *
-     * @ORM\Column(name="resource_id", type="integer")
+     * @ORM\Column(name="resource_id", type="integer", unique=true)
      */
     private $resourceId;
 

@@ -70,6 +70,18 @@
         });
     });
 
+    var conn = new ab.Session('ws://127.0.0.1:8080',
+            function() {
+                conn.subscribe('chat', function(topic, data) {
+                    console.log(data);
+                });
+            },
+            function() {
+                console.warn('WebSocket connection closed');
+            },
+            {'skipSubprotocolCheck': true}
+    );
+
 </script>
 
 {% endblock %}

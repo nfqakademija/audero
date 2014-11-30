@@ -22,16 +22,24 @@ class PusherServer implements WampServerInterface, OutputInterface {
             $conn->close(); return;
         }
 
-        if($this->cm->addConnection($conn)) {
-            $this->notification("Added new connection");
-        }else{
-            $this->error("Rejected connection");
-            $conn->close();
+        try{
+            $this->cm->addConnection($conn);
+        }catch (\Exception $e) {
+            $this->error($e->getMessage());
+            $conn->close(); die;
         }
+
+        $this->notification("Added new connection");
     }
     public function onClose(ConnectionInterface $conn) {
-        $this->notification("Closing connection");
-        $this->cm->removeConnection($conn);
+        try{
+            $this->cm->removeConnection($conn);
+        }catch(\Exception $e) {
+            $this->error($e->getMessage());
+            $conn->close(); die;
+        }
+
+        $this->notification("Removed connection");
     }
     public function onSubscribe(ConnectionInterface $conn, $topic) {
         if(!$this->cm->hasPermissions($conn, $topic)) {
@@ -39,21 +47,25 @@ class PusherServer implements WampServerInterface, OutputInterface {
             $conn->close(); return;
         }
 
-        if($this->cm->addSubscriber($conn, $topic)) {
-            $this->notification("Added new subscription");
-        }else{
-            $this->error("Refused subscription");
+        try{
+            if($this->cm->addSubscription($conn, $topic)) {
+                $this->notification("Added new subscription");
+            }else{
+                $this->error("User tried to subscribe to not existing topic");
+            }
+        }catch(\Exception $e) {
+            $this->error($e->getMessage());
+            $conn->close(); die;
         }
+
     }
     public function onUnSubscribe(ConnectionInterface $conn, $topic) {
-        //$this->cm->removeSubscription($conn, $topic);
+        $conn->close();
     }
     public function onCall(ConnectionInterface $conn, $id, $topic, array $params) {
-        // In this application if clients send data it's because the user hacked around in console
         $conn->callError($id, $topic, 'You are not allowed to make calls')->close();
     }
     public function onPublish(ConnectionInterface $conn, $topic, $event, array $exclude, array $eligible) {
-        // In this application if clients send data it's because the user hacked around in console
         $conn->close();
     }
     public function onError(ConnectionInterface $conn, \Exception $e) {
