@@ -57,8 +57,6 @@ class ChatController extends Controller
         $form = $this->createForm(new ChatType(), $message);
 
         $form->handleRequest($request);
-        $response = new JsonResponse();
-
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $message->setUser($user);
@@ -81,11 +79,9 @@ class ChatController extends Controller
             $socket->connect("tcp://127.0.0.1:5555");
             $socket->send(json_encode($data));
 
-            $response->setData(array("status" => "success"));
-            return $response;
+            return new JsonResponse(json_encode(array("status" => "success")));
         }
 
-        $response->setData(array("status" => "failure", "message" =>$form->getErrors()));
-        return $response;
+        return new JsonResponse(json_encode(array("status" => "failure", "message" =>$form->getErrors())));
     }
 }

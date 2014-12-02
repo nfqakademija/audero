@@ -46,23 +46,32 @@ class PhotoResponseController extends Controller
      */
     public function createAction(Request $request)
     {
-        $securityContext = $this->container->get('security.context');
-        if (!$securityContext->isGranted('IS_AUTHENTICATED_FULLY')
-            || !$this->get('game.player.manager')->isPlayer($this->getUser())) {
+        if (!$this->get('game.player.manager')->isPlayer($this->getUser())) {
             throw new AccessDeniedException();
         }
 
+        $response = $this->get('game.photo.request')->handlePhotoResponse($request);
+
+        if($response) {
+            // broadcast;
+        }
         $entity = new PhotoResponse();
         $form = $this->createForm(new PhotoResponseType(), $entity);
         $form->handleRequest($request);
 
         if ($form->isValid()) {
+
+
+            // check if upload time hasn't finished
+
+
+
             $slugify = new Slugify();
             $uploader = $this->get('uploader');
             $response = json_decode($uploader->uploadFile($entity->getPhotoFile()));
-            if ($response->status == 200) {
+            if ($response && $response->status == 200) {
                 $em = $this->getDoctrine()->getManager();
-                $entity->setUser($securityContext->getToken()->getUser());
+                $entity->setUser($this->getUser());
                 $entity->setPhotoLink($response->data->link);
                 $entity->setSlug($slugify->slugify(""));
 

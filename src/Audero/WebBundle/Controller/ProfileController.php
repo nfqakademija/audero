@@ -11,6 +11,7 @@ use FOS\UserBundle\Controller\ProfileController as BaseController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Symfony\Component\CssSelector\Exception\InternalErrorException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -25,15 +26,20 @@ class ProfileController extends BaseController
         if(!($user = $this->getUser())) {
             throw new AccessDeniedException();
         }
+        /** @var \Audero\BackendBundle\Entity\Options $options */
+        $options = $this->getDoctrine()->getRepository('AuderoBackendBundle:OptionsRecord')->findCurrent();
+        if(!$options) {
+            throw new InternalErrorException();
+        }
 
-        $wishes = (array) $this->getDoctrine()->getRepository('AuderoShowphotoBundle:Wish')->findBy(array('user'=>$user), array('position'=>'ASC'));
+        $wishes = (array) $this->getDoctrine()->getRepository('AuderoShowphotoBundle:Wish')->findBy(array('user'=>$user));
         $wishList = array();
         foreach($wishes as $wish) {
             $wishList[$wish->getPosition()] = $wish;
         }
         return $this->render('FOSUserBundle:Profile:show.html.twig', array(
             'wishList' => $wishList,
-            'wishListSize' => 10 //TODO GET FROM ADMIN
+            'wishListSize' => $options->getPlayerWishesCount()
         ));
     }
 }

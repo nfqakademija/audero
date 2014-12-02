@@ -19,7 +19,7 @@ class PhotoResponseRepository extends EntityRepository
      * @return array
      */
     public function findBest(PhotoRequest $request) {
-        $result =  $this->getEntityManager()
+        $result = $this->getEntityManager()
             ->createQuery("SELECT res AS response, SUM(CASE WHEN rat.rate = 1 THEN 1 ELSE -1 END) AS rating
                            FROM AuderoShowphotoBundle:PhotoResponse res
                            JOIN res.ratings rat
@@ -29,7 +29,7 @@ class PhotoResponseRepository extends EntityRepository
             ->getResult();
 
             // TODO FIX THIS
-            return $result[0]['rating'] ? $result : null;
+            return !is_null($result[0]['rating']) ? $result : null;
     }
 
     public function findByRequest(PhotoRequest $request) {

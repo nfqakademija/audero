@@ -14,10 +14,10 @@ class Pusher extends PusherServer {
     public function execute($jsonPacket) {
         $packet = json_decode($jsonPacket);
         if(!$packet){
-            echo "Pusher execute: Received packet equals null \n"; return;
+            $this->error("Pusher", "Pusher execute: Received packet equals null"); return;
         }
         if(!isset($packet->command) || !isset($packet->data)) {
-            echo "Pusher execute: Received packet does not contain command or data \n"; return;
+            $this->error("Pusher", "Pusher execute: Received packet does not contain command or data"); return;
         }
 
         switch ($packet->command) {
@@ -32,20 +32,20 @@ class Pusher extends PusherServer {
 
     private function push($data) {
         if(!$data){
-            echo "Pusher push: null data revieved \n"; return;
+            $this->error("Pusher", "Pusher push: null data reveived"); return;
         }
 
         if(!isset($data->topic) || !isset($data->data)) {
-            echo "Pusher push: Received data is not properly formatted \n"; return;
+            $this->error("Pusher", "Pusher push: Received data is not properly formatted"); return;
         }
 
         if(!($topic = $this->cm->getTopicById($data->topic))) {
-            echo "Pusher push: Topic ".$data->topic." is unavailable \n"; return;
+            $this->error("Pusher", "Pusher push: Topic ".$data->topic." is unavailable"); return;
         }
 
         $topic->broadcast($data->data);
     }
-
+    // TODO parameters to conn, data
     private function send(ConnectionInterface $conn, $topic, $data) {
         $conn->send(json_encode(array(WAMP::MSG_EVENT, (string) $topic, $data)));
     }

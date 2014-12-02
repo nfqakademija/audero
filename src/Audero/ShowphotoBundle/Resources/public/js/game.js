@@ -1,6 +1,24 @@
 var count= 30;
 var counter= setInterval(timer, 1000); //1000 will run it every 1 second
 
+$('form[name="showphoto_chat"]').submit(function( event ) {
+    $.ajax( {
+        type: "POST",
+        url: $(this).attr('action'),
+        data: $(this).serialize(),
+        success: function(data) {
+            data = JSON.parse(data);
+            if(data.status == 'failure') {
+                alert(data);
+            }
+        }
+    } );
+
+    $('#showphoto_chat_text').val('');
+
+    event.preventDefault();
+});
+
 function timer()
 {
     count=count-1;
@@ -22,8 +40,9 @@ var conn = new ab.Session('ws://127.0.0.1:8080',
         });
         conn.subscribe('game_request', function(topic, data) {
             // This is where you would add the new article to the DOM (beyond the scope of this tutorial)
-            //$( "#request" ).text(data);
-            console.log(data); count = 30;
+            $( "#request" ).text(data.request);
+            $( "#user" ).text(data.user);
+            console.log(data.validUntil.date);
         });
         conn.subscribe('game_response', function(topic, data) {
             // This is where you would add the new article to the DOM (beyond the scope of this tutorial)

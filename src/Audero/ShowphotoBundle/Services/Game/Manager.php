@@ -2,15 +2,10 @@
 
 namespace Audero\ShowphotoBundle\Services\Game;
 
-use Audero\ShowphotoBundle\Entity\Player;
-use Audero\ShowphotoBundle\Services\Game\PlayerManager;
-use Audero\ShowphotoBundle\Services\Game\PhotoRequest;
-use Audero\WebBundle\Services\Pusher\Commands;
-use Audero\WebBundle\Services\Pusher\Packet;
+use Audero\ShowphotoBundle\Services\OutputInterface;
 use Doctrine\ORM\EntityManager;
-use Symfony\Component\Validator\Constraints\DateTime;
 
-class Manager {
+class Manager implements OutputInterface {
 
     private $em;
     private $photoRequest;
@@ -27,30 +22,28 @@ class Manager {
             // getting admin options
             $options = $this->em->getRepository("AuderoBackendBundle:OptionsRecord")->findCurrent();
             if(!$options) {
-                echo "GameManager: admin options not found \n";
+                $this->error("Admin options not found");
                 sleep(10); continue;
             }
 
-            // Generating new response from player's wish
+            // Generating new request
             $data = $this->photoRequest->generate();
             if(!isset($data['request']) || !isset($data['wish'])) {
-                echo "Could not get new request \n";
+                $this->error("Could not get new request");
                 sleep(10); continue;
             }
+
             $request = $data['request'];
             $wish = $data['wish'];
 
-            // removing wish from which request was generated from, persisting new request
-            try{
+            // wish -> request
+/*            try{
                 $this->em->remove($wish);
                 $this->em->persist($request);
                 $this->em->flush();
             }catch (\Exception $e) {
                 echo $e->getMessage(); die;
-            }
-
-            // setting time until valid
-            $validUntil = $request->getDate()->add(new \DateInterval('PT'.$options->getTimeForResponse().'S'));
+            }*/
 
             $data = array(
                 'command' => 'push',
@@ -58,17 +51,29 @@ class Manager {
                     'topic' => "game_request",
                     'data'    => array(
                         'request' => $request->getTitle(),
-                        'validUntil' => $validUntil,
+                        'user'    => $request->getUser()->getUsername(),
+                        'validUntil' => $request->getDate()->add(new \DateInterval('PT'.$options->getTimeForResponse().'S')),
                     )
                 )
             );
-
             // Broadcasting
             $context = new \ZMQContext();
             $socket = $context->getSocket(\ZMQ::SOCKET_PUSH, 'pusher');
             $socket->connect("tcp://127.0.0.1:5555");
             $socket->send(json_encode($data));
-            sleep(30);
+            //
+
+            sleep($options->getTimeForResponse());
         }
+    }
+
+    public function error($text)
+    {
+        echo "Game Manager error: ".$text."\n";
+    }
+
+    public function notification($text)
+    {
+        echo "Game Manager: ".$text."\n";
     }
 }

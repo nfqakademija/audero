@@ -7,7 +7,6 @@ use Audero\WebBundle\Entity\UserSubscription;
 use Doctrine\ORM\EntityManager;
 use Ratchet\ConnectionInterface;
 use Ratchet\Wamp\Topic;
-use Symfony\Component\Config\Definition\Exception\Exception;
 
 /**
  * Class ConnectionManager
@@ -29,12 +28,6 @@ class ConnectionManager {
      * @var array
      */
     protected $connections = array();
-
-    /**
-     * @param EntityManager $em
-     *
-     *
-     */
 
     public function  __construct(EntityManager $em) {
         $this->em = $em;
@@ -93,6 +86,8 @@ class ConnectionManager {
             throw new \Exception('Failed to store new connection in database');
         }
 
+        $this->connections[$conn->resourceId] = $conn;
+
         return $userConnection;
     }
 
@@ -105,6 +100,7 @@ class ConnectionManager {
      * @throws \Exception
      */
     public function removeConnection(ConnectionInterface $conn) {
+        unset($this->connections[$conn->resourceId]);
         foreach($this->topics as $id => $topic) {
             $topic->remove($conn);
         }

@@ -10,7 +10,7 @@
     <div class="col-md-8">
         <blockquote>
             <p id="request">{{ request.title }}</p>
-            <small id="requester">by {{ request.user.username }}</small>
+            <small id="user">by {{ request.user.username }}</small>
         </blockquote>
         <hr>
         {% for response in responses %}
@@ -60,5 +60,4 @@
 
 {% block scripts %}
     <script src="{{ asset('bundles/auderoshowphoto/js/game.js') }}" type="text/javascript"></script>
-    <script src="{{ asset('bundles/auderoshowphoto/js/chat.js') }}" type="text/javascript"></script>
 {% endblock %}

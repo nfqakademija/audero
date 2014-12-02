@@ -4,7 +4,7 @@ namespace Audero\WebBundle\Services\Pusher;
 
 interface OutputInterface {
 
-    public function error($text);
+    public function error($entity, $text);
 
-    public function notification($text);
+    public function notification($entity, $text);
 }

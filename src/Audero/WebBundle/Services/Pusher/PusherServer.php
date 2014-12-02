@@ -18,43 +18,43 @@ class PusherServer implements WampServerInterface, OutputInterface {
 
     public function onOpen(ConnectionInterface $conn) {
         if(!$this->cm->hasPermissions($conn)) {
-            $this->error("Rejected connection (Permissions)");
+            $this->error("PusherServer", "Rejected connection (Permissions)");
             $conn->close(); return;
         }
 
         try{
             $this->cm->addConnection($conn);
         }catch (\Exception $e) {
-            $this->error($e->getMessage());
+            $this->error("PusherServer", $e->getMessage());
             $conn->close(); die;
         }
 
-        $this->notification("Added new connection");
+        $this->notification("PusherServer", "Added new connection");
     }
     public function onClose(ConnectionInterface $conn) {
         try{
             $this->cm->removeConnection($conn);
         }catch(\Exception $e) {
-            $this->error($e->getMessage());
+            $this->error("PusherServer", $e->getMessage());
             $conn->close(); die;
         }
 
-        $this->notification("Removed connection");
+        $this->notification("PusherServer", "Removed connection");
     }
     public function onSubscribe(ConnectionInterface $conn, $topic) {
         if(!$this->cm->hasPermissions($conn, $topic)) {
-            $this->error("Rejected subscription");
+            $this->error("PusherServer", "Rejected subscription");
             $conn->close(); return;
         }
 
         try{
             if($this->cm->addSubscription($conn, $topic)) {
-                $this->notification("Added new subscription");
+                $this->notification("PusherServer", "Added new subscription");
             }else{
-                $this->error("User tried to subscribe to not existing topic");
+                $this->error("PusherServer", "User tried to subscribe to not existing topic");
             }
         }catch(\Exception $e) {
-            $this->error($e->getMessage());
+            $this->error("PusherServer", $e->getMessage());
             $conn->close(); die;
         }
 
@@ -71,13 +71,13 @@ class PusherServer implements WampServerInterface, OutputInterface {
     public function onError(ConnectionInterface $conn, \Exception $e) {
     }
 
-    public function error($text)
+    public function error($entity, $text)
     {
-        echo "Error: ".$text."\n";
+        echo "{$entity} Error: ".$text."\n";
     }
 
-    public function notification($text)
+    public function notification($entity, $text)
     {
-        echo $text."\n";
+        echo "{$entity}: ".$text."\n";
     }
 }
