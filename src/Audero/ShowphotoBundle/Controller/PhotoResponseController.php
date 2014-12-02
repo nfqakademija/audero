@@ -4,6 +4,8 @@ namespace Audero\ShowphotoBundle\Controller;
 
 use Audero\ShowphotoBundle\Entity\PhotoResponse;
 use Audero\ShowphotoBundle\Form\PhotoResponseType;
+use Symfony\Component\CssSelector\Exception\InternalErrorException;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -20,24 +22,6 @@ use Cocur\Slugify\Slugify;
  */
 class PhotoResponseController extends Controller
 {
-
-    /**
-     * Lists all Interpretation entities.
-     *
-     * @Route("/", name="game_response")
-     * @Method("GET")
-     * @Template()
-     */
-    public function indexAction()
-    {
-        $em = $this->getDoctrine()->getManager();
-
-        $entities = $em->getRepository('AuderoShowphotoBundle:PhotoRequest')->findAll();
-
-        return array(
-            'entities' => $entities,
-        );
-    }
     /**
      * Creates a new Response entity.
      *
@@ -50,52 +34,24 @@ class PhotoResponseController extends Controller
             throw new AccessDeniedException();
         }
 
-        $response = $this->get('game.photo.request')->handlePhotoResponse($request);
-
-        if($response) {
-            // broadcast;
-        }
-        $entity = new PhotoResponse();
-        $form = $this->createForm(new PhotoResponseType(), $entity);
-        $form->handleRequest($request);
-
-        if ($form->isValid()) {
-
-
-            // check if upload time hasn't finished
-
-
-
-            $slugify = new Slugify();
-            $uploader = $this->get('uploader');
-            $response = json_decode($uploader->uploadFile($entity->getPhotoFile()));
-            if ($response && $response->status == 200) {
-                $em = $this->getDoctrine()->getManager();
-                $entity->setUser($this->getUser());
-                $entity->setPhotoLink($response->data->link);
-                $entity->setSlug($slugify->slugify(""));
-
-                $em->persist($entity);
-                $em->flush();
-
-                $data = array(
-                    'channel' => "game_response",
-                    'data' => $entity->getPhoto()
-                );
-
-                $context = new \ZMQContext();
-                $socket = $context->getSocket(\ZMQ::SOCKET_PUSH, 'my pusher');
-                $socket->connect("tcp://127.0.0.1:5555");
-
-                $socket->send(json_encode($data));
-
-                return new Response('Success');
-            }
-
-            return new Response('Upload failed');
+        try {
+            $response = $this->get('game.photo.response')->handlePhotoResponse($request);
+        } catch (\Exception $e) {
+            return new JsonResponse(array('status' => 'failure', 'message' => $e->getMessage()));
         }
 
-        return new Response($form->getErrors());
+        $em = $this->getDoctrine()->getManager();
+        try {
+            $em->persist($response);
+            $em->flush();
+        } catch (\Exception $e) {
+            throw new InternalErrorException();
+        }
+
+        // Broadcasting
+        $this->get('game.photo.response')->broadcast($response);
+
+        return new JsonResponse(array('status' => 'success'));
     }
 
     /**
@@ -108,11 +64,11 @@ class PhotoResponseController extends Controller
     public function newAction()
     {
         $entity = new Interpretation();
-        $form   = $this->createCreateForm($entity);
+        $form = $this->createCreateForm($entity);
 
         return array(
             'entity' => $entity,
-            'form'   => $form->createView(),
+            'form' => $form->createView(),
         );
     }
 
@@ -136,7 +92,7 @@ class PhotoResponseController extends Controller
         $deleteForm = $this->createDeleteForm($id);
 
         return array(
-            'entity'      => $entity,
+            'entity' => $entity,
             'delete_form' => $deleteForm->createView(),
         );
     }
@@ -162,19 +118,19 @@ class PhotoResponseController extends Controller
         $deleteForm = $this->createDeleteForm($id);
 
         return array(
-            'entity'      => $entity,
-            'edit_form'   => $editForm->createView(),
+            'entity' => $entity,
+            'edit_form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
         );
     }
 
     /**
-    * Creates a form to edit a Interpretation entity.
-    *
-    * @param Interpretation $entity The entity
-    *
-    * @return \Symfony\Component\Form\Form The form
-    */
+     * Creates a form to edit a Interpretation entity.
+     *
+     * @param Interpretation $entity The entity
+     *
+     * @return \Symfony\Component\Form\Form The form
+     */
     private function createEditForm(Interpretation $entity)
     {
         $form = $this->createForm(new InterpretationType(), $entity, array(
@@ -186,6 +142,7 @@ class PhotoResponseController extends Controller
 
         return $form;
     }
+
     /**
      * Edits an existing Interpretation entity.
      *
@@ -214,11 +171,12 @@ class PhotoResponseController extends Controller
         }
 
         return array(
-            'entity'      => $entity,
-            'edit_form'   => $editForm->createView(),
+            'entity' => $entity,
+            'edit_form' => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
         );
     }
+
     /**
      * Deletes a Interpretation entity.
      *
@@ -258,7 +216,6 @@ class PhotoResponseController extends Controller
             ->setAction($this->generateUrl('game_response_delete', array('id' => $id)))
             ->setMethod('DELETE')
             ->add('submit', 'submit', array('label' => 'Delete'))
-            ->getForm()
-        ;
+            ->getForm();
     }
 }

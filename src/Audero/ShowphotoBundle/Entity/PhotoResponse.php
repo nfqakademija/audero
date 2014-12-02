@@ -4,6 +4,7 @@ namespace Audero\ShowphotoBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * @ORM\Table(name="photo_response")
@@ -99,7 +100,7 @@ class PhotoResponse
     private $photoUrl;
 
     /**
-     * @var string
+     * @var UploadedFile
      */
     private $photoFile;
 
@@ -112,6 +113,7 @@ class PhotoResponse
         $this->ratings = new ArrayCollection();
         $this->date = new \DateTime('now');
     }
+
     /**
      * @var \Audero\ShowphotoBundle\Entity\Win
      */
@@ -121,7 +123,7 @@ class PhotoResponse
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -144,7 +146,7 @@ class PhotoResponse
     /**
      * Get date
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getDate()
     {
@@ -167,7 +169,7 @@ class PhotoResponse
     /**
      * Get photoId
      *
-     * @return string 
+     * @return string
      */
     public function getPhotoId()
     {
@@ -190,7 +192,7 @@ class PhotoResponse
     /**
      * Get deleteHash
      *
-     * @return string 
+     * @return string
      */
     public function getDeleteHash()
     {
@@ -213,7 +215,7 @@ class PhotoResponse
     /**
      * Get photoLink
      *
-     * @return string 
+     * @return string
      */
     public function getPhotoLink()
     {
@@ -236,7 +238,7 @@ class PhotoResponse
     /**
      * Get user
      *
-     * @return \Audero\ShowphotoBundle\Entity\User 
+     * @return \Audero\ShowphotoBundle\Entity\User
      */
     public function getUser()
     {
@@ -259,7 +261,7 @@ class PhotoResponse
     /**
      * Get request
      *
-     * @return \Audero\ShowphotoBundle\Entity\PhotoRequest 
+     * @return \Audero\ShowphotoBundle\Entity\PhotoRequest
      */
     public function getRequest()
     {
@@ -292,7 +294,7 @@ class PhotoResponse
     /**
      * Get ratings
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getRatings()
     {
@@ -315,7 +317,7 @@ class PhotoResponse
     /**
      * Get win
      *
-     * @return \Audero\ShowphotoBundle\Entity\Win 
+     * @return \Audero\ShowphotoBundle\Entity\Win
      */
     public function getWin()
     {
@@ -338,7 +340,7 @@ class PhotoResponse
     /**
      * Get height
      *
-     * @return integer 
+     * @return integer
      */
     public function getHeight()
     {
@@ -361,7 +363,7 @@ class PhotoResponse
     /**
      * Get width
      *
-     * @return integer 
+     * @return integer
      */
     public function getWidth()
     {
@@ -384,7 +386,7 @@ class PhotoResponse
     /**
      * Get size
      *
-     * @return integer 
+     * @return integer
      */
     public function getSize()
     {
@@ -407,7 +409,7 @@ class PhotoResponse
     /**
      * Get animated
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getAnimated()
     {
@@ -438,22 +440,7 @@ class PhotoResponse
     }
 
     /**
-     * Set photoFile path
-     *
-     * @param string $path
-     * @return PhotoResponse
-     */
-    public function setPhotoFile($path)
-    {
-        $this->photoFile = $path;
-
-        return $this;
-    }
-
-    /**
-     * Get photoFile path
-     *
-     * @return string
+     * @return UploadedFile
      */
     public function getPhotoFile()
     {
@@ -461,14 +448,23 @@ class PhotoResponse
     }
 
     /**
+     * @param UploadedFile $photoFile
+     */
+    public function setPhotoFile($photoFile)
+    {
+        $this->photoFile = $photoFile;
+    }
+
+    /**
      * Get positive ratings count
      *
      * @return int
      */
-    public function getPositiveRatingsCount() {
+    public function getPositiveRatingsCount()
+    {
         $count = 0;
-        foreach($this->ratings as $rating) {
-            if($rating->getRate() == 1) {
+        foreach ($this->ratings as $rating) {
+            if ($rating->getRate() == 1) {
                 $count++;
             }
         }
@@ -481,10 +477,11 @@ class PhotoResponse
      *
      * @return int
      */
-    public function getNegativeRatingsCount() {
+    public function getNegativeRatingsCount()
+    {
         $count = 0;
-        foreach($this->ratings as $rating) {
-            if($rating->getRate() == 0) {
+        foreach ($this->ratings as $rating) {
+            if ($rating->getRate() == 0) {
                 $count++;
             }
         }

@@ -19,6 +19,23 @@ $('form[name="showphoto_chat"]').submit(function( event ) {
     event.preventDefault();
 });
 
+/*
+$('form[name="audero_showphotobundle_photoresponse"]').submit(function( event ) {
+    $.ajax( {
+        type: "POST",
+        url: $(this).attr('action'),
+        data: $(this).serialize(),
+        success: function(data) {
+            if(data.status == 'success') {
+                console.log("good");
+            }
+        }
+    } );
+
+    event.preventDefault();
+});
+*/
+
 function timer()
 {
     count=count-1;

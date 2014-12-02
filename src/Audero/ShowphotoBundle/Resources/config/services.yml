@@ -11,6 +11,9 @@ services:
     game.photo.request:
         class:  Audero\ShowphotoBundle\Services\Game\PhotoRequest
         arguments: ["@doctrine.orm.entity_manager"]
+    game.photo.response:
+        class:  Audero\ShowphotoBundle\Services\Game\PhotoResponse
+        arguments: ["@doctrine.orm.entity_manager", "@form.factory", "@uploader", "@security.context"]
     game.winner.queue:
         class:  Audero\ShowphotoBundle\Services\Game\WinnerQueue
         arguments: ["@doctrine.orm.entity_manager"]

@@ -2,80 +2,116 @@
 
 namespace Audero\ShowphotoBundle\Services\Game;
 
+use Audero\BackendBundle\Entity\Options;
 use Audero\ShowphotoBundle\Form\PhotoResponseType;
+use Audero\ShowphotoBundle\Services\Uploader\Imgur;
+use Symfony\Component\Form\FormFactory;
 use Symfony\Component\HttpFoundation\Request;
 use Audero\ShowphotoBundle\Entity\PhotoRequest;
 use Audero\ShowphotoBundle\Entity\PhotoResponse as Response;
 use Audero\ShowphotoBundle\Entity\Wish;
 use Cocur\Slugify\Slugify;
 use Doctrine\ORM\EntityManager;
+use Symfony\Component\Security\Core\SecurityContext;
+use Symfony\Component\Validator\Constraints\DateTime;
 
-class PhotoResponse {
+class PhotoResponse
+{
 
     private $em;
 
-    public function __construct(EntityManager $em) {
+    private $factory;
+
+    private $uploader;
+
+    private $security;
+
+    public function __construct(EntityManager $em, FormFactory $factory, Imgur $uploader, SecurityContext $security)
+    {
         $this->em = $em;
+        $this->factory = $factory;
+        $this->uploader = $uploader;
+        $this->security = $security;
     }
 
-    public function handlePhotoResponse(Request $request) {
-        $entity = new Response();
-        $form = $this->createForm(new PhotoResponseType(), $entity);
+    public function handlePhotoResponse(Request $request)
+    {
+        if (!($user = $this->security->getToken()->getUser())) {
+            throw new \Exception('User was not found');
+        }
+
+        $response = new Response();
+        $form = $this->factory->create(new PhotoResponseType(), $response);
         $form->handleRequest($request);
-
-        if ($form->isValid()) {
-    }
-
-    /**
-     * Generates a new Request
-     *
-     * @return array
-     */
-    public function generate() {
-        // finding newest request
-        $request = $this->em->getRepository('AuderoShowphotoBundle:PhotoRequest')->findNewest();
-        if(!$request) {
-            return $this->generatePlayersRequest();
+        if (!$form->isValid()) {
+            throw new \Exception($form->getErrors());
         }
 
-        // finding it's best responses
-        $responses = $this->em->getRepository('AuderoShowphotoBundle:PhotoResponse')->findBest($request);
-        if (!$responses) {
-            return $this->generatePlayersRequest();
-        }
-        foreach($responses as $response) {
-            $wish = $this->em->getRepository('AuderoShowphotoBundle:Wish')->findUserFirstWish($response['response']->getUser());
-            if($wish) {
-                return $this->createRequest($wish);
-            }
+        // checking time
+        /** @var PhotoRequest $photoRequest */
+        $photoRequest = $this->em->getRepository("AuderoShowphotoBundle:PhotoRequest")->findNewest();
+        if (!$photoRequest) {
+            throw new \Exception('No Request was found');
         }
 
-        return $this->generatePlayersRequest();
+        $validUntil = $this->getValidUntil($photoRequest);
+        if (time() > $validUntil->getTimestamp()) {
+            throw new \Exception('Request time has expired');
+        }
+
+        if ($response->getPhotoUrl()) {
+            $data = $this->uploader->uploadUrl($response->getPhotoUrl());
+        } else {
+            $data = $this->uploader->uploadFile($response->getPhotoFile());
+        }
+
+        if ($data && isset($data->status) && $data->status == 200) {
+            $data = $data->data;
+            $response->setUser($user)
+                ->setAnimated($data->animated)
+                ->setDeleteHash($data->deletehash)
+                ->setHeight($data->height)
+                ->setPhotoId($data->id)
+                ->setPhotoLink($data->link)
+                ->setRequest($photoRequest)
+                ->setSize($data->size)
+                ->setWidth($data->width);
+
+            return $response;
+        }
+
+        throw new \Exception('Response from image storage is not valid');
     }
 
-    /**
-     * Generates request from players wishes
-     *
-     * @return array
-     */
-    private function generatePlayersRequest() {
-        var_dump("TO DO FROM PLAYERS"); die;
-        return $this->createRequest(new Wish());
+
+    public function broadcast(Response $response)
+    {
+        $data = array(
+            'command' => 'push',
+            'data' => array(
+                'topic' => "game_request",
+                'data' => array(
+                    'request' => $response->getRequest()->getTitle(),
+                    'user' => $response->getUser()->getUsername(),
+                    'validUntil' => $this->getValidUntil($response->getRequest()),
+                )
+            )
+        );
+
+        $context = new \ZMQContext();
+        $socket = $context->getSocket(\ZMQ::SOCKET_PUSH, 'pusher');
+        $socket->connect("tcp://127.0.0.1:5555");
+        $socket->send(json_encode($data));
     }
 
-    /**
-     * @param Wish $wish
-     * @return array
-     */
-    private function createRequest(Wish $wish) {
-        // TODO MOVE TO SERVICE
-        $slugify = new Slugify();
-        //
-        $request = new Request();
-        $request->setTitle($wish->getTitle())
-            ->setUser($wish->getUser())
-            ->setSlug($slugify->slugify($wish->getTitle()));
+    private function getValidUntil(PhotoRequest $request)
+    {
+        /** @var Options $options */
+        $options = $this->em->getRepository("AuderoBackendBundle:OptionsRecord")->findCurrent();
+        if (!$options) {
+            return null;
+        }
 
-        return array('request' => $request, 'wish' => $wish);
+        return $request->getDate()->add(new \DateInterval('PT' . $options->getTimeForResponse() . 'S'));
     }
 } 

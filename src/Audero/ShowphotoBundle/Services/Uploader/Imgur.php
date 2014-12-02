@@ -4,7 +4,8 @@ namespace Audero\ShowphotoBundle\Services\Uploader;
 
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-class Imgur {
+class Imgur
+{
 
     private $tokenProvider;
 
@@ -24,14 +25,15 @@ class Imgur {
         curl_setopt($curl, CURLOPT_URL, 'https://api.imgur.com/3/upload');
         curl_setopt($curl, CURLOPT_TIMEOUT, $timeout);
         curl_setopt($curl, CURLOPT_HTTPHEADER, array(
-            'Authorization: Bearer '.$this->tokenProvider->getToken()
+            'Authorization: Bearer ' . $this->tokenProvider->getToken()
         ));
         curl_setopt($curl, CURLOPT_POST, 1);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($curl, CURLOPT_POSTFIELDS, $post);
         $response = curl_exec($curl);
-        curl_close ($curl);
-        return $response;
+        curl_close($curl);
+
+        return $response ? json_decode($response) : null;
     }
 
     /*
@@ -54,7 +56,7 @@ class Imgur {
     public function uploadFile(UploadedFile $file)
     {
         $post = array(
-            'image' => '@'.$file->getPath().'/'.$file->getBasename()
+            'image' => '@' . $file->getPath() . '/' . $file->getBasename()
         );
 
         return $this->upload($post);
