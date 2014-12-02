@@ -89,11 +89,11 @@ class PhotoResponse
         $data = array(
             'command' => 'push',
             'data' => array(
-                'topic' => "game_request",
+                'topic' => "game_response",
                 'data' => array(
-                    'request' => $response->getRequest()->getTitle(),
-                    'user' => $response->getUser()->getUsername(),
-                    'validUntil' => $this->getValidUntil($response->getRequest()),
+                    'photoLink' => $response->getPhotoLink(),
+                    'username' => $response->getUser()->getUsername(),
+                    'id' => $response->getId(),
                 )
             )
         );

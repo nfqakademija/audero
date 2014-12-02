@@ -13,21 +13,28 @@
             <small id="user">by {{ request.user.username }}</small>
         </blockquote>
         <hr>
-        {% for response in responses %}
-        <div class="col-md-4">
-            <p class="text-center">
-                <img class="img-responsive" src="{{ response.photoLink }}">
-            </p>
-        </div>
-{#            {% if loop|index mod 3 == 0 %}
-                <p>&nbsp;</p>
-            {% endif %}#}
-        {% endfor %}
+        <div id="responses">
+            {% for response in responses %}
+            <div class="col-md-4">
+                <p class="text-center">
+                    <img class="img-responsive" src="{{ response.photoLink }}">
+                </p>
+            </div>
+    {#            {% if loop|index mod 3 == 0 %}
+                    <p>&nbsp;</p>
+                {% endif %}#}
 
+        {% endfor %}
+        </div>
     </div>
     <div class="col-md-4">
         <p><a href="#" class="btn btn-default btn-lg btn-block">Time left: <span id="timer"></span></a></p>
-        {{ form(form_response) }}
+        {{ form_start(form_response, {'attr': {'target': 'uploadHandler'}}) }}
+        {{ form_rest(form_response) }}
+        {{ form_end(form_response) }}
+        <iframe name="uploadHandler" id="uploadHandler" src="{{ path('game_response_create') }}">
+
+        </iframe>
         <hr>
         <ul class="nav nav-tabs">
             <li class="active"><a href="#chat" data-toggle="tab">Chat</a></li>

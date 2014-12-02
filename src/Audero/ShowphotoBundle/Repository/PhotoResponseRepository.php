@@ -36,7 +36,6 @@ class PhotoResponseRepository extends EntityRepository
         return $this->getEntityManager()
             ->createQuery("SELECT res
                            FROM AuderoShowphotoBundle:PhotoResponse res
-                           JOIN res.ratings rat
                            WHERE res.request = ?1
                            ORDER BY res.date DESC")
             ->setParameter(1, $request)

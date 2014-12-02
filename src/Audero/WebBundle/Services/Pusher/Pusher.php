@@ -45,6 +45,7 @@ class Pusher extends PusherServer {
 
         $topic->broadcast($data->data);
     }
+
     // TODO parameters to conn, data
     private function send(ConnectionInterface $conn, $topic, $data) {
         $conn->send(json_encode(array(WAMP::MSG_EVENT, (string) $topic, $data)));
