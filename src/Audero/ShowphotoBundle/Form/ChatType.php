@@ -16,7 +16,7 @@ class ChatType extends AbstractType
     {
         $builder
             ->add('text')
-            ->add('Send', 'button')
+            ->add('Send', 'submit')
         ;
     }
     
@@ -35,6 +35,6 @@ class ChatType extends AbstractType
      */
     public function getName()
     {
-        return 'audero_showphotobundle_chat';
+        return 'showphoto_chat';
     }
 }
