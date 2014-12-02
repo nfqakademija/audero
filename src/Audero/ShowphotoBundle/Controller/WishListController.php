@@ -2,81 +2,108 @@
 
 namespace Audero\ShowphotoBundle\Controller;
 
+use Audero\ShowphotoBundle\Entity\Wish;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Audero\WebBundle\Form\WishListType;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Cocur\Slugify\Slugify;
 use Doctrine\Common\Collections\ArrayCollection;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
+/**
+ * WishList controller.
+ *
+ * @Route("/wish")
+ */
 class WishListController extends Controller
 {
     /**
-     * @Route("/create")
-     * @Template()
+     * @Route("/update", name="showphoto_wish_update")
      */
-    public function createAction()
+    public function updateAction(Request $request)
     {
-        return array(
-                // ...
-            );
-    }
-
-    /**
-     * Edits user's wish list
-     *
-     * @Route("/wish/edit", name="showphoto_wish_list_edit")
-     * @Method("POST")
-     */
-    public function editAction(Request $request)
-    {
-        $user = $this->getUser();
-
-        if (!$user) {
-            throw $this->createNotFoundException('Unable to find Application entity.');
+        if(!($user = $this->getUser())) {
+            return new JsonResponse(json_encode(array('status'=>'failure', 'message'=>'Please login')));
         }
 
-        $originalWishes = new ArrayCollection();
-        foreach($user->getWishes() as $wish) {
-            $originalWishes->add($wish);
+        $title = (string) $request->request->get('title');
+        $position = (int) $request->request->get('position');
+
+        // checking if position is correct
+        $maxWishes = 10;
+        if($position < 1 || $position > $maxWishes ) {
+            return new JsonResponse(json_encode(array('status'=>'failure', 'message'=>'Wrong position')));
         }
 
-        $form = $this->createForm(new WishListType(), $user, array(
-            'action' => $this->generateUrl('showphoto_wish_list_edit'),
-        ));
+        // checking if wish has already been solved
+        // TODO MOVE TO SERVICE
+        $slugify = new Slugify();
+        $slug = $slugify->slugify($title." ".$user->getUserName());
+        //
+        $em = $this->getDoctrine()->getManager();
+        $request = $em->getRepository("AuderoShowphotoBundle:PhotoRequest")->findOneBy(array('slug'=>$slug));
+        if($request) {
+            return new JsonResponse(json_encode(array('status'=>'failure', 'message'=>'This wish is already ?? COMPLETED ??  ')));
+        }
 
-        $form->handleRequest($request);
+        // creating new wish
 
-        if ($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            // removing previous wishes
-            foreach($originalWishes as $wish) {
-                if (false === $user->getWishes()->contains($wish)) {
-                    // remove the Task from the Tag
-                    $user->getTasks()->removeWish($wish);
-                }
-            }
+        // TODO MOVE TO SERVICE
+        $slugify = new Slugify();
+        $slug = $slugify->slugify($title);
+        //
+        $wish = new Wish();
+        $wish->setTitle($title)
+             ->setUser($user)
+             ->setSlug($slug)
+             ->setPosition($position);
 
-            foreach($user->getWishes() as $wish) {
-                $wish->setUser($user);
-                $em->persist($wish);
-            }
+        $validator = $this->get('validator');
+        $errors = $validator->validate($wish);
+        if(count($errors) > 0) {
+            return new JsonResponse(json_encode(array('status'=>'failure', 'message'=>(string) $errors)));
+        }
 
+        // removing old wish
+        $oldWish = $em->getRepository("AuderoShowphotoBundle:Wish")->findOneBy(array('user'=>$user, 'position'=>$position));
+        if($oldWish) {
+            $em->remove($oldWish);
             $em->flush();
         }
 
-        return $this->redirect($this->generateUrl('web_profile_show'));
+        $em->persist($wish);
+        $em->flush();
+
+        return new JsonResponse(json_encode('success'));
     }
 
     /**
-     * @Route("/remove")
-     * @Template()
+     * @Route("/delete", name="showphoto_wish_delete")
      */
-    public function removeAction()
-    {
-        return array(
-                // ...
-            );    }
+    public function deleteAction(Request $request) {
+        if(!($user = $this->getUser())) {
+            return new JsonResponse(json_encode(array('status'=>'failure', 'message'=>'Please login')));
+        }
 
+        $em = $this->getDoctrine()->getManager();
+
+        $position = (int) $request->request->get('position');
+        // TODO
+        $maxWishes = 10;
+        //
+        if($position < 1 || $position > $maxWishes ) {
+            return new JsonResponse(json_encode(array("status"=>"failure", "message"=>"Wrong position")));
+        }
+
+        $wish = $em->getRepository("AuderoShowphotoBundle:Wish")->findOneBy(array('user'=>$user, 'position'=>$position));
+        if($wish) {
+            $em->remove($wish);
+            $em->flush();
+        }
+
+        return new JsonResponse(json_encode(array("status"=>"success")));
+    }
 }

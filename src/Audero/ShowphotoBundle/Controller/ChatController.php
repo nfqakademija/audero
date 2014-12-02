@@ -13,6 +13,10 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
+/**
+ * Class ChatController
+ * @package Audero\ShowphotoBundle\Controller
+ */
 class ChatController extends Controller
 {
     /**
@@ -62,8 +66,14 @@ class ChatController extends Controller
             $em->flush();
 
             $data = array(
-                'channel' => "chat",
-                'data' => array("user"=>$user->getUsername(), "text" => $message->getText())
+                'command' => 'push',
+                'data' => array(
+                    'topic' => "chat",
+                    'data'    => array(
+                        'user' => $user->getUsername(),
+                        'text' => $message->getText(),
+                    )
+                )
             );
 
             $context = new \ZMQContext();
@@ -71,7 +81,7 @@ class ChatController extends Controller
             $socket->connect("tcp://127.0.0.1:5555");
             $socket->send(json_encode($data));
 
-            $response->setData(array("status" => "sucess"));
+            $response->setData(array("status" => "success"));
             return $response;
         }
 

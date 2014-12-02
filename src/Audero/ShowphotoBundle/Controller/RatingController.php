@@ -31,14 +31,14 @@ class RatingController extends Controller
             $photoId = $request->get('photo_id');
             $rate = $request->get('rate') == 1 ? 1 : 0;
 
+            $em = $this->getDoctrine()->getManager();
 
-            $response = $this->getDoctrine()->getRepository("AuderoShowphotoBundle:PhotoResponse")->findOneByPhotoId($photoId);
+            $response = $em->getRepository("AuderoShowphotoBundle:PhotoResponse")->findOneByPhotoId($photoId);
             if(!$response) {
                 return new JsonResponse("Photo Response not found");
             }
 
-            $em = $this->getDoctrine()->getManager();
-            $rating = $this->getDoctrine()->getRepository("AuderoShowphotoBundle:Rating")->findOneBy(array('response'=>$response, 'user'=>$user->getId()));
+            $rating = $em->getRepository("AuderoShowphotoBundle:Rating")->findOneBy(array('response'=>$response, 'user'=>$user));
             if($rating) {
                 if($rating->getRate() == $rate) {
                     $em->remove($rating);

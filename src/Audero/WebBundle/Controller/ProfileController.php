@@ -4,11 +4,16 @@ namespace Audero\WebBundle\Controller;
 
 use Audero\ShowphotoBundle\Entity\Wish;
 use Audero\WebBundle\Form\WishListType;
+use Cocur\Slugify\Slugify;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\PersistentCollection;
 use FOS\UserBundle\Controller\ProfileController as BaseController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class ProfileController extends BaseController
 {
@@ -17,30 +22,18 @@ class ProfileController extends BaseController
      */
     public function showAction()
     {
-        if($user = $this->getUser()) {
-
-            $form = $this->createForm(new WishListType(), $user, array(
-                'action' => $this->generateUrl('showphoto_wish_list_edit'),
-            ));
-
-            return $this->render('FOSUserBundle:Profile:show.html.twig', array(
-                'user' => $user,
-                'wish_list_form' => $form->createView()
-            ));
+        if(!($user = $this->getUser())) {
+            throw new AccessDeniedException();
         }
 
-        return $this->redirect($this->generateUrl('fos_user_security_login'));
+        $wishes = (array) $this->getDoctrine()->getRepository('AuderoShowphotoBundle:Wish')->findBy(array('user'=>$user), array('position'=>'ASC'));
+        $wishList = array();
+        foreach($wishes as $wish) {
+            $wishList[$wish->getPosition()] = $wish;
+        }
+        return $this->render('FOSUserBundle:Profile:show.html.twig', array(
+            'wishList' => $wishList,
+            'wishListSize' => 10 //TODO GET FROM ADMIN
+        ));
     }
-
-    /**
-     * @Route("/profile")
-     * @Method("POST")
-     * @Template()
-     */
-    public function editAction(Request $request)
-    {
-        return array(
-                // ...
-            );    }
-
 }

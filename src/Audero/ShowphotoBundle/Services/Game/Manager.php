@@ -31,12 +31,23 @@ class Manager {
                 sleep(10); continue;
             }
 
-            $request = $this->photoRequest->generate();
-            if(!$request) {
+            // Generating new response from player's wish
+            $data = $this->photoRequest->generate();
+            if(!isset($data['request']) || !isset($data['wish'])) {
                 echo "Could not get new request \n";
                 sleep(10); continue;
             }
-            $this->store($request);
+            $request = $data['request'];
+            $wish = $data['wish'];
+
+            // removing wish from which request was generated from, persisting new request
+            try{
+                $this->em->remove($wish);
+                $this->em->persist($request);
+                $this->em->flush();
+            }catch (\Exception $e) {
+                echo $e->getMessage(); die;
+            }
 
             // setting time until valid
             $validUntil = $request->getDate()->add(new \DateInterval('PT'.$options->getTimeForResponse().'S'));
@@ -52,17 +63,12 @@ class Manager {
                 )
             );
 
+            // Broadcasting
             $context = new \ZMQContext();
             $socket = $context->getSocket(\ZMQ::SOCKET_PUSH, 'pusher');
-            $socket->connect("tcp://127.0.0.1:5557");
+            $socket->connect("tcp://127.0.0.1:5555");
             $socket->send(json_encode($data));
             sleep(30);
         }
     }
-
-    private function store($object) {
-     //   $this->em->persist($object);
-       // $this->em->flush($object);
-    }
-
 }

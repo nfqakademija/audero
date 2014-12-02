@@ -2,22 +2,21 @@
 
 namespace Audero\WebBundle\Form;
 
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class WishListType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
-    {
-        $builder->add('wishes', 'collection', array('type' => new WishType(), 'allow_add'=> true,'allow_delete' => true));
+    private $wishes;
+
+    public function __construct(Collection $wishes) {
+        $this->wishes = $wishes;
     }
 
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $resolver->setDefaults(array(
-            'data_class' => 'Audero\ShowphotoBundle\Entity\User',
-        ));
+
     }
 
     public function getName()

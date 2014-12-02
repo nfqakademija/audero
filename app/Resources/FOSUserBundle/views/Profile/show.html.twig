@@ -6,21 +6,28 @@
         <hr>
         <div class="col-md-4">
             <p class="text-center"><img class="img-circle" src="http://placehold.it/180x180" style="width: 180px; height: 180px;"></p>
-            <p class="text-center"><strong>Username</strong></p>
-            <p class="text-center">user@email.com</p>
+            <p class="text-center"><strong>{{ app.user.username }}</strong></p>
+            <p class="text-center">{{ app.user.email }}</p>
             <p class="text-center">Your rank: 254</p>
         </div>
         <div class="col-md-8">
 
             <!--My request list-->
 
-            <h3>My request list: </h3>
+            <h3>My requests list: </h3>
             <hr>
-            <p>You can change list priority by drag-and-drop <a href="http://www.w3schools.com/html/html5_draganddrop.asp" title="How to drag-and-drop" target="_blank">How?</a></p>
-            <p><input type="text" class="form-control" placeholder="Enter your first wish"></p>
-            <p><input type="text" class="form-control" placeholder="Enter your second wish"></p>
-            <p><input type="text" class="form-control" placeholder="Enter your third wish"></p>
-            <p><a href="#" title="Add more requests">Add more</a></p>
+            <div id="wish-list-errors">
+            </div>
+            <span id="wishes">
+                {% for i in 1..3 %}
+                    {% if wishList[i] is defined %}
+                        <p><input type="text" class="form-control" data-position="{{ i }}" value="{{ wishList[i].title }}" placeholder="Place your wish"></p>
+                    {% else %}
+                        <p><input type="text" class="form-control" data-position="{{ i }}" placeholder="Place your wish"></p>
+                    {% endif %}
+                {% endfor %}
+            </span>
+            <p><a href="#" title="Add more requests">Show more</a></p>
             <!-- My last requests -->
 
             <h3>My last requests: </h3>
@@ -103,48 +110,8 @@
                 </tr>
                 </tbody>
             </table>
-
-
-
         </div>
     </div>
-    <h1>NORAI</h1>
-
-    <ul class="wish" data-prototype="{{ form_widget(wish_list_form.wishes.vars.prototype)|e }}"></ul>
-    {{ form_start(wish_list_form) }}
-    <ul>
-        {# iterate over each existing tag and render its only field: name #}
-        {% for wish in wish_list_form.wishes %}
-            <li>{{ form_widget(wish.title) }}</li>
-        {% endfor %}
-    </ul>
-    {{ form_end(wish_list_form) }}
-    <script>
-        $('form[name="web_wish_list"] :input').blur(function() {
-            alert('kuku');
-        });
-    </script>
-    <h1>PRASYMAI</h1>
-    <ul>
-        {% for request in app.user.requests %}
-            <li>{{ request.title }}</li>
-        {% endfor %}
-    </ul>
-
-    <h1>Atsakymai</h1>
-    <ul>
-        {% for response in app.user.responses %}
-            <li>{{ response.request.title }} </li>
-            <li>{{ response.photoLink }}</li>
-        {% endfor %}
-    </ul>
-
-
-
-    <script>
-
-    </script>
-
 {% endblock %}
 
 {% block scripts %}

@@ -2,23 +2,27 @@
 
 namespace Audero\WebBundle\Form;
 
+use Audero\ShowphotoBundle\Entity\Wish;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class WishType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
-    {
-        $builder->add('title');
+    private $wish;
+
+    public function __construct(Wish $wish = null) {
+        $this->wish = $wish;
     }
 
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $resolver->setDefaults(array(
-            'data_class' => 'Audero\ShowphotoBundle\Entity\Wish',
-        ));
+        $builder->add('title', 'text');
+
+        if(!is_null($this->wish)) {
+            $builder->setData($this->wish);
+        }
     }
+
 
     public function getName()
     {

@@ -4,6 +4,7 @@ namespace Audero\ShowphotoBundle\Controller;
 
 use Audero\ShowphotoBundle\Entity\PhotoRequest;
 use Audero\ShowphotoBundle\Entity\PhotoResponse;
+use Guzzle\Http\Exception\ClientErrorResponseException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -28,22 +29,25 @@ class GameController extends Controller
                 $player = $this->get('game.player.manager')->add($user);
             }
 
-            // if user was successfully added to players list
-            if($player) {
-
-                $requests = $em->getRepository('AuderoShowphotoBundle:PhotoRequest')->findAll();
-                $responses = $em->getRepository('AuderoShowphotoBundle:PhotoResponse')->findAll();
-                $request = new PhotoRequest();
-                $response = new PhotoResponse();
-                $formResponse = $this->createFormResponse($response);
-
-                return array(
-                    'form_response'   => $formResponse->createView(),
-                    'responses' => $responses
-                );
+            // if user could not be added
+            if(!$player) {
+                return $this->redirect($this->generateUrl('showphoto_spectate'));
             }
 
-            return $this->redirect($this->generateUrl('showphoto_spectate'));
+            $request = $em->getRepository('AuderoShowphotoBundle:PhotoRequest')->findNewest();
+            if(!$request) {
+                // TODO ??
+                throw new ClientErrorResponseException();
+            }
+            $responses = (array) $em->getRepository('AuderoShowphotoBundle:PhotoResponse')->findByRequest($request);
+            $formResponse = $this->createFormResponse(new PhotoResponse());
+
+            return array(
+                'form_response'   => $formResponse->createView(),
+                'request' => $request,
+                'responses' => $responses
+            );
+
         }
 
         throw new AccessDeniedException();
