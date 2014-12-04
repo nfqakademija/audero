@@ -2,7 +2,13 @@
 
 namespace Audero\ShowphotoBundle\Controller;
 
+use Audero\ShowphotoBundle\Entity\PhotoResponse;
+use Audero\ShowphotoBundle\Entity\User;
+use Audero\ShowphotoBundle\RatingEvents;
+use Symfony\Component\CssSelector\Exception\InternalErrorException;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Audero\ShowphotoBundle\Entity\Rating;
+use Audero\ShowphotoBundle\Event\FilterRatingEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -25,40 +31,89 @@ class RatingController extends Controller
      */
     public function createAction(Request $request)
     {
-        if($user = $this->getUser()) {
-            $entity = new Rating();
+        $requestSlug = $request->get('request_slug', '');
+        $responseAuthor = $request->get('response_author', '');
+        $rate = $request->get('rate') == 1 ? 1 : 0;
 
-            $photoId = $request->get('photo_id');
-            $rate = $request->get('rate') == 1 ? 1 : 0;
+        $em = $this->getDoctrine()->getManager();
 
-            $em = $this->getDoctrine()->getManager();
-
-            $response = $em->getRepository("AuderoShowphotoBundle:PhotoResponse")->findOneByPhotoId($photoId);
-            if(!$response) {
-                return new JsonResponse("Photo Response not found");
-            }
-
-            $rating = $em->getRepository("AuderoShowphotoBundle:Rating")->findOneBy(array('response'=>$response, 'user'=>$user));
-            if($rating) {
-                if($rating->getRate() == $rate) {
-                    $em->remove($rating);
-                }else{
-                    $rating->setRate($rate);
-                }
-            }else{
-                $rating = new Rating();
-                $rating->setUser($user)
-                       ->setResponse($response)
-                       ->setRate($rate);
-
-                $em->persist($rating);
-            }
-
-            $em->flush();
-
-            return new JsonResponse('success');
+        if (!($user = $this->getUser())) {
+            return new JsonResponse(array("status" => "failure", "message" => "Please sign in"));
         }
 
-        return new JsonResponse("Please sign in");
+        if (!($response = $this->getStoredResponse($requestSlug, $responseAuthor))) {
+            return new JsonResponse(array("status" => "failure", "message" => "Photo could not be found"));
+        }
+
+        if ($rating = $this->getStoredRating($user, $response)) {
+            if ($rating->getRate() == $rate) {
+                return new JsonResponse(array("status" => "success", "message" => "You have already liked this photo"));
+            }
+
+            $rating->setRate($rate);
+            $this->get('event_dispatcher')->dispatch(RatingEvents::RATE_PHOTO, new FilterRatingEvent($rating));
+            $em->flush();
+        }
+
+        /* Creating new rating */
+        $rating = new Rating();
+        $rating->setUser($user)
+            ->setResponse($response)
+            ->setRate($rate);
+        try {
+            $em->persist($rating);
+            $em->flush();
+        } catch (\Exception $e) {
+            throw new InternalErrorException();
+        }
+
+        // TODO ASK AURELIJUS
+        /*$dispatcher = new EventDispatcher();
+        $event = new FilterRatingEvent($rating);
+        $dispatcher->dispatch(RatingEvents::RATE_PHOTO, $event);*/
+
+        //$this->get('event_dispatcher')->dispatch(RatingEvents::RATE_PHOTO, new FilterRatingEvent(new Rating()));
+
+        return new JsonResponse(array("status" => "success"));
+    }
+
+    private function getStoredResponse($requestSlug, $responseAuthor)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $request = $em->getRepository("AuderoShowphotoBundle:PhotoRequest")->findOneBy(array('slug' => $requestSlug));
+        if (!$request) {
+            return null;
+        }
+
+        $author = $em->getRepository("AuderoShowphotoBundle:User")->findOneBy(array('username' => $responseAuthor));
+        if (!$author) {
+            return null;
+        }
+
+        $response = $em->getRepository("AuderoShowphotoBundle:PhotoResponse")->findOneBy(array('request' => $request, 'user' => $author));
+        if (!$response) {
+            return null;
+        }
+
+        return $response;
+    }
+
+
+    /**
+     * @param User $user
+     * @param PhotoResponse $response
+     * @return Rating|null
+     */
+    private function getStoredRating(User $user, PhotoResponse $response)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $rating = $em->getRepository("AuderoShowphotoBundle:Rating")->findOneBy(array('response' => $response, 'user' => $user));
+        if (!$rating) {
+            return null;
+        }
+
+        return $rating;
     }
 }

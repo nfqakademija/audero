@@ -1,4 +1,13 @@
 services:
+    rating.listener:
+        class: Audero\ShowphotoBundle\EventListener\RatingUpdater
+        tags:
+            - { name: doctrine.event_listener, event: onFlush }
+   # rating.listener:
+    #  class: Audero\ShowphotoBundle\Listener\RatingListener
+      #arguments: [ @service_container ]
+    #  tags:
+     #   - { name: kernel.event_listener, event: rate.photo, method: onRate }
     #Uploader services
     uploader.token.provider:
         class:  Audero\ShowphotoBundle\Services\Uploader\TokenProvider

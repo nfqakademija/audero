@@ -59,6 +59,16 @@ class User extends BaseUser
      **/
     protected $wins;
 
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="rank", type="integer")
+     */
+    protected $rank;
+
+    /**
+     *
+     */
     public function __construct()
     {
         parent::__construct();
@@ -90,7 +100,6 @@ class User extends BaseUser
     public function addRequest(\Audero\ShowphotoBundle\Entity\PhotoRequest $requests)
     {
         $this->requests[] = $requests;
-
         return $this;
     }
 
@@ -366,5 +375,41 @@ class User extends BaseUser
     public function getSubscriptions()
     {
         return $this->subscriptions;
+    }
+
+    /**
+     * @return int
+     */
+    public function getRating() {
+        $rating = 0;
+        foreach($this->responses as $response) {
+            $rating+= $response->getRatingValue();
+        }
+
+        return $rating;
+    }
+
+    /**
+     * @return int
+     */
+    public function getRank()
+    {
+        return $this->rank;
+    }
+
+    /**
+     * @param int $rank
+     */
+    public function setRank($rank)
+    {
+        $this->rank = $rank;
+    }
+
+    /**
+     * @param int $value
+     */
+    public function changeRankBy($value)
+    {
+        $this->rank += $value;
     }
 }

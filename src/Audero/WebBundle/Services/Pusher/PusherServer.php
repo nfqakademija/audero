@@ -8,14 +8,27 @@ use Ratchet\Wamp\Topic;
 use Ratchet\Wamp\WampServerInterface;
 use Symfony\Component\Security\Core\SecurityContext;
 
+/**
+ * Class PusherServer
+ * @package Audero\WebBundle\Services\Pusher
+ */
 class PusherServer implements WampServerInterface, OutputInterface {
 
+    /**
+     * @var ConnectionManager
+     */
     protected $cm;
 
+    /**
+     * @param ConnectionManager $cm
+     */
     public function __construct(ConnectionManager $cm) {
         $this->cm = $cm;
     }
 
+    /**
+     * @param ConnectionInterface $conn
+     */
     public function onOpen(ConnectionInterface $conn) {
         if(!$this->cm->hasPermissions($conn)) {
             $this->error("PusherServer", "Rejected connection (Permissions)");
@@ -31,6 +44,10 @@ class PusherServer implements WampServerInterface, OutputInterface {
 
         $this->notification("PusherServer", "Added new connection");
     }
+
+    /**
+     * @param ConnectionInterface $conn
+     */
     public function onClose(ConnectionInterface $conn) {
         try{
             $this->cm->removeConnection($conn);
@@ -41,6 +58,11 @@ class PusherServer implements WampServerInterface, OutputInterface {
 
         $this->notification("PusherServer", "Removed connection");
     }
+
+    /**
+     * @param ConnectionInterface $conn
+     * @param Topic|string $topic
+     */
     public function onSubscribe(ConnectionInterface $conn, $topic) {
         if(!$this->cm->hasPermissions($conn, $topic)) {
             $this->error("PusherServer", "Rejected subscription");
@@ -59,23 +81,56 @@ class PusherServer implements WampServerInterface, OutputInterface {
         }
 
     }
+
+    /**
+     * @param ConnectionInterface $conn
+     * @param Topic|string $topic
+     */
     public function onUnSubscribe(ConnectionInterface $conn, $topic) {
         $conn->close();
     }
+
+    /**
+     * @param ConnectionInterface $conn
+     * @param string $id
+     * @param Topic|string $topic
+     * @param array $params
+     */
     public function onCall(ConnectionInterface $conn, $id, $topic, array $params) {
         $conn->callError($id, $topic, 'You are not allowed to make calls')->close();
     }
+
+    /**
+     * @param ConnectionInterface $conn
+     * @param Topic|string $topic
+     * @param string $event
+     * @param array $exclude
+     * @param array $eligible
+     */
     public function onPublish(ConnectionInterface $conn, $topic, $event, array $exclude, array $eligible) {
         $conn->close();
     }
+
+    /**
+     * @param ConnectionInterface $conn
+     * @param \Exception $e
+     */
     public function onError(ConnectionInterface $conn, \Exception $e) {
     }
 
+    /**
+     * @param $entity
+     * @param $text
+     */
     public function error($entity, $text)
     {
         echo "{$entity} Error: ".$text."\n";
     }
 
+    /**
+     * @param $entity
+     * @param $text
+     */
     public function notification($entity, $text)
     {
         echo "{$entity}: ".$text."\n";

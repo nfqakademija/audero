@@ -23,7 +23,8 @@
         "knplabs/knp-menu-bundle": "~2.0",
         "cboden/ratchet": "0.3.*",
         "react/zmq": "0.2.*|0.3.*",
-        "cocur/slugify": "@stable"
+        "cocur/slugify": "@stable",
+        "symfony/event-dispatcher": "~2.6"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3"

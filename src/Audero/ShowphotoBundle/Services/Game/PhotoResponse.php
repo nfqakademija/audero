@@ -5,35 +5,66 @@ namespace Audero\ShowphotoBundle\Services\Game;
 use Audero\BackendBundle\Entity\Options;
 use Audero\ShowphotoBundle\Form\PhotoResponseType;
 use Audero\ShowphotoBundle\Services\Uploader\Imgur;
+use Audero\WebBundle\Services\Pusher\PusherQueue;
 use Symfony\Component\Form\FormFactory;
 use Symfony\Component\HttpFoundation\Request;
 use Audero\ShowphotoBundle\Entity\PhotoRequest;
 use Audero\ShowphotoBundle\Entity\PhotoResponse as Response;
-use Audero\ShowphotoBundle\Entity\Wish;
-use Cocur\Slugify\Slugify;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Security\Core\SecurityContext;
-use Symfony\Component\Validator\Constraints\DateTime;
 
+/**
+ * Class PhotoResponse
+ * @package Audero\ShowphotoBundle\Services\Game
+ */
 class PhotoResponse
 {
-
+    /**
+     * @var EntityManager
+     */
     private $em;
 
+    /**
+     * @var FormFactory
+     */
     private $factory;
 
+    /**
+     * @var Imgur
+     */
     private $uploader;
 
+    /**
+     * @var SecurityContext
+     */
     private $security;
 
-    public function __construct(EntityManager $em, FormFactory $factory, Imgur $uploader, SecurityContext $security)
+    /**
+     * @var PusherQueue
+     */
+    private $pQueue;
+
+    /**
+     * @param EntityManager $em
+     * @param FormFactory $factory
+     * @param Imgur $uploader
+     * @param SecurityContext $security
+     * @param PusherQueue $pQueue
+     */
+    public function __construct(EntityManager $em, FormFactory $factory, Imgur $uploader, SecurityContext $security, PusherQueue $pQueue)
     {
         $this->em = $em;
         $this->factory = $factory;
         $this->uploader = $uploader;
         $this->security = $security;
+        $this->pQueue = $pQueue;
     }
 
+    /**
+     * @param Request $request
+     * @return Response
+     * @throws \Exception
+     */
     public function handlePhotoResponse(Request $request)
     {
         if (!($user = $this->security->getToken()->getUser())) {
@@ -83,7 +114,9 @@ class PhotoResponse
         throw new \Exception('Response from image storage is not valid');
     }
 
-
+    /**
+     * @param Response $response
+     */
     public function broadcast(Response $response)
     {
         $data = array(
@@ -98,12 +131,13 @@ class PhotoResponse
             )
         );
 
-        $context = new \ZMQContext();
-        $socket = $context->getSocket(\ZMQ::SOCKET_PUSH, 'pusher');
-        $socket->connect("tcp://127.0.0.1:5555");
-        $socket->send(json_encode($data));
+        $this->pQueue->add($data);
     }
 
+    /**
+     * @param PhotoRequest $request
+     * @return \DateTime|null
+     */
     private function getValidUntil(PhotoRequest $request)
     {
         /** @var Options $options */

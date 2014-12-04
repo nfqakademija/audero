@@ -5,12 +5,22 @@ namespace Audero\WebBundle\Services\Pusher;
 use React\Socket\ConnectionInterface;
 use Ratchet\Wamp\ServerProtocol as WAMP;
 
+/**
+ * Class Pusher
+ * @package Audero\WebBundle\Services\Pusher
+ */
 class Pusher extends PusherServer {
 
+    /**
+     * @param ConnectionManager $cm
+     */
     public function __construct(ConnectionManager $cm) {
         parent::__construct($cm);
     }
 
+    /**
+     * @param $jsonPacket
+     */
     public function execute($jsonPacket) {
         $packet = json_decode($jsonPacket);
         if(!$packet){
@@ -30,6 +40,9 @@ class Pusher extends PusherServer {
         }
     }
 
+    /**
+     * @param $data
+     */
     private function push($data) {
         if(!$data){
             $this->error("Pusher", "Pusher push: null data reveived"); return;
@@ -47,6 +60,11 @@ class Pusher extends PusherServer {
     }
 
     // TODO parameters to conn, data
+    /**
+     * @param ConnectionInterface $conn
+     * @param $topic
+     * @param $data
+     */
     private function send(ConnectionInterface $conn, $topic, $data) {
         $conn->send(json_encode(array(WAMP::MSG_EVENT, (string) $topic, $data)));
     }

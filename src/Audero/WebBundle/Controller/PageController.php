@@ -2,6 +2,9 @@
 
 namespace Audero\WebBundle\Controller;
 
+use Audero\ShowphotoBundle\Entity\Rating;
+use Audero\ShowphotoBundle\Event\FilterRatingEvent;
+use Audero\ShowphotoBundle\RatingEvents;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;

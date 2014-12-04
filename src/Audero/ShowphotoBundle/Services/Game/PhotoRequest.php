@@ -48,8 +48,10 @@ class PhotoRequest {
      * @return array
      */
     private function generatePlayersRequest() {
-        var_dump("TO DO FROM PLAYERS"); die;
-        return $this->createRequest(new Wish());
+        $players = (array) $this->em->getRepository("AuderoShowphotoBundle:Player")->findOrderedByRank();
+        foreach($players as $player)  {
+
+        }
     }
 
     /**
@@ -57,14 +59,16 @@ class PhotoRequest {
      * @return array
      */
     private function createRequest(Wish $wish) {
-        // TODO MOVE TO SERVICE
-        $slugify = new Slugify();
-        //
         $request = new Request();
         $request->setTitle($wish->getTitle())
             ->setUser($wish->getUser())
-            ->setSlug($slugify->slugify($wish->getTitle()));
+            ->setSlug($this->createSlug($wish));
 
         return array('request' => $request, 'wish' => $wish);
+    }
+
+    public function createSlug(Wish $wish) {
+        $slugify = new Slugify();
+        return $slugify->slugify($wish->getTitle().' '.$wish->getUser()->getUsername());
     }
 } 

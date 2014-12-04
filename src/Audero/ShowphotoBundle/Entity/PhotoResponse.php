@@ -5,7 +5,7 @@ namespace Audero\ShowphotoBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-
+//TODO check win
 /**
  * @ORM\Table(name="photo_response")
  * @ORM\Entity(repositoryClass="Audero\ShowphotoBundle\Repository\PhotoResponseRepository")
@@ -104,6 +104,24 @@ class PhotoResponse
      */
     private $photoFile;
 
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="likes", type="integer")
+     */
+    private $likes;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="dislikes", type="integer")
+     */
+    private $dislikes;
+
+    /**
+     * @var \Audero\ShowphotoBundle\Entity\Winner
+     */
+    private $win;
 
     /**
      * Constructor
@@ -115,10 +133,36 @@ class PhotoResponse
     }
 
     /**
-     * @var \Audero\ShowphotoBundle\Entity\Win
+     * @return int
      */
-    private $win;
+    public function getDislikes()
+    {
+        return $this->dislikes;
+    }
 
+    /**
+     * @param int $dislikes
+     */
+    public function setDislikes($dislikes)
+    {
+        $this->dislikes = $dislikes;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLikes()
+    {
+        return $this->likes;
+    }
+
+    /**
+     * @param int $likes
+     */
+    public function setLikes($likes)
+    {
+        $this->likes = $likes;
+    }
 
     /**
      * Get id
@@ -487,5 +531,12 @@ class PhotoResponse
         }
 
         return $count;
+    }
+
+    /**
+     * @return int
+     */
+    public function getRatingValue() {
+        return $this->getPositiveRatingsCount() - $this->getNegativeRatingsCount();
     }
 }

@@ -15,7 +15,7 @@
                     <div class="panel panel-default">
                         <div class="panel-heading">Decide image fate</div>
                         <div class="panel-body">
-                            <p><a href="#" id="like_button" class="btn btn-default btn-lg btn-block" data-id="{{ response.photoId }}" data-rate="1">Like</a></p>
+                            <p><a href="#" id="like_button" class="btn btn-default btn-lg btn-block" data-request_slug="{{ request.slug}}" data-response_author="{{ response.user.username}}" data-rate="1">Like</a></p>
                             <p class="text-center">
                                 <a href="#" class="btn btn-info">Share</a>
                                 <a href="#" class="btn btn-warning">Report</a>
@@ -57,15 +57,15 @@
     $('#like_button').click(function(){
         $.ajax({
             type: "POST",
-            url: '/app_dev.php/rating/create',
-            data: {photo_id: $(this).data('id'), rate: $(this).data('rate')}
+            url: '/app_dev.php/rating/like',
+            data: {request_slug: $(this).data('request_slug'), response_author: $(this).data('response_author'), rate: $(this).data('rate')}
         });
     });
 
     $('#dislike_button').click(function(){
         $.ajax({
             type: "POST",
-            url: '/app_dev.php/rating/create',
+            url: '/app_dev.php/rating/',
             data: {photo_id: $(this).data('id'), rate: $(this).data('rate')}
         });
     });
