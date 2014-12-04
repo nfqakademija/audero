@@ -20,7 +20,7 @@ class PageController extends Controller
     /**
      * Displays photos-responses
      *
-     * @Route("/", name="web_index")
+     * @Route("/", name="web_page_index")
      * @Template()
      */
     public function indexAction()
@@ -30,4 +30,54 @@ class PageController extends Controller
             'requests' => $requests
         ));
     }
+
+    /**
+     * Displays request with it's photos
+     *
+     * @Route("/{slug}", name="web_page_showRequest")
+     * @Template()
+     */
+    public function showRequestAction($slug)
+    {
+        $request = $this->getDoctrine()->getRepository("AuderoShowphotoBundle:PhotoRequest")->findOneBy(array('slug'=>$slug));
+        if(!$request) {
+            return $this->redirect($this->generateUrl("web_page_index"));
+        }
+
+        return $this->render('AuderoWebBundle:Page:request.html.twig', array(
+            'request' => $request
+        ));
+    }
+
+    /**
+     * Displays single response
+     *
+     * @Route("/{slug}/{author}", name="web_page_showResponse")
+     * @Template()
+     */
+    public function showResponseAction($slug, $author)
+    {
+        $request = $this->getDoctrine()->getRepository("AuderoShowphotoBundle:PhotoRequest")->findOneBy(array('slug'=>$slug));
+        if(!$request) {
+            return $this->redirect($this->generateUrl("web_page_index"));
+        }
+
+        $author = $this->getDoctrine()->getRepository("AuderoShowphotoBundle:User")->findOneBy(array('username'=>$author));
+        if(!$author) {
+            return $this->redirect($this->generateUrl("web_page_showRequest"));
+        }
+
+        $response = $this->getDoctrine()->getRepository("AuderoShowphotoBundle:PhotoResponse")->findOneBy(array('request'=>$request, 'user'=>$author));
+        if(!$response) {
+            return $this->redirect($this->generateUrl("web_page_showRequest"));
+        }
+
+        return $this->render('AuderoWebBundle:Page:response.html.twig', array(
+            'response' => $response
+        ));
+    }
+
+
+
+
 }
