@@ -2,6 +2,7 @@
 
 namespace Audero\WebBundle\Services\Pusher;
 
+use Audero\ShowphotoBundle\Entity\User;
 use Audero\WebBundle\Entity\UserConnection;
 use Audero\WebBundle\Entity\UserSubscription;
 use Doctrine\ORM\EntityManager;
@@ -29,11 +30,13 @@ class ConnectionManager {
      */
     protected $connections = array();
 
+    /**
+     * @param EntityManager $em
+     */
     public function  __construct(EntityManager $em) {
         $this->em = $em;
         $this->topics = array(
-            'game_request'=> new Topic('game_request'),
-            'game_response' => new Topic('game_response'),
+            'game'=> new Topic('game'),
             'chat' => new Topic('chat'),
             'rating' => new Topic('rating')
         );
@@ -46,7 +49,8 @@ class ConnectionManager {
      * @param Topic $topic
      * @return bool
      */
-    public function hasPermissions(ConnectionInterface $conn, Topic $topic =null) {
+    public function hasPermissions(ConnectionInterface $conn, Topic $topic=null) {
+        /*For this moment*/
         return true;
     }
 
@@ -62,19 +66,19 @@ class ConnectionManager {
         return null;
     }
 
-
     /**
      * @param ConnectionInterface $conn
      * @return UserConnection
      * @throws \Exception
      */
     public function addConnection(ConnectionInterface $conn) {
+        /**@var User $user*/
         $user = $this->extractUserFromSession($conn);
 
         $userConnection = new UserConnection();
-        $userConnection->setResourceId($conn->resourceId);
-        $userConnection->setUser($user);
-
+        $userConnection->setResourceId($conn->resourceId)
+                        ->setUser($user)
+                        ->setIp($conn->remoteAddress);
         try{
             $this->em->persist($userConnection);
             $this->em->flush();
@@ -102,6 +106,7 @@ class ConnectionManager {
      */
     public function removeConnection(ConnectionInterface $conn) {
         unset($this->connections[$conn->resourceId]);
+        /**@var Topic $topic*/
         foreach($this->topics as $id => $topic) {
             $topic->remove($conn);
         }
@@ -125,6 +130,12 @@ class ConnectionManager {
         $conn->close();
     }
 
+    /**
+     * @param ConnectionInterface $conn
+     * @param Topic $topic
+     * @return UserSubscription
+     * @throws \Exception
+     */
     public function addSubscription(ConnectionInterface $conn, Topic $topic) {
         $topic = $this->getTopicById($topic->getId());
         if(!$topic) {

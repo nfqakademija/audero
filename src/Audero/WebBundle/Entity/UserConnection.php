@@ -2,6 +2,7 @@
 
 namespace Audero\WebBundle\Entity;
 
+use Audero\ShowphotoBundle\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -32,6 +33,13 @@ class UserConnection
      * @ORM\Column(name="resource_id", type="integer", unique=true)
      */
     private $resourceId;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="ip", type="string", length=255)
+     */
+    private $ip;
 
     /**
      * @ORM\OneToMany(targetEntity="Audero\WebBundle\Entity\UserSubscription", mappedBy="connection", cascade={"persist","remove"})
@@ -109,10 +117,10 @@ class UserConnection
     /**
      * Set user
      *
-     * @param \Audero\ShowphotoBundle\Entity\User $user
+     * @param User $user
      * @return UserConnection
      */
-    public function setUser(\Audero\ShowphotoBundle\Entity\User $user = null)
+    public function setUser(User $user = null)
     {
         $this->user = $user;
 
@@ -122,7 +130,7 @@ class UserConnection
     /**
      * Get user
      *
-     * @return \Audero\ShowphotoBundle\Entity\User 
+     * @return User
      */
     public function getUser()
     {
@@ -130,26 +138,26 @@ class UserConnection
     }
 
     /**
-     * Add subscriptions
+     * Add subscription
      *
-     * @param \Audero\WebBundle\Entity\UserSubscription $subscriptions
+     * @param UserSubscription $subscription
      * @return UserConnection
      */
-    public function addSubscription(\Audero\WebBundle\Entity\UserSubscription $subscriptions)
+    public function addSubscription(UserSubscription $subscription)
     {
-        $this->subscriptions[] = $subscriptions;
+        $this->subscriptions[] = $subscription;
 
         return $this;
     }
 
     /**
-     * Remove subscriptions
+     * Remove subscription
      *
-     * @param \Audero\WebBundle\Entity\UserSubscription $subscriptions
+     * @param UserSubscription $subscription
      */
-    public function removeSubscription(\Audero\WebBundle\Entity\UserSubscription $subscriptions)
+    public function removeSubscription(UserSubscription $subscription)
     {
-        $this->subscriptions->removeElement($subscriptions);
+        $this->subscriptions->removeElement($subscription);
     }
 
     /**
@@ -160,5 +168,21 @@ class UserConnection
     public function getSubscriptions()
     {
         return $this->subscriptions;
+    }
+
+    /**
+     * @return string
+     */
+    public function getIp()
+    {
+        return $this->ip;
+    }
+
+    /**
+     * @param string $ip
+     */
+    public function setIp($ip)
+    {
+        $this->ip = $ip;
     }
 }
