@@ -1,16 +1,14 @@
 services:
-    chat:
-        class: Audero\WebBundle\Chat\Chat
-    web.form.type.wish.list:
-        class: Audero\WebBundle\Form\WishListType
-        arguments: [ @router ]
-        tags:
-            - { name: form.type, alias: wish_list}
     pusher.connection.manager:
-        class:  Audero\WebBundle\Services\Pusher\ConnectionManager
+        class:  Audero\WebBundle\Services\Pusher\Pusher\ConnectionManager
         arguments: ["@doctrine.orm.default_entity_manager"]
+        public: false;
+    pusher:
+        class:  Audero\WebBundle\Services\Pusher\Pusher\Pusher
+        arguments: ["@pusher.connection.manager"]
     pusher.queue:
         class:  Audero\WebBundle\Services\Pusher\PusherQueue
-    pusher:
-        class:  Audero\WebBundle\Services\Pusher\Pusher
-        arguments: ["@pusher.connection.manager"]
+    pusher.connection:
+        class:  Audero\WebBundle\Services\Pusher\Connection
+        arguments: ["@pusher.queue"]
+

@@ -1,6 +1,6 @@
 <?php
 
-namespace Audero\WebBundle\Services\Pusher;
+namespace Audero\WebBundle\Services\Pusher\Pusher;
 
 interface OutputInterface {
 

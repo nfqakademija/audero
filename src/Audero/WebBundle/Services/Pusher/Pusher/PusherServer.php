@@ -1,6 +1,6 @@
 <?php
 
-namespace Audero\WebBundle\Services\Pusher;
+namespace Audero\WebBundle\Services\Pusher\Pusher;
 
 use Ratchet\ConnectionInterface;
 use Ratchet\Wamp\Topic;
@@ -11,7 +11,8 @@ use Symfony\Component\Security\Core\SecurityContext;
  * Class PusherServer
  * @package Audero\WebBundle\Services\Pusher
  */
-class PusherServer implements WampServerInterface, OutputInterface {
+class PusherServer implements WampServerInterface, OutputInterface
+{
 
     /**
      * @var ConnectionManager
@@ -21,24 +22,29 @@ class PusherServer implements WampServerInterface, OutputInterface {
     /**
      * @param ConnectionManager $cm
      */
-    public function __construct(ConnectionManager $cm) {
+    public function __construct(ConnectionManager $cm)
+    {
         $this->cm = $cm;
+        $cm->clearConnectionsFromDatabase();
     }
 
     /**
      * @param ConnectionInterface $conn
      */
-    public function onOpen(ConnectionInterface $conn) {
-        if(!$this->cm->hasPermissions($conn)) {
+    public function onOpen(ConnectionInterface $conn)
+    {
+        if (!$this->cm->hasPermissions($conn)) {
             $this->error("PusherServer", "Rejected connection (Permissions)");
-            $conn->close(); return;
+            $conn->close();
+            return;
         }
 
-        try{
+        try {
             $this->cm->addConnection($conn);
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             $this->error("PusherServer", $e->getMessage());
-            $conn->close(); die;
+            $conn->close();
+            die;
         }
 
         $this->notification("PusherServer", "Added new connection");
@@ -47,12 +53,13 @@ class PusherServer implements WampServerInterface, OutputInterface {
     /**
      * @param ConnectionInterface $conn
      */
-    public function onClose(ConnectionInterface $conn) {
-        try{
+    public function onClose(ConnectionInterface $conn)
+    {
+        try {
             $this->cm->removeConnection($conn);
-        }catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->error("PusherServer", $e->getMessage());
-            $conn->close(); die;
+            die;
         }
 
         $this->notification("PusherServer", "Removed connection");
@@ -62,24 +69,26 @@ class PusherServer implements WampServerInterface, OutputInterface {
      * @param ConnectionInterface $conn
      * @param Topic|string $topic
      */
-    public function onSubscribe(ConnectionInterface $conn, $topic) {
-        if(!$this->cm->hasPermissions($conn, $topic)) {
-            $this->error("PusherServer", "Rejected subscription");
-            $conn->close(); return;
+    public function onSubscribe(ConnectionInterface $conn, $topic)
+    {
+        if (!$this->cm->hasPermissions($conn, $topic)) {
+            $this->error("PusherServer", "Rejected subscription (Permissions)");
+            $conn->close();
+            return;
         }
 
-        try{
-            if($this->cm->addSubscription($conn, $topic)) {
+        try {
+            if ($this->cm->addSubscription($conn, $topic)) {
                 $this->notification("PusherServer", "Added new subscription");
-            }else{
+            } else {
                 $this->error("PusherServer", "User tried to subscribe to not existing topic");
                 $conn->close();
             }
-        }catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->error("PusherServer", $e->getMessage());
-            $conn->close(); die;
+            $conn->close();
+            die;
         }
-
     }
 
     /**
@@ -88,7 +97,8 @@ class PusherServer implements WampServerInterface, OutputInterface {
      * @param ConnectionInterface $conn
      * @param Topic|string $topic
      */
-    public function onUnSubscribe(ConnectionInterface $conn, $topic) {
+    public function onUnSubscribe(ConnectionInterface $conn, $topic)
+    {
         $conn->close();
     }
 
@@ -98,7 +108,8 @@ class PusherServer implements WampServerInterface, OutputInterface {
      * @param Topic|string $topic
      * @param array $params
      */
-    public function onCall(ConnectionInterface $conn, $id, $topic, array $params) {
+    public function onCall(ConnectionInterface $conn, $id, $topic, array $params)
+    {
         $conn->callError($id, $topic, 'You are not allowed to make calls')->close();
     }
 
@@ -109,7 +120,8 @@ class PusherServer implements WampServerInterface, OutputInterface {
      * @param array $exclude
      * @param array $eligible
      */
-    public function onPublish(ConnectionInterface $conn, $topic, $event, array $exclude, array $eligible) {
+    public function onPublish(ConnectionInterface $conn, $topic, $event, array $exclude, array $eligible)
+    {
         $conn->close();
     }
 
@@ -117,7 +129,8 @@ class PusherServer implements WampServerInterface, OutputInterface {
      * @param ConnectionInterface $conn
      * @param \Exception $e
      */
-    public function onError(ConnectionInterface $conn, \Exception $e) {
+    public function onError(ConnectionInterface $conn, \Exception $e)
+    {
     }
 
     /**
@@ -126,7 +139,7 @@ class PusherServer implements WampServerInterface, OutputInterface {
      */
     public function error($entity, $text)
     {
-        echo "{$entity} Error: ".$text."\n";
+        echo "{$entity} Error: " . $text . "\n";
     }
 
     /**
@@ -135,6 +148,6 @@ class PusherServer implements WampServerInterface, OutputInterface {
      */
     public function notification($entity, $text)
     {
-        echo "{$entity}: ".$text."\n";
+        echo "{$entity}: " . $text . "\n";
     }
 }
