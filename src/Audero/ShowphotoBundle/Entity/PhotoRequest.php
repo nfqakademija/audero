@@ -94,10 +94,10 @@ class PhotoRequest
     /**
      * Set user
      *
-     * @param \Audero\ShowphotoBundle\Entity\User $user
+     * @param User $user
      * @return PhotoRequest
      */
-    public function setUser(\Audero\ShowphotoBundle\Entity\User $user = null)
+    public function setUser(User $user = null)
     {
         $this->user = $user;
 
@@ -107,7 +107,7 @@ class PhotoRequest
     /**
      * Get user
      *
-     * @return \Audero\ShowphotoBundle\Entity\User
+     * @return User
      */
     public function getUser()
     {
@@ -117,10 +117,10 @@ class PhotoRequest
     /**
      * Add responses
      *
-     * @param \Audero\ShowphotoBundle\Entity\PhotoResponse $responses
+     * @param PhotoResponse $responses
      * @return PhotoRequest
      */
-    public function addResponse(\Audero\ShowphotoBundle\Entity\PhotoResponse $responses)
+    public function addResponse(PhotoResponse $responses)
     {
         $this->responses[] = $responses;
 
@@ -130,9 +130,9 @@ class PhotoRequest
     /**
      * Remove responses
      *
-     * @param \Audero\ShowphotoBundle\Entity\PhotoResponse $responses
+     * @param PhotoResponse $responses
      */
-    public function removeResponse(\Audero\ShowphotoBundle\Entity\PhotoResponse $responses)
+    public function removeResponse(PhotoResponse $responses)
     {
         $this->responses->removeElement($responses);
     }

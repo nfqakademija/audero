@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: rokas
- * Date: 14.12.3
- * Time: 15.19
- */
 
 namespace Audero\WebBundle\Services\Pusher;
-
 
 class PusherQueue {
 

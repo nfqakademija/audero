@@ -2,7 +2,6 @@
 
 namespace Audero\WebBundle\Services\Pusher;
 
-use Audero\WebBundle\Entity\UserConnection;
 use Ratchet\ConnectionInterface;
 use Ratchet\Wamp\Topic;
 use Ratchet\Wamp\WampServerInterface;
@@ -74,6 +73,7 @@ class PusherServer implements WampServerInterface, OutputInterface {
                 $this->notification("PusherServer", "Added new subscription");
             }else{
                 $this->error("PusherServer", "User tried to subscribe to not existing topic");
+                $conn->close();
             }
         }catch(\Exception $e) {
             $this->error("PusherServer", $e->getMessage());
@@ -83,6 +83,8 @@ class PusherServer implements WampServerInterface, OutputInterface {
     }
 
     /**
+     * Should be never called
+     *
      * @param ConnectionInterface $conn
      * @param Topic|string $topic
      */

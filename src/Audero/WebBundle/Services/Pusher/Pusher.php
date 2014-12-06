@@ -24,39 +24,39 @@ class Pusher extends PusherServer {
     public function execute($jsonPacket) {
         $packet = json_decode($jsonPacket);
         if(!$packet){
-            $this->error("Pusher", "Pusher execute: Received packet equals null"); return;
+            $this->error("Pusher", "Received packet equals null"); return;
         }
-        if(!isset($packet->command) || !isset($packet->data)) {
-            $this->error("Pusher", "Pusher execute: Received packet does not contain command or data"); return;
+        if(!isset($packet->command) || !isset($packet->topic) || !isset($packet->data)) {
+            $this->error("Pusher", "Received packet is not properly formatted"); return;
         }
 
         switch ($packet->command) {
             case 'push' :
-                $this->push($packet->data);
+                $this->push($packet->topic, $packet->data);
                 break;
             case 'send':
                // $this->send($packet->data);
                 break;
+            default:
+                $this->error("Pusher", "Received packet contains unknown command");
         }
     }
 
+
     /**
-     * @param $data
+     * @param $topicId
+     * @param null $data
      */
-    private function push($data) {
-        if(!$data){
-            $this->error("Pusher", "Pusher push: null data reveived"); return;
+    private function push($topicId, $data = null) {
+        if(!($topic = $this->cm->getTopicById($topicId))) {
+            $this->error("Pusher", "Topic ".$topicId." is unavailable"); return;
         }
 
-        if(!isset($data->topic) || !isset($data->data)) {
-            $this->error("Pusher", "Pusher push: Received data is not properly formatted"); return;
+        if(is_null($data)) {
+            $this->error("Pusher", "Received data equals null"); return;
         }
 
-        if(!($topic = $this->cm->getTopicById($data->topic))) {
-            $this->error("Pusher", "Pusher push: Topic ".$data->topic." is unavailable"); return;
-        }
-
-        $topic->broadcast($data->data);
+        $topic->broadcast($data);
     }
 
     // TODO parameters to conn, data

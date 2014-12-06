@@ -20,7 +20,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 class ChatController extends Controller
 {
     /**
-     * @Route("/chat", name="showphoto_chat")
+     * @Route("/chat", name="showphoto_chat_index")
      * @Method("GET")
      * @Template()
      */
@@ -33,7 +33,7 @@ class ChatController extends Controller
         $em = $this->getDoctrine()->getManager();
         $messages = $em->getRepository("AuderoShowphotoBundle:ChatMessage")->findAll();
         $form = $this->createForm(new ChatType(), new ChatMessage(), array(
-            "action" => $this->generateUrl('showphoto_chat_post_message')
+            "action" => $this->generateUrl('showphoto_chat_postMessage')
         ));
         return array(
             'messages' => $messages,
@@ -42,7 +42,7 @@ class ChatController extends Controller
     }
 
     /**
-     * @Route("/chat", name="showphoto_chat_post_message")
+     * @Route("/chat", name="showphoto_chat_postMessage")
      * @Method("POST")
      * @Template()
      */

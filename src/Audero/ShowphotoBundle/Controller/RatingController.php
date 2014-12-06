@@ -26,15 +26,15 @@ class RatingController extends Controller
     /**
      * Creates a new Rating entity.
      *
-     * @Route("/create", name="rating_create")
+     * @Route("/create", name="showphoto_rating_create")
      * @Method("POST")
      */
     public function createAction(Request $request)
     {
         $requestSlug = $request->get('request_slug', '');
         $responseAuthor = $request->get('response_author', '');
-        $rate = $request->get('rate') == 1 ? 1 : 0;
-
+        /*like or dislike*/
+        $rate = $request->get('rate') == 'true' ? true : false;
         $em = $this->getDoctrine()->getManager();
 
         if (!($user = $this->getUser())) {
@@ -47,12 +47,14 @@ class RatingController extends Controller
 
         if ($rating = $this->getStoredRating($user, $response)) {
             if ($rating->getRate() == $rate) {
-                return new JsonResponse(array("status" => "success", "message" => "You have already liked this photo"));
+                return new JsonResponse(array("status" => "success"));
             }
-
+            /*Updating rating*/
             $rating->setRate($rate);
-            $this->get('event_dispatcher')->dispatch(RatingEvents::RATE_PHOTO, new FilterRatingEvent($rating));
+            $em->persist($rating);
             $em->flush();
+
+            return new JsonResponse(array("status" => "success"));
         }
 
         /* Creating new rating */
@@ -60,6 +62,7 @@ class RatingController extends Controller
         $rating->setUser($user)
             ->setResponse($response)
             ->setRate($rate);
+
         try {
             $em->persist($rating);
             $em->flush();
@@ -71,6 +74,41 @@ class RatingController extends Controller
         /*$dispatcher = new EventDispatcher();
         $event = new FilterRatingEvent($rating);
         $dispatcher->dispatch(RatingEvents::RATE_PHOTO, $event);*/
+
+        //$this->get('event_dispatcher')->dispatch(RatingEvents::RATE_PHOTO, new FilterRatingEvent(new Rating()));
+
+        return new JsonResponse(array("status" => "success"));
+    }
+
+    /**
+     * Removes Rating entity.
+     *
+     * @Route("/remove", name="showphoto_rating_remove")
+     * @Method("POST")
+     */
+    public function removeAction(Request $request)
+    {
+        $requestSlug = $request->get('request_slug', '');
+        $responseAuthor = $request->get('response_author', '');
+
+        $em = $this->getDoctrine()->getEntityManager();
+
+        if (!($user = $this->getUser())) {
+            return new JsonResponse(array("status" => "failure", "message" => "Please sign in"));
+        }
+
+        if (!($response = $this->getStoredResponse($requestSlug, $responseAuthor))) {
+            return new JsonResponse(array("status" => "failure", "message" => "Photo could not be found"));
+        }
+
+        if ($rating = $this->getStoredRating($user, $response)) {
+            try {
+                $em->remove($rating);
+                $em->flush();
+            } catch (\Exception $e) {
+                throw new InternalErrorException();
+            }
+        };
 
         //$this->get('event_dispatcher')->dispatch(RatingEvents::RATE_PHOTO, new FilterRatingEvent(new Rating()));
 

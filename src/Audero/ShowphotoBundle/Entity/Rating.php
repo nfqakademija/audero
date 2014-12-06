@@ -51,10 +51,10 @@ class Rating
     /**
      * Set response
      *
-     * @param \Audero\ShowphotoBundle\Entity\PhotoResponse $response
+     * @param PhotoResponse $response
      * @return Rating
      */
-    public function setResponse(\Audero\ShowphotoBundle\Entity\PhotoResponse $response = null)
+    public function setResponse(PhotoResponse $response = null)
     {
         $this->response = $response;
 
@@ -64,7 +64,7 @@ class Rating
     /**
      * Get response
      *
-     * @return \Audero\ShowphotoBundle\Entity\PhotoResponse 
+     * @return PhotoResponse
      */
     public function getResponse()
     {
@@ -74,10 +74,10 @@ class Rating
     /**
      * Set user
      *
-     * @param \Audero\ShowphotoBundle\Entity\User $user
+     * @param User $user
      * @return Rating
      */
-    public function setUser(\Audero\ShowphotoBundle\Entity\User $user = null)
+    public function setUser(User $user = null)
     {
         $this->user = $user;
 
@@ -87,7 +87,7 @@ class Rating
     /**
      * Get user
      *
-     * @return \Audero\ShowphotoBundle\Entity\User
+     * @return User
      */
     public function getUser()
     {

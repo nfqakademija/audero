@@ -5,7 +5,7 @@ namespace Audero\ShowphotoBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-//TODO check win
+
 /**
  * @ORM\Table(name="photo_response")
  * @ORM\Entity(repositoryClass="Audero\ShowphotoBundle\Repository\PhotoResponseRepository")
@@ -109,19 +109,21 @@ class PhotoResponse
      *
      * @ORM\Column(name="likes", type="integer")
      */
-    private $likes;
+    private $likes = 0;
 
     /**
      * @var integer
      *
      * @ORM\Column(name="dislikes", type="integer")
      */
-    private $dislikes;
+    private $dislikes = 0;
 
     /**
-     * @var \Audero\ShowphotoBundle\Entity\Winner
+     * @var boolean
+     *
+     * @ORM\Column(name="winner", type="boolean")
      */
-    private $win;
+    private $winner;
 
     /**
      * Constructor
@@ -133,19 +135,37 @@ class PhotoResponse
     }
 
     /**
-     * @return int
+     * Get id
+     *
+     * @return integer
      */
-    public function getDislikes()
+    public function getId()
     {
-        return $this->dislikes;
+        return $this->id;
     }
 
     /**
-     * @param int $dislikes
+     * Set likes
+     *
+     * @param integer $likes
+     * @return PhotoResponse
      */
-    public function setDislikes($dislikes)
+    public function setLikes($likes)
     {
-        $this->dislikes = $dislikes;
+        $this->likes = $likes;
+
+        return $this;
+    }
+
+    /**
+     * @param int $value
+     * @return PhotoResponse
+     */
+    public function changeLikesValueBy($value)
+    {
+        $this->likes += $value;
+
+        return $this;
     }
 
     /**
@@ -157,21 +177,35 @@ class PhotoResponse
     }
 
     /**
-     * @param int $likes
+     * Set dislikes
+     *
+     * @param integer $dislikes
+     * @return PhotoResponse
      */
-    public function setLikes($likes)
+    public function setDislikes($dislikes)
     {
-        $this->likes = $likes;
+        $this->dislikes = $dislikes;
+
+        return $this;
     }
 
     /**
-     * Get id
-     *
-     * @return integer
+     * @param int $value
+     * @return PhotoResponse
      */
-    public function getId()
+    public function changeDisLikesValueBy($value)
     {
-        return $this->id;
+        $this->dislikes += $value;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getDislikes()
+    {
+        return $this->dislikes;
     }
 
     /**
@@ -269,10 +303,10 @@ class PhotoResponse
     /**
      * Set user
      *
-     * @param \Audero\ShowphotoBundle\Entity\User $user
+     * @param User $user
      * @return PhotoResponse
      */
-    public function setUser(\Audero\ShowphotoBundle\Entity\User $user = null)
+    public function setUser(User $user = null)
     {
         $this->user = $user;
 
@@ -282,7 +316,7 @@ class PhotoResponse
     /**
      * Get user
      *
-     * @return \Audero\ShowphotoBundle\Entity\User
+     * @return User
      */
     public function getUser()
     {
@@ -292,10 +326,10 @@ class PhotoResponse
     /**
      * Set request
      *
-     * @param \Audero\ShowphotoBundle\Entity\PhotoRequest $request
+     * @param PhotoRequest $request
      * @return PhotoResponse
      */
-    public function setRequest(\Audero\ShowphotoBundle\Entity\PhotoRequest $request = null)
+    public function setRequest(PhotoRequest $request = null)
     {
         $this->request = $request;
 
@@ -305,7 +339,7 @@ class PhotoResponse
     /**
      * Get request
      *
-     * @return \Audero\ShowphotoBundle\Entity\PhotoRequest
+     * @return PhotoRequest
      */
     public function getRequest()
     {
@@ -315,10 +349,10 @@ class PhotoResponse
     /**
      * Add ratings
      *
-     * @param \Audero\ShowphotoBundle\Entity\Rating $ratings
+     * @param Rating $ratings
      * @return PhotoResponse
      */
-    public function addRating(\Audero\ShowphotoBundle\Entity\Rating $ratings)
+    public function addRating(Rating $ratings)
     {
         $this->ratings[] = $ratings;
 
@@ -326,13 +360,13 @@ class PhotoResponse
     }
 
     /**
-     * Remove ratings
+     * Remove rating
      *
-     * @param \Audero\ShowphotoBundle\Entity\Rating $ratings
+     * @param Rating $rating
      */
-    public function removeRating(\Audero\ShowphotoBundle\Entity\Rating $ratings)
+    public function removeRating(Rating $rating)
     {
-        $this->ratings->removeElement($ratings);
+        $this->ratings->removeElement($rating);
     }
 
     /**
@@ -343,29 +377,6 @@ class PhotoResponse
     public function getRatings()
     {
         return $this->ratings;
-    }
-
-    /**
-     * Set win
-     *
-     * @param \Audero\ShowphotoBundle\Entity\Win $win
-     * @return PhotoResponse
-     */
-    public function setWin(\Audero\ShowphotoBundle\Entity\Win $win = null)
-    {
-        $this->win = $win;
-
-        return $this;
-    }
-
-    /**
-     * Get win
-     *
-     * @return \Audero\ShowphotoBundle\Entity\Win
-     */
-    public function getWin()
-    {
-        return $this->win;
     }
 
     /**
@@ -500,43 +511,25 @@ class PhotoResponse
     }
 
     /**
-     * Get positive ratings count
+     * Set rate
      *
-     * @return int
+     * @param boolean $win
+     * @return Rating
      */
-    public function getPositiveRatingsCount()
+    public function setWinner($win)
     {
-        $count = 0;
-        foreach ($this->ratings as $rating) {
-            if ($rating->getRate() == 1) {
-                $count++;
-            }
-        }
+        $this->winner = $win;
 
-        return $count;
+        return $this;
     }
 
     /**
-     * Get negative ratings count
+     * Is winner
      *
-     * @return int
+     * @return boolean
      */
-    public function getNegativeRatingsCount()
+    public function isWinner()
     {
-        $count = 0;
-        foreach ($this->ratings as $rating) {
-            if ($rating->getRate() == 0) {
-                $count++;
-            }
-        }
-
-        return $count;
-    }
-
-    /**
-     * @return int
-     */
-    public function getRatingValue() {
-        return $this->getPositiveRatingsCount() - $this->getNegativeRatingsCount();
+        return $this->winner;
     }
 }

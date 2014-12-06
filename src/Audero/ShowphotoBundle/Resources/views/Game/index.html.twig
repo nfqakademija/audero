@@ -5,8 +5,6 @@
 {% block body %}
     <hr>
 <div class="row">
-    <!-- Image view block
-          ================================================== -->
     <div class="col-md-8">
         <blockquote>
             <p id="request">{{ request.title }}</p>
@@ -15,16 +13,12 @@
         <hr>
         <div id="responses">
             {% for response in responses %}
-            <div class="col-md-4">
-                <p class="text-center">
-                    <img class="img-responsive" src="{{ response.photoLink }}">
-                </p>
-            </div>
-    {#            {% if loop|index mod 3 == 0 %}
-                    <p>&nbsp;</p>
-                {% endif %}#}
-
-        {% endfor %}
+                <div class="col-md-4">
+                    <p class="text-center">
+                        <img class="img-responsive" src="{{ response.photoLink }}">
+                    </p>
+                </div>
+            {% endfor %}
         </div>
     </div>
     <div class="col-md-4">
@@ -32,14 +26,13 @@
         {{ form_start(form_response, {'attr': {'target': 'uploadHandler'}}) }}
         {{ form_rest(form_response) }}
         {{ form_end(form_response) }}
-        <iframe name="uploadHandler" id="uploadHandler" src="{{ path('game_response_create') }}">
-
+        <iframe name="uploadHandler" id="uploadHandler" style="display: none" src="{{ path('game_response_create') }}">
         </iframe>
         <hr>
         <ul class="nav nav-tabs">
             <li class="active"><a href="#chat" data-toggle="tab">Chat</a></li>
             <li class=""><a href="#players" data-toggle="tab">Players</a></li>
-            <li class=""><a href="#wishes" data-toggle="tab">My wishes</a></li>
+            <li class=""><a href="#wishList" data-toggle="tab">My wishList</a></li>
         </ul>
         <div id="myTabContent" class="tab-content">
             <div class="tab-pane fade active in" id="chat">
@@ -47,18 +40,25 @@
             </div>
             <div class="tab-pane fade" id="players">
                 <ul class="list-unstyled">
-                    <li><span class="glyphicon glyphicon-user"></span> <span>Nick name</span></li>
+                    {% for player in players %}
+                    <li><a href="#"><i class="fa fa-user"></i> {{ player.user.username }}</a></li>
+                    {% endfor %}
                 </ul>
             </div>
-            <div class="tab-pane fade" id="wishes">
-                <form role="form">
-                    <div class="form-group">
-                        <input type="text" class="form-control" placeholder="Enter email">
-                    </div>
-                    <div class="form-group">
-                        <input type="text" class="form-control" placeholder="Enter email">
-                    </div>
-                </form>
+            <div class="tab-pane fade" id="wishList">
+                <div id="wish-list-errors">
+                </div>
+                <span id="wishes">
+                    {% for i in 1..wishListSize %}
+                        <p><input type="text" class="form-control"
+                              data-position="{{ i }}"
+                                {% if wishList[i] is defined  %}
+                                    value="{{ wishList[i].title }}"
+                                {% endif %}
+                              placeholder="Place your wish">
+                        </p>
+                    {% endfor %}
+                </span>
             </div>
         </div>
     </div>

@@ -2,17 +2,36 @@
 
 namespace Audero\ShowphotoBundle\Services\Game;
 
-use Audero\ShowphotoBundle\Entity\PhotoRequest as Request;
+use Audero\BackendBundle\Entity\Options;
+use Audero\ShowphotoBundle\Entity\PhotoRequest as PRequestEntity;
 use Audero\ShowphotoBundle\Entity\Wish;
+use Audero\WebBundle\Services\Pusher\PusherQueue;
 use Cocur\Slugify\Slugify;
 use Doctrine\ORM\EntityManager;
 
+/**
+ * Class PhotoRequest
+ * @package Audero\ShowphotoBundle\Services\Game
+ */
 class PhotoRequest {
 
+    /**
+     * @var EntityManager
+     */
     private $em;
 
-    public function __construct(EntityManager $em) {
+    /**
+     * @var PusherQueue
+     */
+    private $pusherQueue;
+
+    /**
+     * @param EntityManager $em
+     * @param PusherQueue $pusherQueue
+     */
+    public function __construct(EntityManager $em, PusherQueue $pusherQueue) {
         $this->em = $em;
+        $this->pusherQueue = $pusherQueue;
     }
 
     /**
@@ -21,27 +40,26 @@ class PhotoRequest {
      * @return array
      */
     public function generate() {
-        // finding newest request
-        $request = $this->em->getRepository('AuderoShowphotoBundle:PhotoRequest')->findNewest();
-        if(!$request) {
+        /*Finding newest photo request*/
+        $pRequestEntity = $this->em->getRepository('AuderoShowphotoBundle:PhotoRequest')->findNewest();
+        if(!$pRequestEntity) {
             return $this->generatePlayersRequest();
         }
-
-        // finding it's best responses
-        $responses = $this->em->getRepository('AuderoShowphotoBundle:PhotoResponse')->findBest($request);
-        if (!$responses) {
-            return $this->generatePlayersRequest();
-        }
-        foreach($responses as $response) {
-            $wish = $this->em->getRepository('AuderoShowphotoBundle:Wish')->findUserFirstWish($response['response']->getUser());
-            if($wish) {
-                return $this->createRequest($wish);
+        /*finding it's best responses*/
+        $pResponses = $this->em->getRepository('AuderoShowphotoBundle:PhotoResponse')->findBestResponses($pRequestEntity);
+        if ($pResponses) {
+            foreach($pResponses as $pResponse) {
+                $wish = $this->em->getRepository('AuderoShowphotoBundle:Wish')->findUserFirstWish($pResponse['response']->getUser());
+                if($wish) {
+                    return $this->createRequest($wish);
+                }
             }
         }
 
         return $this->generatePlayersRequest();
     }
 
+    // TODO
     /**
      * Generates request from players wishes
      *
@@ -52,6 +70,8 @@ class PhotoRequest {
         foreach($players as $player)  {
 
         }
+
+        return $this->createRequest(new Wish());
     }
 
     /**
@@ -59,16 +79,60 @@ class PhotoRequest {
      * @return array
      */
     private function createRequest(Wish $wish) {
-        $request = new Request();
-        $request->setTitle($wish->getTitle())
+        $pResponseEntity = new PRequestEntity();
+        $pResponseEntity->setTitle($wish->getTitle())
             ->setUser($wish->getUser())
             ->setSlug($this->createSlug($wish));
 
-        return array('request' => $request, 'wish' => $wish);
+        return array('request' => $pResponseEntity, 'wish' => $wish);
     }
 
+    /**
+     * Creates photo request slug from wish title
+     *
+     * @param Wish $wish
+     * @return string
+     */
     public function createSlug(Wish $wish) {
         $slugify = new Slugify();
         return $slugify->slugify($wish->getTitle().' '.$wish->getUser()->getUsername());
+    }
+
+
+    /**
+     * @param pRequestEntity $pRequestEntity
+     */
+    public function broadcast(pRequestEntity $pRequestEntity)
+    {
+        $data = array(
+            'command' => 'push',
+            'data' => array(
+                'topic' => "game_request",
+                'data' => array(
+                    'requestTitle' => $pRequestEntity->getTitle(),
+                    'username' =>$pRequestEntity->getUser()->getUsername(),
+                    'validUntil' => $this->getValidUntil($pRequestEntity)
+                )
+            )
+        );
+
+        $this->pusherQueue->add($data);
+    }
+
+    /**
+     * Returns timestamp (valid Until) for photo request's Entity
+     *
+     * @param $pRequestEntity $request
+     * @return int|null
+     */
+    public function getValidUntil(pRequestEntity $pRequestEntity)
+    {
+        /** @var Options $options */
+        $options = $this->em->getRepository("AuderoBackendBundle:OptionsRecord")->findCurrent();
+        if (!$options) {
+            return null;
+        }
+
+        return $pRequestEntity->getDate()->add(new \DateInterval('PT' . $options->getTimeForResponse() . 'S'))->getTimestamp();
     }
 } 

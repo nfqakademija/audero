@@ -11,7 +11,6 @@ services:
         arguments: ["@doctrine.orm.default_entity_manager"]
     pusher.queue:
         class:  Audero\WebBundle\Services\Pusher\PusherQueue
-        arguments: ["@pusher.connection.manager"]
     pusher:
         class:  Audero\WebBundle\Services\Pusher\Pusher
         arguments: ["@pusher.connection.manager"]

@@ -2,6 +2,7 @@
 
 namespace Audero\WebBundle\Controller;
 
+use Audero\ShowphotoBundle\Entity\PhotoResponse;
 use Audero\ShowphotoBundle\Entity\Rating;
 use Audero\ShowphotoBundle\Event\FilterRatingEvent;
 use Audero\ShowphotoBundle\RatingEvents;
@@ -25,7 +26,7 @@ class PageController extends Controller
      */
     public function indexAction()
     {
-        $requests = $this->getDoctrine()->getManager()->getRepository("AuderoShowphotoBundle:PhotoRequest")->findAll();
+        $requests = $this->getDoctrine()->getRepository("AuderoShowphotoBundle:PhotoRequest")->findAll();
         return $this->render('AuderoWebBundle:Page:index.html.twig', array(
             'requests' => $requests
         ));
@@ -34,7 +35,7 @@ class PageController extends Controller
     /**
      * Displays request with it's photos
      *
-     * @Route("/{slug}", name="web_page_showRequest")
+     * @Route("/game/{slug}", name="web_page_showRequest")
      * @Template()
      */
     public function showRequestAction($slug)
@@ -52,7 +53,7 @@ class PageController extends Controller
     /**
      * Displays single response
      *
-     * @Route("/{slug}/{author}", name="web_page_showResponse")
+     * @Route("/game/{slug}/{author}", name="web_page_showResponse")
      * @Template()
      */
     public function showResponseAction($slug, $author)

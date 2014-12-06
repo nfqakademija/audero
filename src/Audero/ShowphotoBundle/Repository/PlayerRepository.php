@@ -13,7 +13,6 @@ use Doctrine\ORM\EntityRepository;
 class PlayerRepository extends EntityRepository
 {
     public function getPlayersCount() {
-        // TODO wtf ?
         return $this->getEntityManager()
             ->createQuery(
                 'SELECT count(p) FROM AuderoShowphotoBundle:Player p'
@@ -21,11 +20,13 @@ class PlayerRepository extends EntityRepository
             ->getResult()[0][1];
     }
 
-    public function findOrderedByRank() {
+    public function findAllOrderedByRank() {
         return $this->getEntityManager()
             ->createQuery(
-                'SELECT count(p) FROM AuderoShowphotoBundle:Player p'
+                'SELECT p
+                FROM AuderoShowphotoBundle:Player p JOIN p.user u
+                ORDER BY u.rate DESC'
             )
-            ->getResult()[0][1];
+            ->getResult();
     }
 }

@@ -19,6 +19,27 @@ $('form[name="showphoto_chat"]').submit(function( event ) {
     event.preventDefault();
 });
 
+$("#wishes > p > input").blur(function() {
+
+    var type = 'update';
+    if($(this).val() == '')
+        type = 'delete';
+
+    $.ajax({
+        type: "POST",
+        url: "/app_dev.php/wish/" + type,
+        data: { title: $(this).val() , position: $(this).data('position') }
+    })
+        .success(function(data) {
+            data = JSON.parse(data);
+            if(data.status == "failure") {
+                $('#wish-list-errors').html(data.message);
+            }else{
+                $('#wish-list-errors').html('');
+            }
+        });
+});
+
 /*
 $('form[name="audero_showphotobundle_photoresponse"]').submit(function( event ) {
     $.ajax( {
@@ -57,9 +78,12 @@ var conn = new ab.Session('ws://127.0.0.1:8080',
         });
         conn.subscribe('game_request', function(topic, data) {
             // This is where you would add the new article to the DOM (beyond the scope of this tutorial)
-            $( "#request" ).text(data.request);
-            $( "#user" ).text(data.user);
-            console.log(data.validUntil.date);
+            $( "#request" ).text(data.requestTitle);
+            $( "#user" ).text(data.username);
+            $("#timer").text(data.validUntil);
+
+            console.log(parseInt((parseInt(data.validUntil)*1000 - new Date().getTime())/1000));
+
         });
         conn.subscribe('game_response', function(topic, data) {
             $( "#responses" ).append("<div class='col-md-4'><p class='text-center'><img class='img-responsive' src='" + data.photoLink + "'></p></div>");

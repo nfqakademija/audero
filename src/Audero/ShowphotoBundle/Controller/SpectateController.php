@@ -9,7 +9,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 class SpectateController extends Controller
 {
     /**
-     * @Route("/spectate", name="showphoto_spectate")
+     * @Route("/spectate", name="showphoto_spectate_index")
      * @Template()
      */
     public function indexAction()

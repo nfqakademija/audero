@@ -4,10 +4,11 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     {% block stylesheets %}
-        {% stylesheets
+        {% stylesheets filter='cssrewrite'
         '@AuderoWebBundle/Resources/public/css/bootstrap.css'
         '@AuderoWebBundle/Resources/public/css/bootswatch.min.css'
         '@AuderoWebBundle/Resources/public/css/custom.css'
+        'font-awesome-4.1.0/css/font-awesome.min.css'
         %}
         <link rel="stylesheet" href="{{ asset_url }}" />
         {% endstylesheets %}

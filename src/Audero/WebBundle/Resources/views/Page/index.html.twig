@@ -15,7 +15,8 @@
                     <div class="panel panel-default">
                         <div class="panel-heading">Decide image fate</div>
                         <div class="panel-body">
-                            <p><a href="#" id="like_button" class="btn btn-default btn-lg btn-block" data-request_slug="{{ request.slug}}" data-response_author="{{ response.user.username}}" data-rate="1">Like</a></p>
+                            <p><a href="#" id="like_button" class="btn btn-default btn-lg btn-block" data-request_slug="{{ request.slug}}" data-response_author="{{ response.user.username}}" data-rate="1"><i class="fa fa-thumbs-up"></i>
+                                    Like</a></p>
                             <p class="text-center">
                                 <a href="#" class="btn btn-info">Share</a>
                                 <a href="#" class="btn btn-warning">Report</a>
@@ -30,12 +31,12 @@
                         <div class="panel-heading">Image points</div>
                         <div class="panel-body">
                             <div class="progress">
-                                {% if response.positiveRatingsCount + response.negativeRatingsCount > 0 %}
-                                    <div class="progress-bar progress-bar-success" style="width: {{ 100 * response.positiveRatingsCount / (response.positiveRatingsCount + response.negativeRatingsCount) }}%">
-                                        {{ response.positiveRatingsCount }}
+                                {% if response.likes + response.dislikes > 0 %}
+                                    <div class="progress-bar progress-bar-success" style="width: {{ 100 * response.likes / (response.likes + response.dislikes) }}%">
+                                        {{ response.likes }}
                                     </div>
-                                    <div class="progress-bar progress-bar-danger" style="width: {{ 100 - 100 * response.positiveRatingsCount / (response.positiveRatingsCount + response.negativeRatingsCount) }}%">
-                                        {{ response.negativeRatingsCount }}
+                                    <div class="progress-bar progress-bar-danger" style="width: {{ 100 - 100 * response.likes / (response.likes + response.dislikes) }}%">
+                                        {{ response.dislikes }}
                                     </div>
                                 {% endif %}
                             </div>
@@ -57,9 +58,12 @@
     $('#like_button').click(function(){
         $.ajax({
             type: "POST",
-            url: '/app_dev.php/rating/like',
-            data: {request_slug: $(this).data('request_slug'), response_author: $(this).data('response_author'), rate: $(this).data('rate')}
-        });
+            url: '/app_dev.php/rating/create',
+            data: {request_slug: $(this).data('request_slug'), response_author: $(this).data('response_author'), rate: true}
+        })
+        .success(function(data){
+            $('#like_button').css("border", "2px solid green");
+        })
     });
 
     $('#dislike_button').click(function(){
@@ -72,7 +76,7 @@
 
     var conn = new ab.Session('ws://127.0.0.1:8080',
             function() {
-                conn.subscribe('chat', function(topic, data) {
+                conn.subscribe('rating', function(topic, data) {
                     console.log(data);
                 });
             },

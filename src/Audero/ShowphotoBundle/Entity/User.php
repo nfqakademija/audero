@@ -2,13 +2,14 @@
 
 namespace Audero\ShowphotoBundle\Entity;
 
+use Audero\WebBundle\Entity\UserConnection;
 use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * @ORM\Entity
  * @ORM\Table(name="user")
+ * @ORM\Entity(repositoryClass="Audero\ShowphotoBundle\Repository\UserRepository")
  */
 class User extends BaseUser
 {
@@ -55,16 +56,11 @@ class User extends BaseUser
     protected $connections;
 
     /**
-     * @ORM\OneToMany(targetEntity="Audero\ShowphotoBundle\Entity\Winner", mappedBy="user")
-     **/
-    protected $wins;
-
-    /**
      * @var integer
      *
-     * @ORM\Column(name="rank", type="integer")
+     * @ORM\Column(name="rate", type="integer")
      */
-    protected $rank;
+    protected $rate = 0;
 
     /**
      *
@@ -76,9 +72,8 @@ class User extends BaseUser
         $this->responses = new ArrayCollection();
         $this->ratings = new ArrayCollection();
         $this->wishes = new ArrayCollection();
-        $this->messages = new ArrayCollection();
         $this->connections = new ArrayCollection();
-        $this->wins = new ArrayCollection();
+        $this->chatMessages = new ArrayCollection();
     }
 
     /**
@@ -92,25 +87,25 @@ class User extends BaseUser
     }
 
     /**
-     * Add requests
+     * Add request
      *
-     * @param \Audero\ShowphotoBundle\Entity\PhotoRequest $requests
+     * @param PhotoRequest $request
      * @return User
      */
-    public function addRequest(\Audero\ShowphotoBundle\Entity\PhotoRequest $requests)
+    public function addRequest(PhotoRequest $request)
     {
-        $this->requests[] = $requests;
+        $this->requests[] = $request;
         return $this;
     }
 
     /**
-     * Remove requests
+     * Remove request
      *
-     * @param \Audero\ShowphotoBundle\Entity\PhotoRequest $requests
+     * @param PhotoRequest $request
      */
-    public function removeRequest(\Audero\ShowphotoBundle\Entity\PhotoRequest $requests)
+    public function removeRequest(PhotoRequest $request)
     {
-        $this->requests->removeElement($requests);
+        $this->requests->removeElement($request);
     }
 
     /**
@@ -124,26 +119,26 @@ class User extends BaseUser
     }
 
     /**
-     * Add responses
+     * Add response
      *
-     * @param \Audero\ShowphotoBundle\Entity\PhotoResponse $responses
+     * @param PhotoResponse $response
      * @return User
      */
-    public function addResponse(\Audero\ShowphotoBundle\Entity\PhotoResponse $responses)
+    public function addResponse(PhotoResponse $response)
     {
-        $this->responses[] = $responses;
+        $this->responses[] = $response;
 
         return $this;
     }
 
     /**
-     * Remove responses
+     * Remove response
      *
-     * @param \Audero\ShowphotoBundle\Entity\PhotoResponse $responses
+     * @param PhotoResponse $response
      */
-    public function removeResponse(\Audero\ShowphotoBundle\Entity\PhotoResponse $responses)
+    public function removeResponse(PhotoResponse $response)
     {
-        $this->responses->removeElement($responses);
+        $this->responses->removeElement($response);
     }
 
     /**
@@ -157,26 +152,26 @@ class User extends BaseUser
     }
 
     /**
-     * Add wishes
+     * Add wish
      *
-     * @param \Audero\ShowphotoBundle\Entity\Wish $wishes
+     * @param Wish $wish
      * @return User
      */
-    public function addWish(\Audero\ShowphotoBundle\Entity\Wish $wishes)
+    public function addWish(Wish $wish)
     {
-        $this->wishes[] = $wishes;
+        $this->wishes[] = $wish;
 
         return $this;
     }
 
     /**
-     * Remove wishes
+     * Remove wish
      *
-     * @param \Audero\ShowphotoBundle\Entity\Wish $wishes
+     * @param Wish $wish
      */
-    public function removeWish(\Audero\ShowphotoBundle\Entity\Wish $wishes)
+    public function removeWish(Wish $wish)
     {
-        $this->wishes->removeElement($wishes);
+        $this->wishes->removeElement($wish);
     }
 
     /**
@@ -190,26 +185,26 @@ class User extends BaseUser
     }
 
     /**
-     * Add chatMessages
+     * Add chatMessage
      *
-     * @param \Audero\ShowphotoBundle\Entity\ChatMessage $chatMessages
+     * @param ChatMessage $chatMessage
      * @return User
      */
-    public function addChatMessage(\Audero\ShowphotoBundle\Entity\ChatMessage $chatMessages)
+    public function addChatMessage(ChatMessage $chatMessage)
     {
-        $this->chatMessages[] = $chatMessages;
+        $this->chatMessages[] = $chatMessage;
 
         return $this;
     }
 
     /**
-     * Remove chatMessages
+     * Remove chatMessage
      *
-     * @param \Audero\ShowphotoBundle\Entity\ChatMessage $chatMessages
+     * @param ChatMessage $chatMessage
      */
-    public function removeChatMessage(\Audero\ShowphotoBundle\Entity\ChatMessage $chatMessages)
+    public function removeChatMessage(ChatMessage $chatMessage)
     {
-        $this->chatMessages->removeElement($chatMessages);
+        $this->chatMessages->removeElement($chatMessage);
     }
 
     /**
@@ -225,10 +220,10 @@ class User extends BaseUser
     /**
      * Set player
      *
-     * @param \Audero\ShowphotoBundle\Entity\Player $player
+     * @param Player $player
      * @return User
      */
-    public function setPlayer(\Audero\ShowphotoBundle\Entity\Player $player = null)
+    public function setPlayer(Player $player = null)
     {
         $this->player = $player;
 
@@ -238,7 +233,7 @@ class User extends BaseUser
     /**
      * Get player
      *
-     * @return \Audero\ShowphotoBundle\Entity\Player 
+     * @return Player
      */
     public function getPlayer()
     {
@@ -246,59 +241,26 @@ class User extends BaseUser
     }
 
     /**
-     * Add wins
+     * Add rating
      *
-     * @param \Audero\ShowphotoBundle\Entity\Winner $wins
+     * @param Rating $rating
      * @return User
      */
-    public function addWin(\Audero\ShowphotoBundle\Entity\Winner $wins)
+    public function addRating(Rating $rating)
     {
-        $this->wins[] = $wins;
+        $this->ratings[] = $rating;
 
         return $this;
     }
 
     /**
-     * Remove wins
+     * Remove rating
      *
-     * @param \Audero\ShowphotoBundle\Entity\Winner $wins
+     * @param Rating $rating
      */
-    public function removeWin(\Audero\ShowphotoBundle\Entity\Winner $wins)
+    public function removeRating(Rating $rating)
     {
-        $this->wins->removeElement($wins);
-    }
-
-    /**
-     * Get wins
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getWins()
-    {
-        return $this->wins;
-    }
-
-    /**
-     * Add ratings
-     *
-     * @param \Audero\ShowphotoBundle\Entity\Rating $ratings
-     * @return User
-     */
-    public function addRating(\Audero\ShowphotoBundle\Entity\Rating $ratings)
-    {
-        $this->ratings[] = $ratings;
-
-        return $this;
-    }
-
-    /**
-     * Remove ratings
-     *
-     * @param \Audero\ShowphotoBundle\Entity\Rating $ratings
-     */
-    public function removeRating(\Audero\ShowphotoBundle\Entity\Rating $ratings)
-    {
-        $this->ratings->removeElement($ratings);
+        $this->ratings->removeElement($rating);
     }
 
     /**
@@ -314,24 +276,24 @@ class User extends BaseUser
     /**
      * Add connections
      *
-     * @param \Audero\WebBundle\Entity\UserConnection $connections
+     * @param UserConnection $connection
      * @return User
      */
-    public function addConnection(\Audero\WebBundle\Entity\UserConnection $connections)
+    public function addConnection(UserConnection $connection)
     {
-        $this->connections[] = $connections;
+        $this->connections[] = $connection;
 
         return $this;
     }
 
     /**
-     * Remove connections
+     * Remove connection
      *
-     * @param \Audero\WebBundle\Entity\UserConnection $connections
+     * @param \Audero\WebBundle\Entity\UserConnection $connection
      */
-    public function removeConnection(\Audero\WebBundle\Entity\UserConnection $connections)
+    public function removeConnection(UserConnection $connection)
     {
-        $this->connections->removeElement($connections);
+        $this->connections->removeElement($connection);
     }
 
     /**
@@ -345,71 +307,34 @@ class User extends BaseUser
     }
 
     /**
-     * Add subscriptions
+     * @return int
+     */
+    public function getRate()
+    {
+        return $this->rate;
+    }
+
+    /**
+     * @param int $rate
      *
-     * @param \Audero\WebBundle\Entity\UserSubscription $subscriptions
      * @return User
      */
-    public function addSubscription(\Audero\WebBundle\Entity\UserSubscription $subscriptions)
+    public function setRate($rate)
     {
-        $this->subscriptions[] = $subscriptions;
+        $this->rate = $rate;
 
         return $this;
     }
 
     /**
-     * Remove subscriptions
-     *
-     * @param \Audero\WebBundle\Entity\UserSubscription $subscriptions
-     */
-    public function removeSubscription(\Audero\WebBundle\Entity\UserSubscription $subscriptions)
-    {
-        $this->subscriptions->removeElement($subscriptions);
-    }
-
-    /**
-     * Get subscriptions
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getSubscriptions()
-    {
-        return $this->subscriptions;
-    }
-
-    /**
-     * @return int
-     */
-    public function getRating() {
-        $rating = 0;
-        foreach($this->responses as $response) {
-            $rating+= $response->getRatingValue();
-        }
-
-        return $rating;
-    }
-
-    /**
-     * @return int
-     */
-    public function getRank()
-    {
-        return $this->rank;
-    }
-
-    /**
-     * @param int $rank
-     */
-    public function setRank($rank)
-    {
-        $this->rank = $rank;
-    }
-
-    /**
      * @param int $value
+     *
+     * @return User
      */
-    public function changeRankBy($value)
+    public function changeRateBy($value)
     {
-        $this->rank += $value;
+        $this->rate += $value;
+
+        return $this;
     }
 }

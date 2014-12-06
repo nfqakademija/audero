@@ -38,10 +38,10 @@ class Player
     /**
      * Set user
      *
-     * @param \Audero\ShowphotoBundle\Entity\User $user
+     * @param User $user
      * @return Player
      */
-    public function setUser(\Audero\ShowphotoBundle\Entity\User $user = null)
+    public function setUser(User $user = null)
     {
         $this->user = $user;
 
@@ -51,7 +51,7 @@ class Player
     /**
      * Get user
      *
-     * @return \Audero\ShowphotoBundle\Entity\User 
+     * @return User
      */
     public function getUser()
     {

@@ -8,26 +8,33 @@
             <p class="text-center"><img class="img-circle" src="http://placehold.it/180x180" style="width: 180px; height: 180px;"></p>
             <p class="text-center"><strong>{{ app.user.username }}</strong></p>
             <p class="text-center">{{ app.user.email }}</p>
-            <p class="text-center">Your rank: 254</p>
+            <p class="text-center">Your rate: {{ app.user.rate }} Your rank: {{ rank }}</p>
         </div>
         <div class="col-md-8">
 
             <!--My request list-->
 
-            <h3>My requests list: </h3>
+            <h3>My wishes list: </h3>
             <hr>
             <div id="wish-list-errors">
             </div>
             <span id="wishes">
                 {% for i in 1..wishListSize %}
-                    {% if wishList[i] is defined %}
-                        <p><input type="text" class="form-control" data-position="{{ i }}" value="{{ wishList[i].title }}" placeholder="Place your wish"></p>
-                    {% else %}
-                        <p><input type="text" class="form-control" data-position="{{ i }}" placeholder="Place your wish"></p>
-                    {% endif %}
+                    <p><input type="text"
+                        {% if i > 3 %}
+                            {{ "class='form-control additional_wish' style='display:none'" }}
+                        {% else %}
+                            {{ "class='form-control'" }}
+                        {% endif %}
+                        data-position="{{ i }}"
+                        {% if wishList[i] is defined  %}
+                            value="{{ wishList[i].title }}"
+                        {% endif %}
+                        placeholder="Place your wish">
+                    </p>
                 {% endfor %}
             </span>
-            <p><a href="#" title="Add more requests">Show more</a></p>
+            <p><a id="show_more" href="#" title="Add more requests">Show more</a></p>
             <!-- My last requests -->
 
             <h3>My last requests: </h3>

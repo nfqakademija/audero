@@ -4,42 +4,45 @@ namespace Audero\ShowphotoBundle\Services\Game;
 
 use Audero\ShowphotoBundle\Services\OutputInterface;
 use Doctrine\ORM\EntityManager;
+use Symfony\Component\Validator\Constraints\DateTime;
 
 class Manager implements OutputInterface
 {
 
     private $em;
-    private $photoRequest;
+    private $pRequestService;
     private $playerManager;
 
-    public function __construct(EntityManager $em, PhotoRequest $photoRequest, PlayerManager $playerManager)
+    public function __construct(EntityManager $em, PhotoRequest $pRequestService, PlayerManager $playerManager)
     {
         $this->em = $em;
-        $this->photoRequest = $photoRequest;
+        $this->pRequestService = $pRequestService;
         $this->playerManager = $playerManager;
     }
 
     public function start()
     {
         while (true) {
-            // getting admin options
+            /*Getting admin options*/
             $options = $this->em->getRepository("AuderoBackendBundle:OptionsRecord")->findCurrent();
             if (!$options) {
                 $this->error("Admin options not found");
-                sleep(10);
+                sleep(5);
                 continue;
             }
 
-            // Generating new request
-            $data = $this->photoRequest->generate();
+            /*Generating new Request*/
+            $data = $this->pRequestService->generate();
             if (!isset($data['request']) || !isset($data['wish'])) {
-                $this->error("Could not get new request");
+                $this->error("Could not get newly generated request");
                 sleep(10);
                 continue;
             }
 
-            $request = $data['request'];
+            $pRequestEntity = $data['request'];
             $wish = $data['wish'];
+
+
 
             // wish -> request
             /*            try{
@@ -53,7 +56,12 @@ class Manager implements OutputInterface
 
             //
 
-            sleep($options->getTimeForResponse());
+            $this->pRequestService->broadcast($pRequestEntity);
+
+            // TODO
+            $date = new \DateTime('now');
+            $sleepTime = $this->pRequestService->getValidUntil($pRequestEntity) - $date->getTimestamp();
+            sleep($sleepTime);
         }
     }
 

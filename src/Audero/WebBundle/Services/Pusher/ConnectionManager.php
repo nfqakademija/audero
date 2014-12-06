@@ -34,7 +34,8 @@ class ConnectionManager {
         $this->topics = array(
             'game_request'=> new Topic('game_request'),
             'game_response' => new Topic('game_response'),
-            'chat' => new Topic('chat')
+            'chat' => new Topic('chat'),
+            'rating' => new Topic('rating')
         );
 
         $this->clearConnectionsFromDatabase();
@@ -129,7 +130,7 @@ class ConnectionManager {
         if(!$topic) {
             return null;
         }
-
+        /**@var UserConnection $storedConn */
         $storedConn = $this->em->getRepository("AuderoWebBundle:UserConnection")->findOneBy(array('resourceId' => $conn->resourceId));
         if(!$storedConn) {
             throw new \Exception("Connection for user's subscription was not found in database");
@@ -164,29 +165,6 @@ class ConnectionManager {
              ->execute();
     }
 
-    /* *
-     * Removing connection from topic's connections list
-     * Removing from database
-     * */
-/*    public function removeSubscription(ConnectionInterface $conn, Topic $topic) {
-        $topic = $this->isAvailable($topic);
-        if(!$topic) {
-            return null;
-        }
-
-        $topic->remove($conn);
-
-        $connection = $this->em->getRepository("AuderoWebBundle:UserConnection")->findOneBy(array('resourceId'=>$conn->resourceId));
-        if(!$connection) {
-            return null;
-        }
-        $subscription = $this->em->getRepository("AuderoWebBundle:UserSubscription")->findOneBy(array('connection'=>$connection, 'topic'=>$topic->getId()));
-        if($subscription) {
-            $this->em->remove($subscription);
-            $this->em->flush();
-        }
-    }*/
-
     /**
      * @param ConnectionInterface $conn
      * @return null|object
@@ -208,5 +186,4 @@ class ConnectionManager {
 
         return null;
     }
-
 }

@@ -19,9 +19,9 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 class ProfileController extends BaseController
 {
     /**
-     * @Route("/profile", name="web_profile_show")
+     * @Route("/profile", name="web_profile_index")
      */
-    public function showAction()
+    public function indexAction()
     {
         if(!($user = $this->getUser())) {
             throw new AccessDeniedException();
@@ -32,14 +32,15 @@ class ProfileController extends BaseController
             throw new InternalErrorException();
         }
 
-        $wishes = (array) $this->getDoctrine()->getRepository('AuderoShowphotoBundle:Wish')->findBy(array('user'=>$user));
+        $wishes = $this->getDoctrine()->getRepository('AuderoShowphotoBundle:Wish')->findBy(array('user'=>$user));
         $wishList = array();
         foreach($wishes as $wish) {
             $wishList[$wish->getPosition()] = $wish;
         }
         return $this->render('FOSUserBundle:Profile:show.html.twig', array(
             'wishList' => $wishList,
-            'wishListSize' => $options->getPlayerWishesCount()
+            'wishListSize' => $options->getPlayerWishesCount(),
+            'rank' => $this->getDoctrine()->getRepository("AuderoShowphotoBundle:user")->getRank($user)
         ));
     }
 }

@@ -58,7 +58,7 @@ class ChatMessage
      * Set text
      *
      * @param string $text
-     * @return Chat
+     * @return ChatMessage
      */
     public function setText($text)
     {
@@ -81,7 +81,7 @@ class ChatMessage
      * Set date
      *
      * @param \DateTime $date
-     * @return Chat
+     * @return ChatMessage
      */
     public function setDate($date)
     {
@@ -103,10 +103,10 @@ class ChatMessage
     /**
      * Set user
      *
-     * @param \Audero\ShowphotoBundle\Entity\User $user
-     * @return Chat
+     * @param User $user
+     * @return ChatMessage
      */
-    public function setUser(\Audero\ShowphotoBundle\Entity\User $user = null)
+    public function setUser(User $user = null)
     {
         $this->user = $user;
 
@@ -116,7 +116,7 @@ class ChatMessage
     /**
      * Get user
      *
-     * @return \Audero\ShowphotoBundle\Entity\User 
+     * @return User
      */
     public function getUser()
     {

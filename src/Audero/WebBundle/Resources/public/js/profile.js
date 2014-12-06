@@ -18,3 +18,7 @@ $("#wishes > p > input").blur(function() {
             }
         });
 });
+
+$('#show_more').click(function() {
+   $('.additional_wish').toggle();
+});
