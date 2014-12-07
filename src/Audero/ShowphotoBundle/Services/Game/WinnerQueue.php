@@ -38,7 +38,7 @@ class WinnerQueue {
      * @return ArrayCollection
      */
     public function generate(PRequestEntity $request) {
-        return $winnerQueue = $this->em->getRepository("AuderoShowphotoBundle:Player")->findWinnersQueue($request);
+        return $this->em->getRepository("AuderoShowphotoBundle:Player")->findWinnerQueue($request);
     }
 
 

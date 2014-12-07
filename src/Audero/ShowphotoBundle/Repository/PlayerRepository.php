@@ -30,7 +30,7 @@ class PlayerRepository extends EntityRepository
             ->getResult();
     }
 
-    public function findWinnersQueue($request) {
+    public function findWinnerQueue($request) {
         $result = $this->getEntityManager()
             ->createQuery(
                 'SELECT p, u.username as username, u.rate as rate, SUM(res.likes) as likes, SUM(res.dislikes) as dislikes, SUM(res.likes - res.dislikes) resRate

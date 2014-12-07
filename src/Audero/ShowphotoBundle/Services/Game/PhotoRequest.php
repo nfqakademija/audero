@@ -5,7 +5,7 @@ namespace Audero\ShowphotoBundle\Services\Game;
 use Audero\BackendBundle\Entity\Options;
 use Audero\ShowphotoBundle\Entity\PhotoRequest as PRequestEntity;
 use Audero\ShowphotoBundle\Entity\Player as PlayerEntity;
-use Audero\ShowphotoBundle\Entity\Wish;
+use Audero\ShowphotoBundle\Entity\Wish as WishEntity;
 use Audero\WebBundle\Services\Pusher\PusherQueue;
 use Cocur\Slugify\Slugify;
 use Doctrine\ORM\EntityManager;
@@ -79,10 +79,10 @@ class PhotoRequest {
     }
 
     /**
-     * @param Wish $wish
+     * @param WishEntity $wish
      * @return array
      */
-    private function createRequest(Wish $wish) {
+    private function createRequest(WishEntity $wish) {
         $pResponseEntity = new PRequestEntity();
         $pResponseEntity->setTitle($wish->getTitle())
             ->setUser($wish->getUser())
@@ -94,10 +94,10 @@ class PhotoRequest {
     /**
      * Creates photo request slug from wish title
      *
-     * @param Wish $wish
+     * @param WishEntity $wish
      * @return string
      */
-    public function createSlug(Wish $wish) {
+    public function createSlug(WishEntity $wish) {
         $slugify = new Slugify();
         return $slugify->slugify($wish->getTitle().' '.$wish->getUser()->getUsername());
     }

@@ -88,7 +88,11 @@ class Manager implements OutputInterface
                 sleep(10); continue;
             }
 
-            $this->wish->broadcast($requestEntity->getUser());
+            $user = $requestEntity->getUser();
+            if(!$user) {
+                $this->error("Failed to retrieve user from photoRequest"); die;
+            }
+            $this->wish->broadcast($user);
             $this->photoRequest->broadcast($requestEntity);
 
             /*waiting until request time finishes*/
