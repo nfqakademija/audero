@@ -20,7 +20,7 @@ class Player
     private $id;
 
     /**
-     * @ORM\OneToOne(targetEntity="Audero\ShowphotoBundle\Entity\User", inversedBy="player")
+     * @ORM\OneToOne(targetEntity="Audero\ShowphotoBundle\Entity\User", inversedBy="player", cascade={"persist"})
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
      **/
     private $user;

@@ -1,73 +1,51 @@
-var count= 30;
-var counter= setInterval(timer, 1000); //1000 will run it every 1 second
+/*Time left for request */
+var timeLeft = 0;
+/*Interval used to decrease time*/
+var counter;
 
-$('form[name="showphoto_chat"]').submit(function( event ) {
-    $.ajax( {
-        type: "POST",
-        url: $(this).attr('action'),
-        data: $(this).serialize(),
-        success: function(data) {
-            data = JSON.parse(data);
-            if(data.status == 'failure') {
-                alert(data);
-            }
-        }
-    } );
-
-    $('#showphoto_chat_text').val('');
-
-    event.preventDefault();
+/*Notification dialog setup*/
+$(function() {
+    $( "#notification_dialog" ).dialog({
+        autoOpen: false
+    });
 });
 
-$("#wishes > p > input").blur(function() {
-
-    var type = 'update';
-    if($(this).val() == '')
-        type = 'delete';
-
-    $.ajax({
-        type: "POST",
-        url: "/app_dev.php/wish/" + type,
-        data: { title: $(this).val() , position: $(this).data('position') }
-    })
-        .success(function(data) {
-            data = JSON.parse(data);
-            if(data.status == "failure") {
-                $('#wish-list-errors').html(data.message);
-            }else{
-                $('#wish-list-errors').html('');
-            }
-        });
+/*Initializing timeLeft*/
+$(function(){
+    timeLeft = parseInt((parseInt($('#timer').data('validuntil'))*1000 - new Date().getTime())/1000);
+    counter = setInterval(timer, 1000);
 });
-
-/*
-$('form[name="audero_showphotobundle_photoresponse"]').submit(function( event ) {
-    $.ajax( {
-        type: "POST",
-        url: $(this).attr('action'),
-        data: $(this).serialize(),
-        success: function(data) {
-            if(data.status == 'success') {
-                console.log("good");
-            }
-        }
-    } );
-
-    event.preventDefault();
-});
-*/
 
 function timer()
 {
-    count=count-1;
-    if (count < 0)
+    console.log(timeLeft);
+    timeLeft=timeLeft-1;
+    if (timeLeft < 0)
     {
         clearInterval(counter);
         //counter ended, do something here
         return;
     }
 
-    document.getElementById("timer").innerHTML=count; // watch for spelling
+    $('#timer').text(timeLeft);
+}
+
+function handleRequest(data) {
+    $("#request").text(data.requestTitle);
+    $("#user").text(data.username);
+    /*clearing previous interval*/
+    clearInterval(counter);
+    /*Setting time left*/
+    timeLeft = parseInt((parseInt(data.validUntil)*1000 - new Date().getTime())/1000);
+    counter = setInterval(timer, 1000);
+}
+
+function handleResponse(data) {
+    $( "#responses" ).append("<div class='col-md-4'><p class='text-center'><img class='img-responsive' src='" + data.photoLink + "'></p></div>");
+}
+
+function handlePlayerUpdate(data) {
+    console.log(data.players);
 }
 
 var conn = new ab.Session('ws://127.0.0.1:8080',
@@ -76,21 +54,27 @@ var conn = new ab.Session('ws://127.0.0.1:8080',
             $('#chat_messages').append("<span class='text-muted'>" + data.user + ': ' + '</span>' +
             data.text + "<hr class='no-padding'>");
         });
-        conn.subscribe('game_request', function(topic, data) {
-            // This is where you would add the new article to the DOM (beyond the scope of this tutorial)
-            $( "#request" ).text(data.requestTitle);
-            $( "#user" ).text(data.username);
-            $("#timer").text(data.validUntil);
+        conn.subscribe('game', function(topic, data) {
+            console.log('gavau');
+            if(data.type == 'request') {
+                handleRequest(data);
+            }else if(data.type == 'response') {
+                handleResponse(data);
+            }else if(data.type == 'player') {
+                handlePlayerUpdate(data);
+            }
 
-            console.log(parseInt((parseInt(data.validUntil)*1000 - new Date().getTime())/1000));
 
-        });
-        conn.subscribe('game_response', function(topic, data) {
-            $( "#responses" ).append("<div class='col-md-4'><p class='text-center'><img class='img-responsive' src='" + data.photoLink + "'></p></div>");
         });
     },
     function() {
-        console.warn('WebSocket connection closed');
+        /*Notifying user about connection closure*/
+        setTimeout(function(){
+            var dialog = $('#notification_dialog');
+            dialog.text('Connection closed');
+            dialog.dialog('open');
+        }, 5000);
+
     },
     {'skipSubprotocolCheck': true}
 );

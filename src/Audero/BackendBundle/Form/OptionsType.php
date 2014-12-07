@@ -23,7 +23,7 @@ class OptionsType extends AbstractType
     {
         $builder
             ->add('timeForResponse', 'integer')
-            ->add('playersInOneRoom', 'integer')
+            ->add('maxPlayers', 'integer')
             ->add('playerWishesCount', 'integer')
             ->add('save', 'submit')
         ;

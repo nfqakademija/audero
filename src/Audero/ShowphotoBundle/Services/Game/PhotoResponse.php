@@ -1,11 +1,10 @@
 <?php
 
 namespace Audero\ShowphotoBundle\Services\Game;
-use Audero\ShowphotoBundle\Form\PhotoResponseType;
+
 use Audero\ShowphotoBundle\Services\Uploader\Imgur;
 use Audero\WebBundle\Services\Pusher\PusherQueue;
 use Symfony\Component\Form\FormFactory;
-use Symfony\Component\HttpFoundation\Request;
 use Audero\ShowphotoBundle\Services\Game\PhotoRequest as PRequestService;
 use Audero\ShowphotoBundle\Entity\PhotoResponse as PResponseEntity;
 use Audero\ShowphotoBundle\Entity\PhotoRequest as PRequestEntity;
@@ -46,7 +45,7 @@ class PhotoResponse
     /**
      * @var PusherQueue
      */
-    private $pQueue;
+    private $pusherQueue;
 
     /**
      * @param EntityManager $em
@@ -66,71 +65,71 @@ class PhotoResponse
         $this->pusherQueue = $pusherQueue;
     }
 
-    public function handlePhotoResponse(Request $request)
+    /**
+     * @param PResponseEntity $response
+     * @return PResponseEntity
+     * @throws \Exception
+     */
+    public function manage(PResponseEntity $response)
     {
         if (!($user = $this->security->getToken()->getUser())) {
-            throw new \Exception('User was not found');
-        }
-
-        $pResponseEntity = new pResponseEntity();
-        $form = $this->factory->create(new PhotoResponseType(), $pResponseEntity);
-        $form->handleRequest($request);
-        if (!$form->isValid()) {
-            throw new \Exception($form->getErrors());
+            throw new \Exception('User could not be found');
         }
 
         /** @var PRequestEntity $pRequestEntity */
-        $pRequestEntity = $this->em->getRepository("AuderoShowphotoBundle:PhotoRequest")->findNewest();
-        if (!$pRequestEntity) {
+        $request = $this->em->getRepository("AuderoShowphotoBundle:PhotoRequest")->findNewest();
+        if (!$request) {
             throw new \Exception('No Request was found');
         }
 
-        $validUntil = $this->pRequestService->getValidUntil($pRequestEntity);
+        $storedResponse = $this->em->getRepository("AuderoShowphotoBundle:PhotoResponse")->findOneBy(array('request' => $request, "user" => $user));
+        if ($storedResponse) {
+            throw new \Exception('You have already responded to this request');
+        }
+
+        $validUntil = $this->pRequestService->getValidUntil($request);
         if (time() > $validUntil) {
             throw new \Exception('Request time has expired');
         }
 
-        if ($pResponseEntity->getPhotoUrl()) {
-            $data = $this->uploader->uploadUrl($pResponseEntity->getPhotoUrl());
+        if ($response->getPhotoUrl()) {
+            $data = $this->uploader->uploadUrl($response->getPhotoUrl());
         } else {
-            $data = $this->uploader->uploadFile($pResponseEntity->getPhotoFile());
+            $data = $this->uploader->uploadFile($response->getPhotoFile());
         }
 
         if ($data && isset($data->status) && $data->status == 200) {
             $data = $data->data;
-            $pResponseEntity->setUser($user)
-                            ->setAnimated($data->animated)
-                            ->setDeleteHash($data->deletehash)
-                            ->setHeight($data->height)
-                            ->setPhotoId($data->id)
-                            ->setPhotoLink($data->link)
-                            ->setRequest($pRequestEntity)
-                            ->setSize($data->size)
-                            ->setWidth($data->width);
-
-            return $pResponseEntity;
+            $response->setUser($user)
+                ->setAnimated($data->animated)
+                ->setDeleteHash($data->deletehash)
+                ->setHeight($data->height)
+                ->setPhotoId($data->id)
+                ->setPhotoLink($data->link)
+                ->setRequest($request)
+                ->setSize($data->size)
+                ->setWidth($data->width);
+            return $response;
         }
 
-        throw new \Exception('Response from image storage is not valid');
+        throw new \Exception('Failed to upload image');
     }
 
     /**
-     * @param pResponseEntity $pResponseEntity
+     * @param PResponseEntity $response
      */
-    public function broadcast(pResponseEntity $pResponseEntity)
+    public function broadcast(PResponseEntity $response)
     {
         $data = array(
-            'command' => 'push',
+            'topic' => 'game',
             'data' => array(
-                'topic' => "game_response",
-                'data' => array(
-                    'photoLink' => $pResponseEntity->getPhotoLink(),
-                    'username' => $pResponseEntity->getUser()->getUsername(),
-                    'id' => $pResponseEntity->getId(),
-                )
+                'type' => 'response',
+                'photoLink' => $response->getPhotoLink(),
+                'requestSlug' => $response->getRequest()->getSlug(),
+                'author' => $response->getUser()->getUsername(),
             )
         );
 
-        $this->pQueue->add($data);
+        $this->pusherQueue->add($data);
     }
 } 

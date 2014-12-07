@@ -4,6 +4,7 @@ namespace Audero\ShowphotoBundle\Services\Game;
 
 use Audero\BackendBundle\Entity\Options;
 use Audero\ShowphotoBundle\Entity\PhotoRequest as PRequestEntity;
+use Audero\ShowphotoBundle\Entity\Player;
 use Audero\ShowphotoBundle\Entity\Wish;
 use Audero\WebBundle\Services\Pusher\PusherQueue;
 use Cocur\Slugify\Slugify;
@@ -59,19 +60,22 @@ class PhotoRequest {
         return $this->generatePlayersRequest();
     }
 
-    // TODO
     /**
      * Generates request from players wishes
      *
      * @return array
      */
     private function generatePlayersRequest() {
-        $players = (array) $this->em->getRepository("AuderoShowphotoBundle:Player")->findOrderedByRank();
+        $players = (array) $this->em->getRepository("AuderoShowphotoBundle:Player")->findAllOrderedByRate();
+        /**@var Player $player*/
         foreach($players as $player)  {
-
+            $wish = $this->em->getRepository("AuderoShowphotoBundle:Wish")->findUserFirstWish($player->getUser());
+            if($wish) {
+                return $this->createRequest($wish);
+            }
         }
 
-        return $this->createRequest(new Wish());
+        return null;
     }
 
     /**
@@ -105,14 +109,12 @@ class PhotoRequest {
     public function broadcast(pRequestEntity $pRequestEntity)
     {
         $data = array(
-            'command' => 'push',
+            'topic' => 'game',
             'data' => array(
-                'topic' => "game_request",
-                'data' => array(
-                    'requestTitle' => $pRequestEntity->getTitle(),
-                    'username' =>$pRequestEntity->getUser()->getUsername(),
-                    'validUntil' => $this->getValidUntil($pRequestEntity)
-                )
+                'type' => 'request',
+                'requestTitle' => $pRequestEntity->getTitle(),
+                'username' =>$pRequestEntity->getUser()->getUsername(),
+                'validUntil' => $this->getValidUntil($pRequestEntity)
             )
         );
 

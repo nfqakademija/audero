@@ -14,9 +14,9 @@ class Options
     private $timeForResponse;
 
     /**
-     * @var
+     * @var integer
      */
-    private $playersInOneRoom;
+    private $maxPlayers;
 
     /**
      * @var
@@ -40,19 +40,19 @@ class Options
     }
 
     /**
-     * @param $playersInOneRoom
+     * @param $maxPlayers
      */
-    public function setPlayersInOneRoom($playersInOneRoom)
+    public function setMaxPlayers($maxPlayers)
     {
-        $this->playersInOneRoom = $playersInOneRoom;
+        $this->maxPlayers = $maxPlayers;
     }
 
     /**
-     * @return mixed
+     * @return integer
      */
-    public function getPlayersInOneRoom()
+    public function getMaxPlayers()
     {
-        return $this->playersInOneRoom;
+        return $this->maxPlayers;
     }
 
     /**

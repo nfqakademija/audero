@@ -20,7 +20,7 @@ class PlayerRepository extends EntityRepository
             ->getResult()[0][1];
     }
 
-    public function findAllOrderedByRank() {
+    public function findAllOrderedByRate() {
         return $this->getEntityManager()
             ->createQuery(
                 'SELECT p

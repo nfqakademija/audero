@@ -13,9 +13,6 @@ showphoto_rating:
 showphoto_game:
     resource: "@AuderoShowphotoBundle/Controller/GameController.php"
     type:     annotation
-showphoto_spectate:
-    resource: "@AuderoShowphotoBundle/Controller/SpectateController.php"
-    type:     annotation
 showphoto_chat:
     resource: "@AuderoShowphotoBundle/Controller/ChatController.php"
     type:     annotation

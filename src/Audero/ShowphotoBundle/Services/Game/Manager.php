@@ -10,14 +10,14 @@ class Manager implements OutputInterface
 {
 
     private $em;
-    private $pRequestService;
-    private $playerManager;
+    private $photoRequest;
+    private $player;
 
-    public function __construct(EntityManager $em, PhotoRequest $pRequestService, PlayerManager $playerManager)
+    public function __construct(EntityManager $em, PhotoRequest $photoRequest, Player $player)
     {
         $this->em = $em;
-        $this->pRequestService = $pRequestService;
-        $this->playerManager = $playerManager;
+        $this->photoRequest = $photoRequest;
+        $this->player = $player;
     }
 
     public function start()
@@ -32,15 +32,15 @@ class Manager implements OutputInterface
             }
 
             /*Generating new Request*/
-            $data = $this->pRequestService->generate();
+            $data = $this->photoRequest->generate();
             if (!isset($data['request']) || !isset($data['wish'])) {
                 $this->error("Could not get newly generated request");
                 sleep(10);
                 continue;
             }
 
-            $pRequestEntity = $data['request'];
-            $wish = $data['wish'];
+            $requestEntity = $data['request'];
+            $wishEntity = $data['wish'];
 
 
 
@@ -56,11 +56,11 @@ class Manager implements OutputInterface
 
             //
 
-            $this->pRequestService->broadcast($pRequestEntity);
+            $this->photoRequest->broadcast($requestEntity);
 
             // TODO
             $date = new \DateTime('now');
-            $sleepTime = $this->pRequestService->getValidUntil($pRequestEntity) - $date->getTimestamp();
+            $sleepTime = $this->photoRequest->getValidUntil($requestEntity) - $date->getTimestamp();
             sleep($sleepTime);
         }
     }

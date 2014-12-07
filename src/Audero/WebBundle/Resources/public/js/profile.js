@@ -19,6 +19,8 @@ $("#wishes > p > input").blur(function() {
         });
 });
 
-$('#show_more').click(function() {
-   $('.additional_wish').toggle();
+$('#show_more').click(function(event) {
+    $('.additional_wish').toggle();
+
+    event.preventDefault();
 });

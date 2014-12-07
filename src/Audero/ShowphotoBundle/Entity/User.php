@@ -46,7 +46,7 @@ class User extends BaseUser
     protected $chatMessages;
 
     /**
-     * @ORM\OneToOne(targetEntity="Audero\ShowphotoBundle\Entity\Player", mappedBy="user")
+     * @ORM\OneToOne(targetEntity="Audero\ShowphotoBundle\Entity\Player", mappedBy="user", cascade={"persist", "remove"})
      **/
     protected $player;
 

@@ -26,10 +26,6 @@ class ChatController extends Controller
      */
     public function indexAction()
     {
-        if (!$this->get('game.player.manager')->isPlayer($this->getUser())) {
-            throw new AccessDeniedException();
-        }
-
         $em = $this->getDoctrine()->getManager();
         $messages = $em->getRepository("AuderoShowphotoBundle:ChatMessage")->findAll();
         $form = $this->createForm(new ChatType(), new ChatMessage(), array(
@@ -49,7 +45,7 @@ class ChatController extends Controller
     public function postMessageAction(Request $request)
     {
         $user = $this->getUser();
-        if(!$this->get('game.player.manager')->isPlayer($user)) {
+        if(!$this->get('game.player')->isPlayer($user)) {
             throw new AccessDeniedException();
         }
 
@@ -63,21 +59,7 @@ class ChatController extends Controller
             $em->persist($message);
             $em->flush();
 
-            $data = array(
-                'command' => 'push',
-                'data' => array(
-                    'topic' => "chat",
-                    'data'    => array(
-                        'user' => $user->getUsername(),
-                        'text' => $message->getText(),
-                    )
-                )
-            );
-
-            $context = new \ZMQContext();
-            $socket = $context->getSocket(\ZMQ::SOCKET_PUSH, 'my pusher');
-            $socket->connect("tcp://127.0.0.1:5555");
-            $socket->send(json_encode($data));
+            $this->get('game.chat')->broadcast($message);
 
             return new JsonResponse(json_encode(array("status" => "success")));
         }

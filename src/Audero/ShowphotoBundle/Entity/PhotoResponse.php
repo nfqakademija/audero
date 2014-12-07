@@ -123,7 +123,7 @@ class PhotoResponse
      *
      * @ORM\Column(name="winner", type="boolean")
      */
-    private $winner;
+    private $winner = false;
 
     /**
      * Constructor

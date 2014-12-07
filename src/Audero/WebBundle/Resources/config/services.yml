@@ -1,7 +1,7 @@
 services:
     pusher.connection.manager:
         class:  Audero\WebBundle\Services\Pusher\Pusher\ConnectionManager
-        arguments: ["@doctrine.orm.default_entity_manager"]
+        arguments: ["@doctrine.orm.default_entity_manager", "@game.player"]
         public: false;
     pusher:
         class:  Audero\WebBundle\Services\Pusher\Pusher\Pusher

@@ -3,6 +3,7 @@
 namespace Audero\WebBundle\Services\Pusher\Pusher;
 
 use Audero\ShowphotoBundle\Entity\User;
+use Audero\ShowphotoBundle\Services\Game\Player;
 use Audero\WebBundle\Entity\UserConnection;
 use Audero\WebBundle\Entity\UserSubscription;
 use Doctrine\ORM\EntityManager;
@@ -21,6 +22,8 @@ class ConnectionManager {
      */
     private $em;
 
+    private $player;
+
     /**
      * @var array
      */
@@ -31,11 +34,11 @@ class ConnectionManager {
      */
     protected $connections = array();
 
-    /**
-     * @param EntityManager $em
-     */
-    public function  __construct(EntityManager $em) {
+
+
+    public function  __construct(EntityManager $em, Player $player) {
         $this->em = $em;
+        $this->player = $player;
         $this->topics = array(
             'game'=> new Topic('game'),
             'chat' => new Topic('chat'),
@@ -99,6 +102,7 @@ class ConnectionManager {
 
     /**
      * Removes connection from all the topics and from database
+     * DO NOT CLOSES CONNECTION. Is called on Connection Close.
      *
      * @param ConnectionInterface $conn
      * @throws \Exception
@@ -109,12 +113,18 @@ class ConnectionManager {
         foreach($this->topics as $id => $topic) {
             $topic->remove($conn);
         }
-
+        /**@var UserConnection $connection*/
         $connection = $this->em->getRepository("AuderoWebBundle:UserConnection")->findOneBy(array('resourceId'=>$conn->resourceId));
         if($connection) {
             try{
                 $this->em->remove($connection);
                 $this->em->flush();
+
+                /*Notifying Player's service about connection closure*/
+                $playerEntity = $this->em->getRepository("AuderoShowphotoBundle:Player")->findOneBy(array('user'=>$connection->getUser()));
+                if($playerEntity) {
+                    $this->player->hasDisconnected($connection);
+                }
             }catch (\Exception $e) {
                 throw new \Exception($e->getMessage());
             }

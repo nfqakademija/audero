@@ -13,6 +13,9 @@ services:
         class:  Audero\ShowphotoBundle\Services\Uploader\Imgur
         arguments: ["@uploader.token.provider"]
     #Game services
+    game.chat:
+       class:  Audero\ShowphotoBundle\Services\Game\Chat
+       arguments: ["@pusher.queue"]
     game.photo.request:
         class:  Audero\ShowphotoBundle\Services\Game\PhotoRequest
         arguments: ["@doctrine.orm.entity_manager", "@pusher.queue"]
@@ -25,9 +28,9 @@ services:
     game.winner.queue:
         class:  Audero\ShowphotoBundle\Services\Game\WinnerQueue
         arguments: ["@doctrine.orm.entity_manager"]
-    game.player.manager:
-        class:  Audero\ShowphotoBundle\Services\Game\PlayerManager
-        arguments: ["@doctrine.orm.entity_manager"]
+    game.player:
+        class:  Audero\ShowphotoBundle\Services\Game\Player
+        arguments: ["@doctrine.orm.entity_manager", "@pusher.queue"]
     game.manager:
         class:  Audero\ShowphotoBundle\Services\Game\Manager
-        arguments: ["@doctrine.orm.entity_manager", "@game.photo.request", "@game.player.manager"]
+        arguments: ["@doctrine.orm.entity_manager", "@game.photo.request", "@game.player"]
