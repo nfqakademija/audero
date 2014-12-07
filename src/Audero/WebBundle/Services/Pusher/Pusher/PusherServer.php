@@ -25,7 +25,9 @@ class PusherServer implements WampServerInterface, OutputInterface
     public function __construct(ConnectionManager $cm)
     {
         $this->cm = $cm;
-        $cm->clearConnectionsFromDatabase();
+        if(!$cm->clearConnectionsFromDatabase()){
+            $this->error("PusherServer", "Failed to remove all Connections"); die;
+        }
     }
 
     /**

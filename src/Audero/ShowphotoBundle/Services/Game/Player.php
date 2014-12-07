@@ -82,6 +82,16 @@ class Player
     }
 
     /**
+     * @return bool
+     */
+    public function clearPlayersFromDatabase() {
+        $this->em->createQuery('DELETE FROM AuderoShowphotoBundle:Player player')
+            ->execute();
+
+        return $this->em->getRepository("AuderoShowphotoBundle:Player")->findAll() ? false :true;
+    }
+
+    /**
      * @return integer
      */
     public function getPlayersCount()
@@ -122,6 +132,9 @@ class Player
         $this->pusherQueue->add($data);
     }
 
+    /**
+     * @param UserConnection $oldConnection
+     */
     public function hasDisconnected(UserConnection $oldConnection) {
         $playerRepo = $this->em->getRepository("AuderoShowphotoBundle:Player");
         $player = $playerRepo->findOneBy(array('user'=>$oldConnection->getUser()));

@@ -20,4 +20,16 @@ class WishRepository extends EntityRepository
             ->setParameter(1, $user)
             ->getOneOrNullResult();
     }
+
+    public function findOrderedByPosition(User $user, $length) {
+        if(!is_int($length)) {
+            return array();
+        }
+
+        return $this->getEntityManager()
+            ->createQuery('SELECT wish FROM AuderoShowphotoBundle:Wish wish WHERE wish.user = ?1 ORDER BY wish.position ASC')
+            ->setMaxResults($length)
+            ->setParameter(1, $user)
+            ->getResult();
+    }
 }

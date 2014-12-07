@@ -29,4 +29,20 @@ class PlayerRepository extends EntityRepository
             )
             ->getResult();
     }
+
+    public function findWinnersQueue($request) {
+        $result = $this->getEntityManager()
+            ->createQuery(
+                'SELECT p, u.username as username, u.rate as rate, SUM(res.likes) as likes, SUM(res.dislikes) as dislikes, SUM(res.likes - res.dislikes) resRate
+                FROM AuderoShowphotoBundle:Player p JOIN p.user u JOIN u.responses res
+                WHERE res.request = ?1
+                ORDER BY resRate DESC'
+            )
+            ->setParameter(1, $request)
+            ->getResult();
+
+        return isset($result[0]['username']) ? $result : array();
+    }
+
+
 }

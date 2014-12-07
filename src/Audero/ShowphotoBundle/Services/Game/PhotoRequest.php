@@ -4,7 +4,7 @@ namespace Audero\ShowphotoBundle\Services\Game;
 
 use Audero\BackendBundle\Entity\Options;
 use Audero\ShowphotoBundle\Entity\PhotoRequest as PRequestEntity;
-use Audero\ShowphotoBundle\Entity\Player;
+use Audero\ShowphotoBundle\Entity\Player as PlayerEntity;
 use Audero\ShowphotoBundle\Entity\Wish;
 use Audero\WebBundle\Services\Pusher\PusherQueue;
 use Cocur\Slugify\Slugify;
@@ -67,7 +67,7 @@ class PhotoRequest {
      */
     private function generatePlayersRequest() {
         $players = (array) $this->em->getRepository("AuderoShowphotoBundle:Player")->findAllOrderedByRate();
-        /**@var Player $player*/
+        /**@var PlayerEntity $player*/
         foreach($players as $player)  {
             $wish = $this->em->getRepository("AuderoShowphotoBundle:Wish")->findUserFirstWish($player->getUser());
             if($wish) {
@@ -135,6 +135,6 @@ class PhotoRequest {
             return null;
         }
 
-        return $pRequestEntity->getDate()->add(new \DateInterval('PT' . $options->getTimeForResponse() . 'S'))->getTimestamp();
+        return $pRequestEntity->getDate()->add(new \DateInterval('PT' . $options->getTimeForRequest() . 'S'))->getTimestamp();
     }
 } 

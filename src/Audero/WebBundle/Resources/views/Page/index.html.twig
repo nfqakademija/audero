@@ -58,7 +58,7 @@
     $('#like_button').click(function(){
         $.ajax({
             type: "POST",
-            url: '/app_dev.php/rating/remove',
+            url: '/app_dev.php/rating/create',
             data: {request_slug: $(this).data('request_slug'), response_author: $(this).data('response_author'), rate: true}
         })
         .success(function(data){

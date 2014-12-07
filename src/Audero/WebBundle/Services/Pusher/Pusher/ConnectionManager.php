@@ -15,13 +15,17 @@ use Symfony\Component\CssSelector\Exception\InternalErrorException;
  * Class ConnectionManager
  * @package Audero\WebBundle\Services\Pusher
  */
-class ConnectionManager {
+class ConnectionManager
+{
 
     /**
      * @var EntityManager
      */
     private $em;
 
+    /**
+     * @var Player
+     */
     private $player;
 
     /**
@@ -34,13 +38,16 @@ class ConnectionManager {
      */
     protected $connections = array();
 
-
-
-    public function  __construct(EntityManager $em, Player $player) {
+    /**
+     * @param EntityManager $em
+     * @param Player $player
+     */
+    public function  __construct(EntityManager $em, Player $player)
+    {
         $this->em = $em;
         $this->player = $player;
         $this->topics = array(
-            'game'=> new Topic('game'),
+            'game' => new Topic('game'),
             'chat' => new Topic('chat'),
             'rating' => new Topic('rating')
         );
@@ -50,8 +57,9 @@ class ConnectionManager {
      * @param $id
      * @return null|Topic $topic
      */
-    public function getTopicById($id) {
-        if(is_string($id)) {
+    public function getTopicById($id)
+    {
+        if (is_string($id)) {
             return array_key_exists($id, $this->topics) ? $this->topics[$id] : null;
         }
 
@@ -63,7 +71,8 @@ class ConnectionManager {
      * @param Topic $topic
      * @return bool
      */
-    public function hasPermissions(ConnectionInterface $conn, Topic $topic=null) {
+    public function hasPermissions(ConnectionInterface $conn, Topic $topic = null)
+    {
         /*For this moment*/
         return true;
     }
@@ -75,23 +84,24 @@ class ConnectionManager {
      * @return UserConnection
      * @throws \Exception
      */
-    public function addConnection(ConnectionInterface $conn) {
-        /**@var User $user*/
+    public function addConnection(ConnectionInterface $conn)
+    {
+        /**@var User $user */
         $user = $this->extractUserFromSession($conn);
 
         $userConnection = new UserConnection();
         $userConnection->setResourceId($conn->resourceId)
-                        ->setUser($user)
-                        ->setIp($conn->remoteAddress);
-        try{
+            ->setUser($user)
+            ->setIp($conn->remoteAddress);
+        try {
             $this->em->persist($userConnection);
             $this->em->flush();
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             throw new \Exception($e->getMessage());
         }
 
 
-        if(!$this->em->getRepository("AuderoWebBundle:UserConnection")->findOneBy(array("resourceId"=>$conn->resourceId, "user"=>$user))) {
+        if (!$this->em->getRepository("AuderoWebBundle:UserConnection")->findOneBy(array("resourceId" => $conn->resourceId, "user" => $user))) {
             throw new \Exception('Failed to store new connection in database');
         }
 
@@ -102,35 +112,36 @@ class ConnectionManager {
 
     /**
      * Removes connection from all the topics and from database
-     * DO NOT CLOSES CONNECTION. Is called on Connection Close.
+     * DOES NOT CLOSE CONNECTION ITSELF.
      *
      * @param ConnectionInterface $conn
      * @throws \Exception
      */
-    public function removeConnection(ConnectionInterface $conn) {
+    public function removeConnection(ConnectionInterface $conn)
+    {
         unset($this->connections[$conn->resourceId]);
-        /**@var Topic $topic*/
-        foreach($this->topics as $id => $topic) {
+        /**@var Topic $topic */
+        foreach ($this->topics as $id => $topic) {
             $topic->remove($conn);
         }
-        /**@var UserConnection $connection*/
-        $connection = $this->em->getRepository("AuderoWebBundle:UserConnection")->findOneBy(array('resourceId'=>$conn->resourceId));
-        if($connection) {
-            try{
+        /**@var UserConnection $connection */
+        $connection = $this->em->getRepository("AuderoWebBundle:UserConnection")->findOneBy(array('resourceId' => $conn->resourceId));
+        if ($connection) {
+            try {
                 $this->em->remove($connection);
                 $this->em->flush();
 
                 /*Notifying Player's service about connection closure*/
-                $playerEntity = $this->em->getRepository("AuderoShowphotoBundle:Player")->findOneBy(array('user'=>$connection->getUser()));
-                if($playerEntity) {
+                $playerEntity = $this->em->getRepository("AuderoShowphotoBundle:Player")->findOneBy(array('user' => $connection->getUser()));
+                if ($playerEntity) {
                     $this->player->hasDisconnected($connection);
                 }
-            }catch (\Exception $e) {
+            } catch (\Exception $e) {
                 throw new \Exception($e->getMessage());
             }
         }
 
-        if($this->em->getRepository("AuderoWebBundle:UserConnection")->findOneBy(array('resourceId'=>$conn->resourceId))) {
+        if ($this->em->getRepository("AuderoWebBundle:UserConnection")->findOneBy(array('resourceId' => $conn->resourceId))) {
             throw new \Exception("Failed to remove connection from database");
         }
     }
@@ -144,14 +155,15 @@ class ConnectionManager {
      * @return UserSubscription
      * @throws \Exception
      */
-    public function addSubscription(ConnectionInterface $conn, Topic $topic) {
+    public function addSubscription(ConnectionInterface $conn, Topic $topic)
+    {
         $topic = $this->getTopicById($topic->getId());
-        if(!$topic) {
+        if (!$topic) {
             return null;
         }
         /**@var UserConnection $storedConn */
         $storedConn = $this->em->getRepository("AuderoWebBundle:UserConnection")->findOneBy(array('resourceId' => $conn->resourceId));
-        if(!$storedConn) {
+        if (!$storedConn) {
             throw new \Exception("Connection for user's subscription was not found in database");
         }
 
@@ -159,17 +171,17 @@ class ConnectionManager {
 
         $userSubscription = new UserSubscription();
         $userSubscription->setConnection($storedConn)
-                         ->setTopic($topic->getId());
+            ->setTopic($topic->getId());
         $storedConn->addSubscription($userSubscription);
 
-        try{
+        try {
             $this->em->persist($storedConn);
             $this->em->flush();
-        }catch(\Exception $e) {
+        } catch (\Exception $e) {
             throw new \Exception($e->getMessage());
         }
 
-        if(!$this->em->getRepository("AuderoWebBundle:UserSubscription")->findOneBy(array('topic' => $topic->getId(), 'connection'=>$storedConn))) {
+        if (!$this->em->getRepository("AuderoWebBundle:UserSubscription")->findOneBy(array('topic' => $topic->getId(), 'connection' => $storedConn))) {
             throw new \Exception("Failed to store user's subscription in database");
         }
 
@@ -177,11 +189,16 @@ class ConnectionManager {
     }
 
     /**
-     *  Removes all connections from the database
+     * Removes all connections from the database
+     *
+     * @return bool
      */
-    public final function clearConnectionsFromDatabase() {
+    public final function clearConnectionsFromDatabase()
+    {
         $this->em->createQuery('DELETE FROM AuderoWebBundle:UserConnection conn')
-             ->execute();
+            ->execute();
+
+        return $this->em->getRepository("AuderoWebBundle:UserConnection")->findAll() ? false : true;
     }
 
     /**
@@ -190,19 +207,20 @@ class ConnectionManager {
      * @param ConnectionInterface $conn
      * @return null|object
      */
-    private function extractUserFromSession(ConnectionInterface $conn) {
+    private function extractUserFromSession(ConnectionInterface $conn)
+    {
         $security_main = unserialize($conn->Session->get('_security_main'));
-        if($security_main) {
-            if(!$security_main->getUser()) {
+        if ($security_main) {
+            if (!$security_main->getUser()) {
                 return null;
             }
 
             $id = $security_main->getUser()->getId();
-            if(!$id) {
+            if (!$id) {
                 return null;
             }
 
-            return $this->em->getRepository("AuderoShowphotoBundle:User")->findOneBy(array('id'=>$id));
+            return $this->em->getRepository("AuderoShowphotoBundle:User")->findOneBy(array('id' => $id));
         }
 
         return null;
@@ -213,20 +231,21 @@ class ConnectionManager {
      * @return null | ConnectionInterface
      * @throws InternalErrorException
      */
-    public function getConnectionByUsername($username) {
+    public function getConnectionByUsername($username)
+    {
 
-        $user = $this->em->getRepository("AuderoShowphotoBundle:User")->findOneBy(array('username'=>$username));
-        if(!$user) {
+        $user = $this->em->getRepository("AuderoShowphotoBundle:User")->findOneBy(array('username' => $username));
+        if (!$user) {
             return null;
         }
 
         /**@var UserConnection $connection */
-        $connection = $this->em->getRepository("AuderoWebBundle:UserConnection")->findOneBy(array('user'=>$user));
-        if(!$connection) {
+        $connection = $this->em->getRepository("AuderoWebBundle:UserConnection")->findOneBy(array('user' => $user));
+        if (!$connection) {
             return null;
         }
 
-        if(!isset($this->connections[$connection->getResourceId()])) {
+        if (!isset($this->connections[$connection->getResourceId()])) {
             throw new InternalErrorException();
         }
 
@@ -238,13 +257,14 @@ class ConnectionManager {
      * @return array
      * @throws InternalErrorException
      */
-    public function getConnectionsByIp($ip) {
-        $connections = $this->em->getRepository("AuderoWebBundle:UserConnection")->findBy(array('ip'=>trim($ip)));
+    public function getConnectionsByIp($ip)
+    {
+        $connections = $this->em->getRepository("AuderoWebBundle:UserConnection")->findBy(array('ip' => trim($ip)));
         $mappedConnections = array();
 
         /**@var UserConnection $conn */
-        foreach($connections as $conn) {
-            if(!isset($this->connections[$conn->getResourceId()])) {
+        foreach ($connections as $conn) {
+            if (!isset($this->connections[$conn->getResourceId()])) {
                 throw new InternalErrorException();
             }
             $mappedConnections[$conn->getIp()] = $this->connections[$conn->getResourceId()];
@@ -261,9 +281,10 @@ class ConnectionManager {
      * @return bool
      * @throws \Exception
      */
-    public function closeByUsername($username) {
+    public function closeByUsername($username)
+    {
         $connection = $this->getConnectionByUsername($username);
-        if($connection) {
+        if ($connection) {
             $connection->close();
         }
 
@@ -277,10 +298,11 @@ class ConnectionManager {
      * @return bool
      * @throws \Exception
      */
-    public function closeByIp($ip) {
-        $connections = (array) $this->getConnectionsByIp($ip);
-        /**@var ConnectionInterface $conn*/
-        foreach($connections as $conn) {
+    public function closeByIp($ip)
+    {
+        $connections = (array)$this->getConnectionsByIp($ip);
+        /**@var ConnectionInterface $conn */
+        foreach ($connections as $conn) {
             $conn->close();
         }
 

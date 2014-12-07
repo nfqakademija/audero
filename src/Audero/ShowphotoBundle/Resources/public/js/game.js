@@ -18,7 +18,6 @@ $(function(){
 
 function timer()
 {
-    console.log(timeLeft);
     timeLeft=timeLeft-1;
     if (timeLeft < 0)
     {
@@ -55,13 +54,16 @@ var conn = new ab.Session('ws://127.0.0.1:8080',
             data.text + "<hr class='no-padding'>");
         });
         conn.subscribe('game', function(topic, data) {
-            console.log('gavau');
             if(data.type == 'request') {
                 handleRequest(data);
             }else if(data.type == 'response') {
                 handleResponse(data);
             }else if(data.type == 'player') {
                 handlePlayerUpdate(data);
+            }else if(data.type == 'winnerQueue') {
+                console.log(data);
+            }else if(data.type == "wish") {
+                console.log(data);
             }
 
 

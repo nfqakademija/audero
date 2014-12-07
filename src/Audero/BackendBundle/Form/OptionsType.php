@@ -22,8 +22,10 @@ class OptionsType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('timeForResponse', 'integer')
+            ->add('timeForRequest', 'integer')
+            ->add('minPlayers', 'integer')
             ->add('maxPlayers', 'integer')
+            ->add('timeForWinnerQueue', 'integer')
             ->add('playerWishesCount', 'integer')
             ->add('save', 'submit')
         ;

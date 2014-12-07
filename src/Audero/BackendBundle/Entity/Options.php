@@ -9,9 +9,14 @@ namespace Audero\BackendBundle\Entity;
 class Options
 {
     /**
-     * @var
+     * @var integer
      */
-    private $timeForResponse;
+    private $timeForRequest;
+
+    /**
+     * @var integer
+     */
+    private $minPlayers;
 
     /**
      * @var integer
@@ -19,24 +24,46 @@ class Options
     private $maxPlayers;
 
     /**
-     * @var
+     * @var integer
+     */
+    private $timeForWinnerQueue;
+
+    /**
+     * @var integer
      */
     private $playerWishesCount;
 
+
     /**
-     * @param $timeForResponse
+     * @param $timeForRequest
      */
-    public function setTimeForResponse($timeForResponse)
+    public function setTimeForRequest($timeForRequest)
     {
-        $this->timeForResponse = $timeForResponse;
+        $this->timeForRequest = $timeForRequest;
     }
 
     /**
-     * @return mixed
+     * @return integer
      */
-    public function getTimeForResponse()
+    public function getTimeForRequest()
     {
-        return $this->timeForResponse;
+        return $this->timeForRequest;
+    }
+
+    /**
+     * @param $minPlayers
+     */
+    public function setMinPlayers($minPlayers)
+    {
+        $this->minPlayers = $minPlayers;
+    }
+
+    /**
+     * @return integer
+     */
+    public function getMinPlayers()
+    {
+        return $this->minPlayers;
     }
 
     /**
@@ -56,7 +83,23 @@ class Options
     }
 
     /**
-     * @return mixed
+     * @return integer
+     */
+    public function getTimeForWinnerQueue()
+    {
+        return $this->timeForWinnerQueue;
+    }
+
+    /**
+     * @param integer $timeForWinnerQueue
+     */
+    public function setTimeForWinnerQueue($timeForWinnerQueue)
+    {
+        $this->timeForWinnerQueue = $timeForWinnerQueue;
+    }
+
+    /**
+     * @return integer
      */
     public function getPlayerWishesCount()
     {
@@ -64,11 +107,10 @@ class Options
     }
 
     /**
-     * @param mixed $playerWishesCount
+     * @param integer $playerWishesCount
      */
     public function setPlayerWishesCount($playerWishesCount)
     {
         $this->playerWishesCount = $playerWishesCount;
     }
 }
-
