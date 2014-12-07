@@ -4,6 +4,7 @@ namespace Audero\ShowphotoBundle\EventListener;
 
 use Audero\ShowphotoBundle\Services\Game\Rating as RatingService;
 use Audero\ShowphotoBundle\Entity\Rating;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Symfony\Component\CssSelector\Exception\InternalErrorException;
 
@@ -47,18 +48,7 @@ class RatingListener
                         $entity->getResponse()->getUser()->changeRateBy(-1);
                     }
 
-                    $response = $entity->getResponse();
-                    if(!$response) {
-                        throw new InternalErrorException();
-                    }
-                    $user = $entity->getResponse()->getUser();
-                    if(!$user) {
-                        throw new InternalErrorException();
-                    }
-
-                    $uow->recomputeSingleEntityChangeSet($em->getClassMetadata('Audero\ShowphotoBundle\Entity\PhotoResponse'), $response);
-                    $uow->recomputeSingleEntityChangeSet($em->getClassMetadata('Audero\ShowphotoBundle\Entity\User'), $user);
-                    $this->ratingService->broadcast($entity);
+                    $this->recompute($em, $entity);
                 }
             }
 
@@ -76,18 +66,7 @@ class RatingListener
                             $entity->getResponse()->getUser()->changeRateBy(-2);
                         }
 
-                        $response = $entity->getResponse();
-                        if(!$response) {
-                            throw new InternalErrorException();
-                        }
-                        $user = $entity->getResponse()->getUser();
-                        if(!$user) {
-                            throw new InternalErrorException();
-                        }
-
-                        $uow->recomputeSingleEntityChangeSet($em->getClassMetadata('Audero\ShowphotoBundle\Entity\PhotoResponse'), $response);
-                        $uow->recomputeSingleEntityChangeSet($em->getClassMetadata('Audero\ShowphotoBundle\Entity\User'), $user);
-                        $this->ratingService->broadcast($entity);
+                        $this->recompute($em, $entity);
                     }
                 }
             }
@@ -102,18 +81,7 @@ class RatingListener
                         $entity->getResponse()->getUser()->changeRateBy(1);
                     }
 
-                    $response = $entity->getResponse();
-                    if(!$response) {
-                        throw new InternalErrorException();
-                    }
-                    $user = $entity->getResponse()->getUser();
-                    if(!$user) {
-                        throw new InternalErrorException();
-                    }
-
-                    $uow->recomputeSingleEntityChangeSet($em->getClassMetadata('Audero\ShowphotoBundle\Entity\PhotoResponse'), $response);
-                    $uow->recomputeSingleEntityChangeSet($em->getClassMetadata('Audero\ShowphotoBundle\Entity\User'), $user);
-                    $this->ratingService->broadcast($entity);
+                    $this->recompute($em, $entity);
                 }
             }
 
@@ -131,5 +99,27 @@ class RatingListener
         }
 
         $em->getConnection()->commit();
+    }
+
+    /**
+     * @param EntityManager $em
+     * @param Rating $entity
+     * @throws InternalErrorException
+     */
+    private function recompute(EntityManager $em, Rating $entity) {
+        $uow = $em->getUnitOfWork();
+
+        $response = $entity->getResponse();
+        if(!$response) {
+            throw new InternalErrorException();
+        }
+        $user = $entity->getResponse()->getUser();
+        if(!$user) {
+            throw new InternalErrorException();
+        }
+
+        $uow->recomputeSingleEntityChangeSet($em->getClassMetadata('Audero\ShowphotoBundle\Entity\PhotoResponse'), $response);
+        $uow->recomputeSingleEntityChangeSet($em->getClassMetadata('Audero\ShowphotoBundle\Entity\User'), $user);
+        $this->ratingService->broadcast($entity);
     }
 }
