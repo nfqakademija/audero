@@ -48,21 +48,27 @@
               </button>
           </div>
           <div class="navbar-collapse collapse" id="navbar-main">
+              <form class="navbar-form navbar-left">
+                  <input class="form-control col-lg-8" placeholder="Search" type="text">
+              </form>
+              {#TODO remove <b> tags#}
               <ul class="nav navbar-nav navbar-right">
-                  <li><a href="#" target="_blank">Play game</a></li>
-                  <li><a href="#" target="_blank">How to use?</a></li>
-                  <li><a href="#" target="_blank">About Us</a></li>
-                  <li><a style="background-color: greenyellow" href="#" target="_blank">Spectate</a></li>
-                  <li><a style="background-color: green" href="#" target="_blank">Play</a></li>
+                  <li><a href="{{ path('web_page_newest') }}"><b>Newest</b></a></li>
+                  <li><a href="{{ path('web_page_best') }}"><b>Best</b></a></li>
+                  <li><a href="{{ path('web_page_mostCommented') }}"><b>Hottest</b></a></li>
+                  {% if app.user %}
                   <li class="dropdown">
-                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Login <b class="caret"></b></a>
+                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><b>Account</b> <b class="caret"></b></a>
                       <ul class="dropdown-menu">
                           <li><a href="#">Profile</a></li>
-                          <li><a href="#">Photo requests</a></li>
                           <li class="divider"></li>
                           <li><a href="#">Logout</a></li>
                       </ul>
                   </li>
+                  {% else %}
+                      <li><a href="#" target="_blank">Login</a></li>
+                  {% endif %}
+
 
               </ul>
           </div>

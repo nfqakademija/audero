@@ -1,0 +1,75 @@
+{% for response in responses %}
+    <div class="col-md-8">
+        <h1>Show: {{ response.request.title }}</h1>
+        <img src="{{ response.photoLink }}" class="img-responsive" width="780" height="auto">
+    </div>
+    <div class="col-md-4">
+        <!--Vote block-->
+        <div class="panel panel-default">
+            <div class="panel-heading">Decide image fate</div>
+            <div class="panel-body">
+                <p><a href="#"
+                      {% if ratings[response.id] is defined and ratings[response.id] == true %}
+                          class="btn btn-default btn-lg btn-block like_button liked"
+                      {% else %}
+                          class="btn btn-default btn-lg btn-block like_button"
+                      {% endif %}
+                      data-request_slug="{{ response.request.slug}}"
+                      data-response_author="{{ response.user.username}}">
+                        <i class="fa fa-thumbs-up"></i>
+                        Like
+                    </a>
+                </p>
+                <p class="text-center">
+                    <a href="#" class="btn btn-info">Share</a>
+                    <a href="#" class="btn btn-warning">Report</a>
+                    <a href="#"
+                        {% if ratings[response.id] is defined and ratings[response.id] == false %}
+                            class="btn btn-danger dislike_button disliked"
+                        {% else %}
+                            class="btn btn-danger dislike_button"
+                        {% endif %}
+                        data-request_slug="{{ response.request.slug}}"
+                        data-response_author="{{ response.user.username}}">
+                        Dislike
+                    </a>
+                </p>
+            </div>
+        </div>
+        <!--Vote block-->
+
+        <!--Image points-->
+        <div class="panel panel-default">
+            <div class="panel-heading">Image points</div>
+            <div class="panel-body">
+                <div class="progress">
+                    <div class="progress-bar progress-bar-success"
+                        data-request_slug="{{ response.request.slug}}"
+                        data-response_author="{{ response.user.username}}"
+                        {% if response.likes + response.dislikes > 0 %}
+                            style="width: {{ 100 * response.likes / (response.likes + response.dislikes) }}%" >
+                            {{ response.likes }}
+                        {%  else %}
+                            >
+                        {% endif %}
+                    </div>
+                    <div class="progress-bar progress-bar-danger"
+                        data-request_slug="{{ response.request.slug}}"
+                        data-response_author="{{ response.user.username}}"
+
+                        {% if response.likes + response.dislikes > 0 %}
+                        style="width: {{ 100-100 * response.likes / (response.likes + response.dislikes) }}%" >
+                        {{ response.dislikes }}
+                        {%  else %}
+                            >
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--Image points-->
+    </div>
+    <div class="col-lg-12">
+        <hr>
+    </div>
+{% endfor %}

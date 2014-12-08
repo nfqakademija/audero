@@ -11,7 +11,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
- * Application controller.
+ * PhotoResponse controller.
  *
  * @Route("/game/request")
  */

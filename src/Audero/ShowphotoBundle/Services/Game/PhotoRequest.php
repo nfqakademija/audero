@@ -42,7 +42,7 @@ class PhotoRequest {
      */
     public function generate() {
         /*Finding newest photo request*/
-        $pRequestEntity = $this->em->getRepository('AuderoShowphotoBundle:PhotoRequest')->findNewest();
+        $pRequestEntity = $this->em->getRepository('AuderoShowphotoBundle:PhotoRequest')->findOneNewest();
         if(!$pRequestEntity) {
             return $this->generatePlayersRequest();
         }

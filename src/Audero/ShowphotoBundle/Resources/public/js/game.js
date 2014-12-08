@@ -47,10 +47,29 @@ function handlePlayerUpdate(data) {
     console.log(data.players);
 }
 
+/*Chat message submit handler*/
+$('form[name="showphoto_chat"]').submit(function( event ) {
+    $.ajax( {
+        type: "POST",
+        url: $(this).attr('action'),
+        data: $(this).serialize(),
+        success: function(data) {
+            data = JSON.parse(data);
+            if(data.status == 'failure') {
+                alert(data);
+            }
+        }
+    } );
+
+    $('#showphoto_chat_text').val('');
+
+    event.preventDefault();
+});
+
 var conn = new ab.Session('ws://127.0.0.1:8080',
     function() {
         conn.subscribe('chat', function(topic, data) {
-            $('#chat_messages').append("<span class='text-muted'>" + data.user + ': ' + '</span>' +
+            $('#chat_messages').append("<span class='text-muted'>" + data.author + ': ' + '</span>' +
             data.text + "<hr class='no-padding'>");
         });
         conn.subscribe('game', function(topic, data) {

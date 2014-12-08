@@ -46,3 +46,11 @@ a:hover {
     margin-top: 5px;
     padding: 0px;
 }
+
+.liked {
+    border: 3px solid green;
+}
+
+.disliked {
+    border: 3px solid red;
+}

@@ -3,14 +3,11 @@
 namespace Audero\WebBundle\Controller;
 
 use Audero\ShowphotoBundle\Entity\PhotoResponse;
-use Audero\ShowphotoBundle\Entity\Rating;
-use Audero\ShowphotoBundle\Event\FilterRatingEvent;
-use Audero\ShowphotoBundle\RatingEvents;
+
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Cocur\Slugify\Slugify;
+
 /**
  * Page controller.
  *
@@ -19,26 +16,48 @@ use Cocur\Slugify\Slugify;
 class PageController extends Controller
 {
     /**
-     * Displays photos-responses
-     *
      * @Route("/", name="web_page_index")
      * @Template()
      */
     public function indexAction()
     {
-        $requests = $this->getDoctrine()->getRepository("AuderoShowphotoBundle:PhotoRequest")->findAll();
-        return $this->render('AuderoWebBundle:Page:index.html.twig', array(
-            'requests' => $requests
-        ));
+        return $this->forward("AuderoWebBundle:Page:newest");
     }
 
     /**
-     * Displays request with it's photos
-     *
-     * @Route("/game/{slug}", name="web_page_showRequest")
+     * @Route("/newest", name="web_page_newest")
      * @Template()
      */
-    public function showRequestAction($slug)
+    public function newestAction()
+    {
+        return array();
+    }
+
+    /**
+     * @Route("/most-commented", name="web_page_mostCommented")
+     * @Template()
+     */
+    public function mostCommentedAction()
+    {
+        return array();
+    }
+
+    /**
+     * @Route("/best", name="web_page_best")
+     * @Template()
+     */
+    public function bestAction()
+    {
+        return array();
+    }
+
+    /**
+     * Displays single photo request
+     *
+     * @Route("/game/{slug}", name="web_page_singleRequest")
+     * @Template()
+     */
+    public function singleRequestAction($slug)
     {
         $request = $this->getDoctrine()->getRepository("AuderoShowphotoBundle:PhotoRequest")->findOneBy(array('slug'=>$slug));
         if(!$request) {
@@ -51,12 +70,12 @@ class PageController extends Controller
     }
 
     /**
-     * Displays single response
+     * Displays single photo response
      *
-     * @Route("/game/{slug}/{author}", name="web_page_showResponse")
+     * @Route("/game/{slug}/{author}", name="web_page_singleResponse")
      * @Template()
      */
-    public function showResponseAction($slug, $author)
+    public function singleResponseAction($slug, $author)
     {
         $request = $this->getDoctrine()->getRepository("AuderoShowphotoBundle:PhotoRequest")->findOneBy(array('slug'=>$slug));
         if(!$request) {
@@ -65,20 +84,16 @@ class PageController extends Controller
 
         $author = $this->getDoctrine()->getRepository("AuderoShowphotoBundle:User")->findOneBy(array('username'=>$author));
         if(!$author) {
-            return $this->redirect($this->generateUrl("web_page_showRequest"));
+            return $this->redirect($this->generateUrl("web_page_singleRequest"));
         }
 
         $response = $this->getDoctrine()->getRepository("AuderoShowphotoBundle:PhotoResponse")->findOneBy(array('request'=>$request, 'user'=>$author));
         if(!$response) {
-            return $this->redirect($this->generateUrl("web_page_showRequest"));
+            return $this->redirect($this->generateUrl("web_page_singleRequest"));
         }
 
         return $this->render('AuderoWebBundle:Page:response.html.twig', array(
             'response' => $response
         ));
     }
-
-
-
-
 }

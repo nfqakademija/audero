@@ -13,7 +13,6 @@ use Doctrine\ORM\EntityRepository;
  */
 class PhotoResponseRepository extends EntityRepository
 {
-
     /**
      * @param PhotoRequest $request
      * @return array
@@ -28,5 +27,15 @@ class PhotoResponseRepository extends EntityRepository
             ->getResult();
 
             return isset($result[0]['rating']) && !is_null($result[0]['rating']) ? $result : array();
+    }
+
+    public function findNewestWithOffset($offset, $size) {
+        return $this->getEntityManager()
+            ->createQuery("SELECT res
+                           FROM AuderoShowphotoBundle:PhotoResponse res
+                           ORDER BY res.date DESC")
+            ->setFirstResult($offset)
+            ->setMaxResults($size)
+            ->getResult();
     }
 }

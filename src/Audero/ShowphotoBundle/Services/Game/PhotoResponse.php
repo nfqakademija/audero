@@ -77,7 +77,7 @@ class PhotoResponse
         }
 
         /** @var PRequestEntity $pRequestEntity */
-        $request = $this->em->getRepository("AuderoShowphotoBundle:PhotoRequest")->findNewest();
+        $request = $this->em->getRepository("AuderoShowphotoBundle:PhotoRequest")->findOneNewest();
         if (!$request) {
             throw new \Exception('No Request was found');
         }

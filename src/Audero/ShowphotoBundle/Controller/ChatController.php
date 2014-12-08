@@ -44,9 +44,19 @@ class ChatController extends Controller
      */
     public function postMessageAction(Request $request)
     {
-        $user = $this->getUser();
+        if(!$user = $this->getUser()) {
+            return new JsonResponse(json_encode(
+                array(
+                    "status" => "failure",
+                    "message" =>"Please login")));
+        }
         if(!$this->get('game.player')->isPlayer($user)) {
-            throw new AccessDeniedException();
+            return new JsonResponse(json_encode(
+                array(
+                    "status" => "failure",
+                    "message" =>"Only players can use chat"
+                )
+            ));
         }
 
         $message = new ChatMessage();

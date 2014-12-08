@@ -15,6 +15,9 @@ class Chat {
 
     public function broadcast(ChatMessage $message)
     {
+        if(!$message->getUser()) {
+            throw new \Exception('Could not retrieve user from message entity');
+        }
         $data = array(
             'topic' => 'chat',
             'data' => array(

@@ -12,7 +12,7 @@ use Doctrine\ORM\EntityRepository;
  */
 class PhotoRequestRepository extends EntityRepository
 {
-    public function findNewest()
+    public function findOneNewest()
     {
         return $this->getEntityManager()
             ->createQuery('SELECT r FROM AuderoShowphotoBundle:PhotoRequest r ORDER BY r.date DESC')

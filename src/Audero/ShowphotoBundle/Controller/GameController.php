@@ -18,7 +18,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 class GameController extends Controller
 {
     /**
-     * @Route("/play", name="showphoto_game_play")
+     * @Route("/game", name="showphoto_game_play")
      * @Template()
      */
     public function playAction()
@@ -53,7 +53,7 @@ class GameController extends Controller
         }
 
         $players = $em->getRepository('AuderoShowphotoBundle:Player')->findAllOrderedByRate();
-        $request = $em->getRepository('AuderoShowphotoBundle:PhotoRequest')->findNewest();
+        $request = $em->getRepository('AuderoShowphotoBundle:PhotoRequest')->findOneNewest();
         if(!$request) {
             throw new InternalErrorException();
         }

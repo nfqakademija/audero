@@ -21,7 +21,7 @@ class Rating {
         $likesPercent = 0;
         $dislikesPercent = 0;
         if(($likes + $dislikes) > 0) {
-            $likesPercent = (int) ($likes / ($likes + $dislikes))*100;
+            $likesPercent = round(($likes / ($likes + $dislikes))*100,0);
             $dislikesPercent = 100 - $likesPercent;
         }
 

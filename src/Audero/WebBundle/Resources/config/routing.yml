@@ -1,7 +1,8 @@
-
-
 web_page:
     resource: "@AuderoWebBundle/Controller/PageController.php"
+    type:     annotation
+web_load:
+    resource: "@AuderoWebBundle/Controller/LoadController.php"
     type:     annotation
 web_profile:
     resource: "@AuderoWebBundle/Controller/ProfileController.php"
