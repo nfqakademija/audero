@@ -67,15 +67,8 @@ class RatingController extends Controller
             $em->persist($rating);
             $em->flush();
         } catch (\Exception $e) {
-            throw new InternalErrorException();
+            return new JsonResponse(array("status" => "success", "message"=>"Internal server error"));
         }
-
-        // TODO ASK AURELIJUS
-        /*$dispatcher = new EventDispatcher();
-        $event = new FilterRatingEvent($rating);
-        $dispatcher->dispatch(RatingEvents::RATE_PHOTO, $event);*/
-
-        //$this->get('event_dispatcher')->dispatch(RatingEvents::RATE_PHOTO, new FilterRatingEvent(new Rating()));
 
         return new JsonResponse(array("status" => "success"));
     }

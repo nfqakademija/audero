@@ -1,13 +1,13 @@
-$(function(){
+$(function () {
     var options = {
-        beforeSubmit:  function(){
+        beforeSubmit: function () {
             alert('loader show');
         },
-        success: function(data) {
-            if(data.status == 'success') {
-                $( "#uplaod_dialog" ).dialog( "close" );
+        success: function (data) {
+            if (data.status == 'success') {
+                $("#upload_dialog").dialog("close");
                 $('#upload_dialog_opener').hide();
-            }else{
+            } else {
                 $('#errors').text(data.message);
             }
 
@@ -21,30 +21,30 @@ $(function(){
 });
 
 /*Dialog setup*/
-$(function() {
-    $( "#upload_dialog" ).dialog({
+$(function () {
+    $("#upload_dialog").dialog({
         autoOpen: false
     });
 });
 
 /* Dialog events*/
-$( "#upload_dialog_opener" ).click(function() {
+$("#upload_dialog_opener").click(function () {
     $('#errors').text('');
     $('form[name="photo_response_url"]').resetForm();
     $('form[name="photo_response_file"]').resetForm();
-    $('#upload_dialog').dialog( "open" );
+    $('#upload_dialog').dialog("open");
 });
 
-$("#type_url").click(function() {
-    $( this ).addClass( "active" );
-    $('#type_file').removeClass( "active" );
+$("#type_url").click(function () {
+    $(this).addClass("active");
+    $('#type_file').removeClass("active");
     $('#form_url').show();
     $('#form_file').hide();
 });
 
-$("#type_file").click(function() {
-    $( this ).addClass( "active" );
-    $('#type_url').removeClass( "active" );
+$("#type_file").click(function () {
+    $(this).addClass("active");
+    $('#type_url').removeClass("active");
     $('#form_file').show();
     $('#form_url').hide();
 });
