@@ -1,5 +1,5 @@
 /*Wish list update handler */
-$("#wishes > p > input").blur(function() {
+$(document).on('blur','#wishes > p > input',function() {
 
     var type = 'update';
     if($(this).val() == '')

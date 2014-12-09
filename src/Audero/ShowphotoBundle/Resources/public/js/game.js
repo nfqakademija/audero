@@ -43,8 +43,22 @@ function handleResponse(data) {
     $( "#responses" ).append("<div class='col-md-4'><p class='text-center'><img class='img-responsive' src='" + data.photoLink + "'></p></div>");
 }
 
-function handlePlayerUpdate(data) {
+function handlePlayersUpdate(data) {
     console.log(data.players);
+}
+
+function handleWishesUpdate(data) {
+    var tag = $('#wishes');
+    tag.html('');
+    var wishList = data.wishList;
+    for (var key in wishList) {
+        if (wishList.hasOwnProperty(key)) {
+            tag.append("<p><input type='text' class='form-control' " +
+            "data-position='"+ key +"'" +
+            "value='" + wishList[key] + "'" +
+            "placeholder='Place your wish'></p>");
+        }
+    }
 }
 
 /*Chat message submit handler*/
@@ -78,14 +92,12 @@ var conn = new ab.Session('ws://127.0.0.1:8080',
             }else if(data.type == 'response') {
                 handleResponse(data);
             }else if(data.type == 'player') {
-                handlePlayerUpdate(data);
+                handlePlayersUpdate(data);
             }else if(data.type == 'winnerQueue') {
                 console.log(data);
             }else if(data.type == "wish") {
-                console.log(data);
+                handleWishesUpdate(data);
             }
-
-
         });
     },
     function() {

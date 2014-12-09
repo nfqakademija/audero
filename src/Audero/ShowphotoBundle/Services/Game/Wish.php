@@ -46,10 +46,20 @@ class Wish {
 
         $wishesRepo = $this->em->getRepository("AuderoShowphotoBundle:Wish");
         $wishes = (array) $wishesRepo->findOrderedByPosition($user, $options->getPlayerWishesCount());
-        $wishList = array();
+
+        $wishesByPosition = array();
         /**@var WishEntity $wish*/
         foreach($wishes as $wish) {
-            $wishList[$wish->getPosition()] = $wish->getTitle();
+            $wishesByPosition[$wish->getPosition()] = $wish->getTitle();
+        }
+
+        $wishList = array();
+        for($i = 1; $i <=$options->getPlayerWishesCount(); $i++) {
+            if(array_key_exists($i, $wishesByPosition)) {
+                $wishList[$i] = $wishesByPosition[$i];
+            }else{
+                $wishList[$i] = '';
+            }
         }
 
         $data = array(
@@ -60,7 +70,6 @@ class Wish {
                 'wishList' => $wishList,
             )
         );
-
         $this->pusherQueue->add($data);
     }
 

@@ -40,8 +40,6 @@ content.on('click', '.like_button', (function(event){
         type = 'remove';
     }
     var likeButton = $(this);
-    /*TODO*/
-    var dislikeButton = $('.dislike_button');
 
     (function() {
         $.ajax({
@@ -53,7 +51,7 @@ content.on('click', '.like_button', (function(event){
                 if(data.status == 'success') {
                     if(type == 'create') {
                         likeButton.addClass('liked');
-                        dislikeButton.removeClass('disliked');
+                        likeButton.parent().children('.dislike_button').removeClass('disliked');
                     }else{
                         likeButton.removeClass('liked');
                     }
@@ -74,26 +72,32 @@ content.on('click','.dislike_button', (function(event){
         type = 'remove';
     }
 
-    $.ajax({
-        type: "POST",
-        url: '/app_dev.php/rating/' + type,
-        data: {request_slug: $(this).data('request_slug'), response_author: $(this).data('response_author'), rate: false}
-    })
-        .success(function(data){
-            var dislikeButton = $('.dislike_button');
-            var likeButton = $('.like_button');
-            if(data.status == 'success') {
-                if(type == 'create') {
-                    likeButton.removeClass('liked');
-                    dislikeButton.addClass('disliked');
-                }else{
-                    dislikeButton.removeClass('disliked');
-                }
-            }else{
-                dialog.text(data.message);
-                dialog.dialog('open');
+    var dislikeButton = $(this);
+
+    (function() {
+        $.ajax({
+            type: "POST",
+            url: '/app_dev.php/rating/' + type,
+            data: {
+                request_slug: $(this).data('request_slug'),
+                response_author: $(this).data('response_author'),
+                rate: false
             }
-        });
+        })
+            .success(function (data) {
+                if (data.status == 'success') {
+                    if (type == 'create') {
+                        dislikeButton.parent().children('.like_button').removeClass('liked');
+                        dislikeButton.addClass('disliked');
+                    } else {
+                        dislikeButton.removeClass('disliked');
+                    }
+                } else {
+                    dialog.text(data.message);
+                    dialog.dialog('open');
+                }
+            });
+    })();
 
     event.preventDefault();
 }));
