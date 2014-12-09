@@ -1,0 +1,29 @@
+{% extends 'AuderoWebBundle::base.html.twig' %}
+
+{% block body %}
+    <div class="container">
+        <div id ="content" class="row"></div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ asset('bundles/auderoweb/js/page.js') }}" type="text/javascript"></script>
+    <script>
+        $.ajax({
+            url: "/app_dev.php/load/most-commented",
+            type: 'POST',
+            success: function(html)
+            {
+                if(html)
+                {
+                    $("#content").append(html);
+                    $('div#loadmoreajaxloader').hide();
+                }else
+                {
+                    $('div#loadmoreajaxloader').html('No more posts to show.');
+                }
+            }
+        });
+    </script>
+
+{% endblock %}

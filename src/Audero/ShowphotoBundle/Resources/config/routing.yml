@@ -1,0 +1,20 @@
+showphoto_photo_request:
+    resource: "@AuderoShowphotoBundle/Controller/PhotoRequestController.php"
+    type:     annotation
+showphoto_photo_response:
+    resource: "@AuderoShowphotoBundle/Controller/PhotoResponseController.php"
+    type:     annotation
+showphoto_wish_list:
+    resource: "@AuderoShowphotoBundle/Controller/WishListController.php"
+    type:     annotation
+showphoto_rating:
+    resource: "@AuderoShowphotoBundle/Controller/RatingController.php"
+    type:     annotation
+showphoto_game:
+    resource: "@AuderoShowphotoBundle/Controller/GameController.php"
+    type:     annotation
+showphoto_chat:
+    resource: "@AuderoShowphotoBundle/Controller/ChatController.php"
+    type:     annotation
+
+

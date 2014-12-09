@@ -1,0 +1,31 @@
+{% extends 'AuderoWebBundle::base.html.twig' %}
+
+{% block body %}
+    <div id="content-category" data-category="newest"></div>
+    <div class="container">
+        <br/>
+        <div id="big-ajax-loader">
+            <img src="{{ asset('img/ajax-loader.gif') }}"/>
+        </div>
+        <div id ="content" class="row"></div>
+        <div id="small-ajax-loader" style="display: none">
+            <img src="{{ asset('img/ajax-loader.gif') }}"/>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ asset('bundles/auderoweb/js/page.js') }}" type="text/javascript"></script>
+    <script>
+        $.ajax({
+            url: "/app_dev.php/load/" + $('#content-category').data('category'),
+            type: 'POST',
+            success: function(html)
+            {
+                $("#content").append(html);
+                $('#big-ajax-loader').hide();
+            }
+        });
+    </script>
+
+{% endblock %}

@@ -1,0 +1,15 @@
+Audero\ShowphotoBundle\Entity\PhotoResponse:
+    constraints:
+        - Audero\ShowphotoBundle\Validator\Constraints\SinglePhotoIsSet: ~
+
+Audero\ShowphotoBundle\Entity\Wish:
+    properties:
+        title:
+            - NotBlank: ~
+            - Regex:
+                pattern: "/^.*$/i" #TODO
+            - Length:
+                min: 10
+                max: 50
+                minMessage: "Wish title must be at least {{ limit }} characters long"
+                maxMessage: "Wish title cannot be longer than {{ limit }} characters long"

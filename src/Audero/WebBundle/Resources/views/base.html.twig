@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% block stylesheets %}
+        {% stylesheets filter='cssrewrite'
+        '@AuderoWebBundle/Resources/public/css/bootstrap.css'
+        '@AuderoWebBundle/Resources/public/css/bootswatch.min.css'
+        '@AuderoWebBundle/Resources/public/css/custom.css'
+        'font-awesome-4.1.0/css/font-awesome.min.css'
+        %}
+        <link rel="stylesheet" href="{{ asset_url }}" />
+        {% endstylesheets %}
+    {% endblock %}
+    {% block javascripts %}
+        {% javascripts
+        '@AuderoWebBundle/Resources/public/js/jquery-1.10.2.min.js'
+        '@AuderoWebBundle/Resources/public/js/jquery.form.js'
+        '@AuderoWebBundle/Resources/public/js/bootstrap.min.js'
+        '@AuderoWebBundle/Resources/public/js/bootswatch.js'
+        '@AuderoWebBundle/Resources/public/js/autobahn.min.js'
+        'jquery-form/jquery.form.js'
+        %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+    {% endblock %}
+
+      <link rel="stylesheet" href="{{ asset('jquery-ui-1.11.2/jquery-ui.min.css') }}" />
+      <script type="text/javascript" src="{{ asset('jquery-ui-1.11.2/jquery-ui.js') }}"></script>
+
+      <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="../bower_components/html5shiv/dist/html5shiv.js"></script>
+      <script src="../bower_components/respond/dest/respond.min.js"></script>
+    <![endif]-->
+
+  </head>
+  <body>
+  <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+          <div class="navbar-header">
+              <a href="{{ path('web_page_index') }}" class="navbar-brand"><img src="{{ asset('img/logo.png') }}" alt="ShowPhoto.me"/></a>
+              <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-main">
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+              </button>
+          </div>
+          <div class="navbar-collapse collapse" id="navbar-main">
+              <form class="navbar-form navbar-left">
+                  <input class="form-control col-lg-8" placeholder="Search" type="text">
+              </form>
+              {#TODO remove <b> tags#}
+              <ul class="nav navbar-nav navbar-right">
+                  <li><a href="{{ path('web_page_newest') }}"><b>Newest</b></a></li>
+                  <li><a href="{{ path('web_page_best') }}"><b>Best</b></a></li>
+                  <li><a href="{{ path('web_page_mostCommented') }}"><b>Hottest</b></a></li>
+                  {% if app.user %}
+                  <li class="dropdown">
+                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><b>Account</b> <b class="caret"></b></a>
+                      <ul class="dropdown-menu">
+                          <li><a href="#">Profile</a></li>
+                          <li class="divider"></li>
+                          <li><a href="#">Logout</a></li>
+                      </ul>
+                  </li>
+                  {% else %}
+                      <li><a href="#" target="_blank">Login</a></li>
+                  {% endif %}
+
+
+              </ul>
+          </div>
+      </div>
+  </div>
+
+    <div class="container">
+        {% block dialogs %}
+            <div id="notification_dialog" style="display: none">
+            </div>
+        {% endblock %}
+
+      {% block body%}
+
+      {% endblock %}
+
+      <footer>
+      <div class="row">
+        {% block footer%}{%endblock%}
+      </div>
+      </footer>
+
+    </div>
+    {% block scripts %}
+    {% endblock %}
+  </body>
+</html>

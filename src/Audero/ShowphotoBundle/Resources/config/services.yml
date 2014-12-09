@@ -1,0 +1,39 @@
+services:
+    rating.listener:
+        class: Audero\ShowphotoBundle\EventListener\RatingListener
+        arguments: ["@game.rating"]
+        tags:
+          - { name: doctrine.event_listener, event: onFlush }
+    #Uploader services
+    uploader.token.provider:
+        class:  Audero\ShowphotoBundle\Services\Uploader\TokenProvider
+        arguments: ["%imgur_client_id%", "%imgur_client_secret%", "%imgur_refresh_token%"]
+        public: false;
+    uploader:
+        class:  Audero\ShowphotoBundle\Services\Uploader\Imgur
+        arguments: ["@uploader.token.provider"]
+    #Game services
+    game.chat:
+       class:  Audero\ShowphotoBundle\Services\Game\Chat
+       arguments: ["@pusher.queue"]
+    game.wish:
+        class:  Audero\ShowphotoBundle\Services\Game\Wish
+        arguments: ["@doctrine.orm.entity_manager","@pusher.queue"]
+    game.photo.request:
+        class:  Audero\ShowphotoBundle\Services\Game\PhotoRequest
+        arguments: ["@doctrine.orm.entity_manager", "@pusher.queue"]
+    game.photo.response:
+        class:  Audero\ShowphotoBundle\Services\Game\PhotoResponse
+        arguments: ["@doctrine.orm.entity_manager", "@form.factory", "@uploader", "@security.context", "@game.photo.request", "@pusher.queue"]
+    game.rating:
+        class:  Audero\ShowphotoBundle\Services\Game\Rating
+        arguments: ["@pusher.queue"]
+    game.winner.queue:
+        class:  Audero\ShowphotoBundle\Services\Game\WinnerQueue
+        arguments: ["@doctrine.orm.entity_manager", "@pusher.queue"]
+    game.player:
+        class:  Audero\ShowphotoBundle\Services\Game\Player
+        arguments: ["@doctrine.orm.entity_manager", "@pusher.queue"]
+    game.manager:
+        class:  Audero\ShowphotoBundle\Services\Game\Manager
+        arguments: ["@doctrine.orm.entity_manager","@game.photo.request", "@game.player", "@game.winner.queue", "@game.wish"]

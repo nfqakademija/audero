@@ -1,0 +1,56 @@
+/*!
+ * Custom css file
+ * Based on Bootstrap
+*/
+
+.form-signin {
+    max-width: 330px;
+    padding: 25px;
+    margin: 0 auto;
+}
+.wide {
+    width:100%;
+    height:350px;
+    background-image:url('images/main-1920x350.jpg');
+    background-size:cover;
+    padding-top: 70px;
+}
+
+.wide img {
+    width:100%;
+}
+
+a {
+    color: #BED632;
+}
+
+a:hover {
+    color: #374140;
+}
+
+.row-game {
+	margin-top: 90px;
+}
+
+
+@media (min-width: 1200px) {
+    .container {
+        width: 950px;
+    }
+}
+
+.no-padding {
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-bottom: 5px;
+    margin-top: 5px;
+    padding: 0px;
+}
+
+.liked {
+    border: 3px solid green;
+}
+
+.disliked {
+    border: 3px solid red;
+}

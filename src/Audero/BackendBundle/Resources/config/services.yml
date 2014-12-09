@@ -1,0 +1,6 @@
+services:
+    form.type.backend_options:
+        class: Audero\BackendBundle\Form\OptionsType
+        arguments: [ @router ]
+        tags:
+            - { name: form.type, alias: audero_backendbundle_options}

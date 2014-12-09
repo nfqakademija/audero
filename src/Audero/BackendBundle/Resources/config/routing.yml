@@ -1,0 +1,17 @@
+backend_dashboard:
+    resource: "@AuderoBackendBundle/Controller/DashboardController.php"
+    type:     annotation
+backend_request:
+    resource: "@AuderoBackendBundle/Controller/RequestController.php"
+    type:     annotation
+backend_response:
+    resource: "@AuderoBackendBundle/Controller/ResponseController.php"
+    type:     annotation
+backend_user:
+    resource: "@AuderoBackendBundle/Controller/UserController.php"
+    type:     annotation
+backend_options:
+    resource: "@AuderoBackendBundle/Controller/OptionsController.php"
+    type:     annotation
+
+
