@@ -25,4 +25,14 @@ class UserRepository extends EntityRepository
 
         return $result[0][1] + 1;
     }
+
+    public function findAllData() {
+        return $this->getEntityManager()
+            ->createQuery(
+                'SELECT u
+                 FROM AuderoShowphotoBundle:User u'
+            )
+            ->getArrayResult();
+
+    }
 }

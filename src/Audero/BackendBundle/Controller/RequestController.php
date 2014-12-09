@@ -3,26 +3,23 @@
 namespace Audero\BackendBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 /**
- * Dashboard controller.
+ * Request controller.
  *
- * @Route("/admin")
+ * @Route("/admin/requests")
  */
-class DashboardController extends Controller
+class RequestController extends Controller
 {
     /**
-     * @Route("/", name="backend_dashboard_index")
+     * @Route("/", name="backend_request_index")
      * @Template()
      */
     public function indexAction()
     {
-        return $this->render('AuderoBackendBundle:Dashboard:index.html.twig', array(
-
-        ));
+        return array();
     }
 
 

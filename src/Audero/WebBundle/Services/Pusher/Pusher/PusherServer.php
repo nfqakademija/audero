@@ -66,20 +66,22 @@ class PusherServer implements WampServerInterface, OutputInterface
 
         $this->notification("PusherServer", "Removed connection");
     }
-
+    
     /**
      * @param ConnectionInterface $conn
      * @param Topic|string $topic
      */
     public function onSubscribe(ConnectionInterface $conn, $topic)
     {
-        if (!$this->cm->hasPermissions($conn, $topic)) {
-            $this->error("PusherServer", "Rejected subscription (Permissions)");
-            $conn->close();
-            return;
-        }
-
         try {
+            if(!($topic instanceof Topic)) {
+                throw new \Exception('Received $topic is not an instance of Topic');
+            }
+            if (!$this->cm->hasPermissions($conn, $topic)) {
+                $this->error("PusherServer", "Rejected subscription (Permissions)");
+                $conn->close();
+                return;
+            }
             if ($this->cm->addSubscription($conn, $topic)) {
                 $this->notification("PusherServer", "Added new subscription");
             } else {

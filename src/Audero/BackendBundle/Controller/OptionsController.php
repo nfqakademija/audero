@@ -26,7 +26,7 @@ class OptionsController extends Controller
     /**
      * Displays options
      *
-     * @Route("/", name="backend_options")
+     * @Route("/", name="backend_options_index")
      * @Method("GET")
      * @Template()
      */
@@ -69,7 +69,7 @@ class OptionsController extends Controller
             $em->persist($record);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('backend_index'));
+            return $this->redirect($this->generateUrl('backend_dashboard_index'));
         }
 
         return $this->render('AuderoBackendBundle:Options:index.html.twig', array(
