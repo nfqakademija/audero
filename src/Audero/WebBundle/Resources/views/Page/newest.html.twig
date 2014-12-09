@@ -1,9 +1,16 @@
 {% extends 'AuderoWebBundle::base.html.twig' %}
 
 {% block body %}
+    <div id="content-category" data-category="newest"></div>
     <div class="container">
         <br/>
+        <div id="big-ajax-loader">
+            <img src="{{ asset('img/ajax-loader.gif') }}"/>
+        </div>
         <div id ="content" class="row"></div>
+        <div id="small-ajax-loader" style="display: none">
+            <img src="{{ asset('img/ajax-loader.gif') }}"/>
+        </div>
     </div>
 {% endblock %}
 
@@ -11,18 +18,12 @@
     <script src="{{ asset('bundles/auderoweb/js/page.js') }}" type="text/javascript"></script>
     <script>
         $.ajax({
-            url: "/app_dev.php/load/newest",
+            url: "/app_dev.php/load/" + $('#content-category').data('category'),
             type: 'POST',
             success: function(html)
             {
-                if(html)
-                {
-                    $("#content").append(html);
-                    $('div#loadmoreajaxloader').hide();
-                }else
-                {
-                    $('div#loadmoreajaxloader').html('No more posts to show.');
-                }
+                $("#content").append(html);
+                $('#big-ajax-loader').hide();
             }
         });
     </script>

@@ -2,28 +2,26 @@
 
 {% block title %}Play{% endblock %}
 
-
+{% block dialogs %}
+    <div id="upload_dialog" title="Insert Image" style="display: none">
+        <div class="btn-group btn-group-justified">
+            <a href="#" id="type_url" class="btn btn-primary btn-xs active">URL</a>
+            <a href="#" id="type_file" class="btn btn-primary btn-xs">FILE</a>
+        </div>
+        <div id="errors">
+        </div>
+        <div id="form_url">
+            {{ form(form_url) }}
+        </div>
+        <div id="form_file" style="display: none">
+            {{ form(form_file) }}
+        </div>
+    </div>
+    <div id="notification_dialog" style="display: none">
+    </div>
+{% endblock %}
 
 {% block body %}
-
-    {% block dialogs %}
-        <div id="upload_dialog" title="Insert Image" style="display: none">
-            <div class="btn-group btn-group-justified">
-                <a href="#" id="type_url" class="btn btn-primary btn-xs active">URL</a>
-                <a href="#" id="type_file" class="btn btn-primary btn-xs">FILE</a>
-            </div>
-            <div id="errors">
-            </div>
-            <div id="form_url">
-                {{ form(form_url) }}
-            </div>
-            <div id="form_file" style="display: none">
-                {{ form(form_file) }}
-            </div>
-        </div>
-        <div id="notification_dialog" style="display: none">
-        </div>
-    {% endblock %}
 <hr>
 <div class="row">
     <div class="col-md-8">

@@ -15,10 +15,15 @@ use Audero\ShowphotoBundle\Form\PhotoResponseType;
 use Symfony\Component\CssSelector\Exception\InternalErrorException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
+/**
+ * Game controller.
+ *
+ * @Route("/game")
+ */
 class GameController extends Controller
 {
     /**
-     * @Route("/game", name="showphoto_game_play")
+     * @Route("/", name="showphoto_game_play")
      * @Template()
      */
     public function playAction()

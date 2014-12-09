@@ -1,9 +1,10 @@
 var offset = 10;
 var category = 'newest';
 var content = $('#content');
+var dialog = $( "#notification_dialog" );
 
 $(function() {
-    $( "#notification_dialog" ).dialog({
+    dialog.dialog({
         autoOpen: false
     });
 });
@@ -56,6 +57,9 @@ content.on('click', '.like_button', (function(event){
                     }else{
                         likeButton.removeClass('liked');
                     }
+                }else{
+                    dialog.text(data.message);
+                    dialog.dialog('open');
                 }
             });
     })();
@@ -85,6 +89,9 @@ content.on('click','.dislike_button', (function(event){
                 }else{
                     dislikeButton.removeClass('disliked');
                 }
+            }else{
+                dialog.text(data.message);
+                dialog.dialog('open');
             }
         });
 
@@ -95,9 +102,9 @@ $(window).scroll(function()
 {
     if($(window).scrollTop() == $(document).height() - $(window).height())
     {
-        $('div#loadmoreajaxloader').show();
+        $('#small-ajax-loader').show();
         $.ajax({
-            url: "/app_dev.php/load/newest",
+            url: "/app_dev.php/load/" + category,
             type: 'POST',
             data: {offset: offset},
             success: function(html)
@@ -105,11 +112,11 @@ $(window).scroll(function()
                 if(html)
                 {
                     $("#content").append(html);
-                    $('div#loadmoreajaxloader').hide();
+                    $('#small-ajax-loader').hide();
                     offset += 5;
                 }else
                 {
-                    $('div#loadmoreajaxloader').html('No more posts to show.');
+                    $('#small-ajax-loader').html('No more photos to show.');
                 }
             }
         });

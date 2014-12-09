@@ -76,7 +76,13 @@
   </div>
 
     <div class="container">
+        {% block dialogs %}
+            <div id="notification_dialog" style="display: none">
+            </div>
+        {% endblock %}
+
       {% block body%}
+
       {% endblock %}
 
       <footer>

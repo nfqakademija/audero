@@ -90,11 +90,12 @@ var conn = new ab.Session('ws://127.0.0.1:8080',
     },
     function() {
         /*Notifying user about connection closure*/
+        //TODO
         setTimeout(function(){
             var dialog = $('#notification_dialog');
             dialog.text('Connection closed');
             dialog.dialog('open');
-        }, 5000);
+        }, 1000);
 
     },
     {'skipSubprotocolCheck': true}
