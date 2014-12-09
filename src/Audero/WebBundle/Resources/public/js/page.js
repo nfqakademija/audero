@@ -45,7 +45,11 @@ content.on('click', '.like_button', (function(event){
         $.ajax({
             type: "POST",
             url: '/app_dev.php/rating/' + type,
-            data: {request_slug: likeButton.data('request_slug'), response_author: likeButton.data('response_author'), rate: true}
+            data: {
+                request_slug: likeButton.data('request_slug'),
+                response_author: likeButton.data('response_author'),
+                rate: true
+            }
         })
             .success(function(data){
                 if(data.status == 'success') {
@@ -79,8 +83,8 @@ content.on('click','.dislike_button', (function(event){
             type: "POST",
             url: '/app_dev.php/rating/' + type,
             data: {
-                request_slug: $(this).data('request_slug'),
-                response_author: $(this).data('response_author'),
+                request_slug: dislikeButton.data('request_slug'),
+                response_author: dislikeButton.data('response_author'),
                 rate: false
             }
         })
