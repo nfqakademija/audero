@@ -1,39 +1,114 @@
 {% extends 'AuderoWebBundle::base.html.twig' %}
 
 {% block body %}
-    single response
+    <div class="container">
+        <div class="row center">
+            <br/>
+            <div class="col-md-8">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            <a href="{{ path('web_page_singleResponse',
+                            {'slug': response.request.slug,
+                            'author':response.user.username}) }}"
+                               class="btn btn-default btn-xs"
+                               style="color:white">SHOW ME:</a>
+                            <a href="{{ path('web_page_singleResponse',
+                            {'slug': response.request.slug,
+                            'author':response.user.username}) }}">
+                                {{ response.request.title }}
+                            </a>
+                        </h3>
+                    </div>
+                    <div class="panel-body">
+                        <a href="{{ response.photoLink }}">
+                            <img src="http://i.imgur.com/{{ response.photoId }}l.jpg" align="center" class="img-responsive center-block" ></a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <!--Vote block-->
+                <div class="panel panel-default">
+                    <div class="panel-heading" >
+                        <a style="color: black; font-size: 16px" href="{{ path('web_profile_user',
+                        {'username':response.user.username}) }}">
+                            @{{ response.user.username }}
+                        </a>
+                        {{ response.date|date('Y-m-d h:i:s') }}
+                    </div>
+                    <div class="panel-body">
+                        <p><a href="#"
+                                    {% if rate.rate is defined and rate.rate == true %}
+                                        class="btn btn-default btn-lg btn-block like_button active"
+                                    {% else %}
+                                        class="btn btn-default btn-lg btn-block like_button"
+                                    {% endif %}
+                              data-request_slug="{{ response.request.slug}}"
+                              data-response_author="{{ response.user.username}}">
+                                <i class="fa fa-thumbs-up"></i>
+                                Like
+                            </a>
+                        </p>
+                        <p class="text-center">
+                            <a href="#"
+                                    {% if rate.rate is defined and rate.rate == false %}
+                                        class="btn btn-danger btn-lg btn-block dislike_button active"
+                                    {% else %}
+                                        class="btn btn-danger btn-lg btn-block dislike_button"
+                                    {% endif %}
+                               data-request_slug="{{ response.request.slug}}"
+                               data-response_author="{{ response.user.username}}">
+                                Dislike
+                            </a>
+                        </p>
+                    </div>
+                    <div class="panel-body">
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-success"
+                                 data-request_slug="{{ response.request.slug}}"
+                                 data-response_author="{{ response.user.username}}"
+                                    {% if response.likes + response.dislikes > 0 %}
+                                 style="width: {{ 100 * response.likes / (response.likes + response.dislikes) }}%" >
+                                {{ response.likes }}
+                                {%  else %}
+                                    >
+                                {% endif %}
+                            </div>
+                            <div class="progress-bar progress-bar-danger"
+                                 data-request_slug="{{ response.request.slug}}"
+                                 data-response_author="{{ response.user.username}}"
+
+                                    {% if response.likes + response.dislikes > 0 %}
+                                 style="width: {{ 100-100 * response.likes / (response.likes + response.dislikes) }}%" >
+                                {{ response.dislikes }}
+                                {%  else %}
+                                    >
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="disqus_thread"></div>
+        <script type="text/javascript">
+            /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+            var disqus_shortname = 'showphoto'; // required: replace example with your forum shortname
+
+            /* * * DON'T EDIT BELOW THIS LINE * * */
+            (function() {
+                var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+                dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+            })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+    </div>
+
 {% endblock %}
 
 {% block scripts %}
-<script>
-    $('#like_button').click(function(){
-        $.ajax({
-            type: "POST",
-            url: '/app_dev.php/rating/like',
-            data: {request_slug: $(this).data('request_slug'), response_author: $(this).data('response_author'), rate: $(this).data('rate')}
-        });
-    });
-
-    $('#dislike_button').click(function(){
-        $.ajax({
-            type: "POST",
-            url: '/app_dev.php/rating/',
-            data: {photo_id: $(this).data('id'), rate: $(this).data('rate')}
-        });
-    });
-
-    var conn = new ab.Session('ws://127.0.0.1:8080',
-            function() {
-                conn.subscribe('chat', function(topic, data) {
-                    console.log(data);
-                });
-            },
-            function() {
-                console.warn('WebSocket connection closed');
-            },
-            {'skipSubprotocolCheck': true}
-    );
-
-</script>
+        <script src="{{ asset('bundles/auderoweb/js/page_response.js') }}" type="text/javascript"></script>
 
 {% endblock %}

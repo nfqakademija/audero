@@ -6,7 +6,7 @@ $("#wishes > p > input").blur(function() {
 
     $.ajax({
         type: "POST",
-        url: "/app_dev.php/wish/" + type,
+        url: "/wish/" + type,
         data: { title: $(this).val() , position: $(this).data('position') }
     })
         .success(function(data) {

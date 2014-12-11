@@ -18,7 +18,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 /**
  * Game controller.
  *
- * @Route("/game")
+ * @Route("/play")
  */
 class GameController extends Controller
 {
@@ -57,14 +57,6 @@ class GameController extends Controller
             $wishList[$wish->getPosition()] = $wish;
         }
 
-        $players = $em->getRepository('AuderoShowphotoBundle:Player')->findAllOrderedByRate();
-        $request = $em->getRepository('AuderoShowphotoBundle:PhotoRequest')->findOneNewest();
-        if(!$request) {
-            throw new InternalErrorException();
-        }
-
-        $responses = $em->getRepository('AuderoShowphotoBundle:PhotoResponse')->findByRequest($request);
-
         $formFile = $this->createForm(new PhotoResponseFileType(), null, array(
             'action' => $this->generateUrl('game_response_file'),
             'method' => 'POST',
@@ -74,25 +66,34 @@ class GameController extends Controller
             'method' => 'POST',
         ));
 
+        $players = $em->getRepository('AuderoShowphotoBundle:Player')->findAllOrderedByRate();
+        /**@var PhotoRequest $request*/
+        $request = $em->getRepository('AuderoShowphotoBundle:PhotoRequest')->findLastBroadcasted();
+        if(!$request) {
+            return array(
+                'form_file' => $formFile->createView(),
+                'form_url' => $formUrl->createView(),
+                'players' => $players,
+                'wishList' => $wishList,
+                'wishListSize' => $backendOptions->getPlayerWishesCount()
+            );
+        }
+
+        if(!$request->getValidUntil()) {
+            throw new \Exception("Could not get validUntil value from photoRequest Entity");
+        }
+        $date = new \DateTime('now');
+        $timeLeft = $request->getValidUntil()->getTimestamp() - $date->getTimestamp();
+        $timeLeft = $timeLeft > 0 ? $timeLeft : "0";
+
         return array(
             'form_file' => $formFile->createView(),
             'form_url' => $formUrl->createView(),
             'request' => $request,
-            'validUntil' => $this->get('game.photo.request')->getValidUntil($request),
-            'responses' => $responses,
+            'timeLeft' => $timeLeft,
             'players' => $players,
             'wishList' => $wishList,
             'wishListSize' => $backendOptions->getPlayerWishesCount()
         );
     }
-
-    /**
-     * @Route("/spectate", name="showphoto_game_spectate")
-     * @Template()
-     */
-    public function spectateAction() {
-        return array();
-    }
-
-
 }

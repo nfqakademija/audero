@@ -22,39 +22,61 @@
 {% endblock %}
 
 {% block body %}
-<hr>
-<div class="row">
+<div class="row" style="margin-top: 40px">
     <div class="col-md-8">
-        <blockquote>
-            <p id="request">{{ request.title }}</p>
-            <small id="user">by {{ request.user.username }}</small>
-        </blockquote>
-        <hr>
-        <div id="responses">
-            <div class="col-md-4" id="upload_dialog_opener">
-                <p>
-                    vietoj paveikslelio
-                </p>
+
+        <div id="request-panel" class="panel panel-default">
+            <div class="panel-body" >
+                <span id="request" style="font-size: 20px">{{ request.title }}</span>
+                <span id="user" style="font-size: 20px"> @{{ request.user }}</span>
             </div>
-
-            {% for response in responses %}
-                <div class="col-md-4">
-                    <p class="text-center">
-                        <img class="img-responsive" src="{{ response.photoLink }}">
-                    </p>
-                </div>
-            {% endfor %}
         </div>
+
+       <div id="winners-panel" class="panel panel-default" style="display: none">
+            <div class="panel-heading">
+                <h3 class="panel-title">Winners</h3>
+            </div>
+            <div class="panel-body">
+                <table class="table table-striped table-hover ">
+                    <thead>
+                    <tr>
+                        <th>Place</th>
+                        <th>Player</th>
+                        <th>Rate</th>
+                    </tr>
+                    </thead>
+                    <tbody id="winners-panel-body">
+                        <tr>
+                            <td>1</td>
+                            <td>Rokas</td>
+                            <td>+10</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div>
+            <div id="upload_dialog_opener" class="col-lg-4 col-md-4">
+                <a class="thumbnail" href="#">
+                    <img class="img-responsive" src="http://i1215.photobucket.com/albums/cc507/burpinguppy/shocked-cat-211212.jpg" alt="">
+                </a>
+            </div>
+            <span id="responses">
+
+            </span>
+        </div>
+
     </div>
+
+
     <div class="col-md-4">
-
-
         <p>
             <a href="#" class="btn btn-default btn-lg btn-block">
-                Time left: <span id="timer" data-validuntil="{{ validUntil }}"></span>
+                Time left: <span id="timer" data-timeLeft="{{ timeLeft }}">0</span>
             </a>
         </p>
-        <hr>
+        <br/>
         <ul class="nav nav-tabs">
             <li class="active"><a href="#chat" data-toggle="tab">Chat</a></li>
             <li class=""><a href="#players" data-toggle="tab">Players</a></li>

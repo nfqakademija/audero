@@ -2,30 +2,52 @@
 
 namespace Audero\ShowphotoBundle\Services\Uploader;
 
+use Audero\ShowphotoBundle\Entity\Token as TokenEntity;
+use Doctrine\ORM\EntityManager;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
+/**
+ * Class Imgur
+ * @package Audero\ShowphotoBundle\Services\Uploader
+ */
 class Imgur
 {
 
-    private $tokenProvider;
+    /**
+     * @var EntityManager
+     */
+    private $em;
 
-    public function __construct(TokenProvider $tokenProvider)
+    /**
+     * @param EntityManager $em
+     */
+    public function __construct(EntityManager $em)
     {
-        $this->tokenProvider = $tokenProvider;
+        $this->em = $em;
     }
 
-    /*
-     * Uploads photo to imgur
-     * Returns JSON response
-     * */
+    /**
+     * @param $post
+     * @return mixed|null
+     */
     private function upload($post)
     {
+        $repo = $this->em->getRepository("AuderoShowphotoBundle:Token");
+        if (!$repo) {
+            return null;
+        }
+        $token = $repo->findNewest();
+        /**@var TokenEntity $token*/
+        if (!$token || !$token->getAccessToken()) {
+            return null;
+        }
+
         $timeout = 10;
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, 'https://api.imgur.com/3/upload');
         curl_setopt($curl, CURLOPT_TIMEOUT, $timeout);
         curl_setopt($curl, CURLOPT_HTTPHEADER, array(
-            'Authorization: Bearer ' . $this->tokenProvider->getToken()
+            'Authorization: Bearer ' . $token->getAccessToken()
         ));
         curl_setopt($curl, CURLOPT_POST, 1);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
@@ -36,10 +58,10 @@ class Imgur
         return $response ? json_decode($response) : null;
     }
 
-    /*
-     *  Passes image's url to imgur
-     *  Return type JSON
-     * */
+    /**
+     * @param $image
+     * @return mixed|null
+     */
     public function uploadUrl($image)
     {
         $post = array(
@@ -49,10 +71,10 @@ class Imgur
         return $this->upload($post);
     }
 
-    /*
-     *  Passes file to imgur
-     *  Return type JSON
-     * */
+    /**
+     * @param UploadedFile $file
+     * @return mixed|null
+     */
     public function uploadFile(UploadedFile $file)
     {
         $post = array(
@@ -61,5 +83,4 @@ class Imgur
 
         return $this->upload($post);
     }
-
 } 

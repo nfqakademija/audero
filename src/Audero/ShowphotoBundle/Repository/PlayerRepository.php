@@ -41,8 +41,6 @@ class PlayerRepository extends EntityRepository
             ->setParameter(1, $request)
             ->getResult();
 
-        return isset($result[0]['username']) ? $result : array();
+        return isset($result[0]['resRate']) && !is_null($result[0]['resRate']) ? $result : array();
     }
-
-
 }

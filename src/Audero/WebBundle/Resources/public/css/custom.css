@@ -54,3 +54,9 @@ a:hover {
 .disliked {
     border: 3px solid red;
 }
+
+.center {
+    float: none;
+    margin-left: auto;
+    margin-right: auto;
+}

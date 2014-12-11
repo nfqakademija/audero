@@ -77,8 +77,8 @@ class PhotoResponse
         }
 
         /** @var PRequestEntity $pRequestEntity */
-        $request = $this->em->getRepository("AuderoShowphotoBundle:PhotoRequest")->findOneNewest();
-        if (!$request) {
+        $request = $this->em->getRepository("AuderoShowphotoBundle:PhotoRequest")->findLastBroadcasted();
+        if (!($request instanceof PRequestEntity)) {
             throw new \Exception('No Request was found');
         }
 
@@ -87,8 +87,12 @@ class PhotoResponse
             throw new \Exception('You have already responded to this request');
         }
 
-        $validUntil = $this->pRequestService->getValidUntil($request);
-        if (time() > $validUntil) {
+        $validUntil = $request->getValidUntil();
+        if(!$validUntil) {
+            throw new \Exception('Could not get validUntil value from photoRequest Entity');
+        }
+
+        if (time() > $validUntil->getTimestamp()) {
             throw new \Exception('Request time has expired');
         }
 
@@ -111,8 +115,8 @@ class PhotoResponse
                 ->setWidth($data->width);
             return $response;
         }
-
-        throw new \Exception('Failed to upload image');
+        // TODO
+        throw new \Exception('Failed to upload image. Available formats: ');
     }
 
     /**

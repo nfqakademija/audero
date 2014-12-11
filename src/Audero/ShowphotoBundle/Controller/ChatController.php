@@ -74,6 +74,6 @@ class ChatController extends Controller
             return new JsonResponse(json_encode(array("status" => "success")));
         }
 
-        return new JsonResponse(json_encode(array("status" => "failure", "message" =>$form->getErrors())));
+        return new JsonResponse(json_encode(array("status" => "failure", "message" =>"Message is too short or too long")));
     }
 }

@@ -38,7 +38,7 @@ class RatingController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         if (!($user = $this->getUser())) {
-            return new JsonResponse(array("status" => "failure", "message" => "Please sign in"));
+            return new JsonResponse(array("status" => "failure", "message" => "Please login"));
         }
 
         if (!($response = $this->getStoredResponse($requestSlug, $responseAuthor))) {
@@ -87,7 +87,7 @@ class RatingController extends Controller
         $em = $this->getDoctrine()->getEntityManager();
 
         if (!($user = $this->getUser())) {
-            return new JsonResponse(array("status" => "failure", "message" => "Please sign in"));
+            return new JsonResponse(array("status" => "failure", "message" => "Please login"));
         }
 
         if (!($response = $this->getStoredResponse($requestSlug, $responseAuthor))) {

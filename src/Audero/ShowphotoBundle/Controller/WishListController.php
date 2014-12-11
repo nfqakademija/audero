@@ -46,7 +46,7 @@ class WishListController extends Controller
         $em = $this->getDoctrine()->getManager();
         $request = $em->getRepository("AuderoShowphotoBundle:PhotoRequest")->findOneBy(array('slug'=>$slug));
         if($request) {
-            return new JsonResponse(json_encode(array('status'=>'failure', 'message'=>'This wish is already ?? COMPLETED ??  ')));
+            return new JsonResponse(json_encode(array('status'=>'failure', 'message'=>"Don't repeat yourself")));
         }
 
         // creating new wish

@@ -9,6 +9,7 @@ use Audero\ShowphotoBundle\Entity\Wish as WishEntity;
 use Audero\WebBundle\Services\Pusher\PusherQueue;
 use Cocur\Slugify\Slugify;
 use Doctrine\ORM\EntityManager;
+use Symfony\Component\Validator\Constraints\DateTime;
 
 /**
  * Class PhotoRequest
@@ -42,12 +43,12 @@ class PhotoRequest {
      */
     public function generate() {
         /*Finding newest photo request*/
-        $pRequestEntity = $this->em->getRepository('AuderoShowphotoBundle:PhotoRequest')->findOneNewest();
+        $pRequestEntity = $this->em->getRepository('AuderoShowphotoBundle:PhotoRequest')->findLastBroadcasted();
         if(!$pRequestEntity) {
             return $this->generatePlayersRequest();
         }
         /*finding it's best responses*/
-        $pResponses = $this->em->getRepository('AuderoShowphotoBundle:PhotoResponse')->findBestResponses($pRequestEntity);
+        $pResponses = (array) $this->em->getRepository('AuderoShowphotoBundle:PhotoResponse')->findBestResponses($pRequestEntity);
         if ($pResponses) {
             foreach($pResponses as $pResponse) {
                 $wish = $this->em->getRepository('AuderoShowphotoBundle:Wish')->findUserFirstWish($pResponse['response']->getUser());
@@ -95,27 +96,41 @@ class PhotoRequest {
      * Creates photo request slug from wish title
      *
      * @param WishEntity $wish
-     * @return string
+     * @return null|string
      */
     public function createSlug(WishEntity $wish) {
         $slugify = new Slugify();
+        $user = $wish->getUser();
+        if(!$user) {
+            return null;
+        }
         return $slugify->slugify($wish->getTitle().' '.$wish->getUser()->getUsername());
     }
 
 
     /**
-     * @param pRequestEntity $pRequestEntity
+     * @param PRequestEntity $pRequestEntity
+     * @throws \Exception
      */
     public function broadcast(pRequestEntity $pRequestEntity)
     {
+        $user = $pRequestEntity->getUser();
+        if(!$user) {
+            throw new \Exception("Can't get user from photoRequest entity");
+        }
+        if(!$pRequestEntity->getValidUntil()) {
+            throw new \Exception("Cant get validUntil from photoRequest entity");
+        }
+
+        $now = new \DateTime('now');
         $data = array(
             'topic' => 'game',
             'data' => array(
                 'type' => 'request',
                 'requestTitle' => $pRequestEntity->getTitle(),
-                'username' =>$pRequestEntity->getUser()->getUsername(),
-                'validUntil' => $this->getValidUntil($pRequestEntity)
-            )
+                'username' => $user->getUsername(),
+                // -2 left for buffering
+                'timeLeft' => $pRequestEntity->getValidUntil()->getTimestamp() - $now->getTimestamp() - 2 )
         );
 
         $this->pusherQueue->add($data);
@@ -135,6 +150,6 @@ class PhotoRequest {
             return null;
         }
 
-        return $pRequestEntity->getDate()->add(new \DateInterval('PT' . $options->getTimeForRequest() . 'S'))->getTimestamp();
+        return $pRequestEntity->getValidUntil();
     }
-} 
+}

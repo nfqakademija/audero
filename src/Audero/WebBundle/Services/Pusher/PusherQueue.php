@@ -8,7 +8,6 @@ namespace Audero\WebBundle\Services\Pusher;
  */
 class PusherQueue
 {
-
     /**
      * @param $data
      */

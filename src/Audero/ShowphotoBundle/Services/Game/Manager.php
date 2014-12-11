@@ -68,43 +68,46 @@ class Manager implements OutputInterface
             /*Getting admin options*/
             $options = $this->em->getRepository("AuderoBackendBundle:OptionsRecord")->findCurrent();
             /**@var Options $options*/
-            if (!$options) {
-                $this->error("Admin options not found");
-                sleep(5);
-                continue;
+            if (!($options instanceof Options)) {
+                $this->error("Admin options not found"); die;
             }
 
             /*Checking if there's enough players */
             $playersCount = (int) $this->em->getRepository("AuderoShowphotoBundle:Player")->getPlayersCount();
             if($playersCount < $options->getMinPlayers()) {
-                $this->error("There's not enough players. Waiting...");
-                sleep(10);
-                continue;
+                $this->error("There's not enough players. Waiting...({$playersCount} < {$options->getMinPlayers()})");
+                sleep(5); continue;
             }
 
+            $this->notification("Generating new photo request");
             $requestEntity = $this->prepareNewRequest();
             if(!($requestEntity instanceof PRequestEntity)) {
-                $this->error("Failed to get newly generated request");
-                sleep(10); continue;
+                $this->error("Could not generate new request");
+                sleep(5); continue;
             }
 
-            $user = $requestEntity->getUser();
-            if(!$user) {
-                $this->error("Failed to retrieve user from photoRequest"); die;
+            /*Setting valid until before broadcasting*/
+            try{
+                $date = new \DateTime('now');
+                $requestEntity->setValidUntil($date->add(new \DateInterval('PT'.$options->getTimeForRequest().'S')));
+                $this->em->persist($requestEntity);
+                $this->em->flush();
+            }catch (\Exception $e) {
+                $this->error($e->getMessage()); die;
             }
-            $this->wish->broadcast($user);
-            $this->photoRequest->broadcast($requestEntity);
 
-            /*waiting until request time finishes*/
-            $now = new \DateTime('now');
-            $sleepTime = $this->photoRequest->getValidUntil($requestEntity) - $now->getTimestamp();
-            sleep($sleepTime);
+            $this->broadcastRequest($requestEntity);
 
-            /*broadcasting winners queue*/
-            $now = new \DateTime('now');
-            $showUntil = $now->add(new \DateInterval('PT'.$options->getTimeForWinnerQueue().'S'))->getTimestamp();
-            $this->winnerQueue->broadcast($requestEntity, $showUntil);
-            sleep($options->getTimeForWinnerQueue());
+            $this->waitUntilRequestExpires($requestEntity);
+
+            /*$this->broadcastWinnerQueue($options, $requestEntity);*/
+
+            /*Waiting*/
+            /*$this->notification("Showing winners queue for {$options->getTimeForWinnerQueue()} sec");
+            sleep($options->getTimeForWinnerQueue());*/
+
+            //TODO kick all players who did not respond
+
         }
     }
 
@@ -135,6 +138,52 @@ class Manager implements OutputInterface
         }
 
         return $requestEntity;
+    }
+
+    /**
+     * @param PRequestEntity $photoRequest
+     */
+    private function broadcastRequest(PRequestEntity $photoRequest) {
+        $user = $photoRequest->getUser();
+        if(!$user) {
+            $this->error("Failed to get user from photoRequest entity"); die;
+        }
+        try{
+            $this->notification("Updating user ({$user}) wish list");
+            $this->wish->broadcast($user);
+            $this->notification("Broadcasting new request '{$photoRequest->getTitle()}'");
+            $this->photoRequest->broadcast($photoRequest);
+        }catch (\Exception $e) {
+            $this->error($e->getMessage()); die;
+        }
+    }
+
+    /**
+     * @param Options $options
+     * @param PRequestEntity $photoRequest
+     */
+    private function broadcastWinnerQueue(Options $options, PRequestEntity $photoRequest) {
+        /*Broadcasting*/
+        $this->notification("Broadcasting winners queue");
+        try{
+            $this->winnerQueue->broadcast($photoRequest, $options->getTimeForWinnerQueue());
+        }catch (\Exception $e) {
+            $this->error($e->getMessage()); die;
+        }
+    }
+
+    /**
+     * @param PRequestEntity $photoRequest
+     */
+    private function waitUntilRequestExpires(PRequestEntity $photoRequest) {
+        /*waiting until request time finishes*/
+        $this->notification("Waiting until request time expires (".
+            date('h:i:s ', $photoRequest->getValidUntil()->getTimestamp()) .")");
+        $now = new \DateTime('now');
+        $sleepTime = $photoRequest->getValidUntil()->getTimestamp() - $now->getTimestamp();
+        if($sleepTime > 0) {
+            sleep($sleepTime);
+        }
     }
 
     /**

@@ -4,9 +4,11 @@ namespace Audero\WebBundle\Controller;
 
 use Audero\ShowphotoBundle\Entity\PhotoResponse;
 
+use Audero\ShowphotoBundle\Entity\Rating;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
  * Page controller.
@@ -29,15 +31,6 @@ class PageController extends Controller
      * @Template()
      */
     public function newestAction()
-    {
-        return array();
-    }
-
-    /**
-     * @Route("/most-commented", name="web_page_mostCommented")
-     * @Template()
-     */
-    public function mostCommentedAction()
     {
         return array();
     }
@@ -92,8 +85,19 @@ class PageController extends Controller
             return $this->redirect($this->generateUrl("web_page_singleRequest"));
         }
 
+        $rate = null;
+        if($this->getUser()) {
+            $repo = $this->getDoctrine()->getRepository("AuderoShowphotoBundle:Rating");
+            if(!$repo) {
+                throw new InternalErrorException();
+            }
+
+            $rate = $repo->findOneBy(array('user'=>$this->getUser(), 'response'=>$response));
+        }
+
         return $this->render('AuderoWebBundle:Page:response.html.twig', array(
-            'response' => $response
+            'response' => $response,
+            'rate' => $rate
         ));
     }
 }

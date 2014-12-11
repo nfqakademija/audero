@@ -2,6 +2,7 @@
 
 namespace Audero\ShowphotoBundle\Repository;
 
+use Audero\ShowphotoBundle\Entity\User;
 use Doctrine\ORM\EntityRepository;
 
 /**
@@ -12,10 +13,14 @@ use Doctrine\ORM\EntityRepository;
  */
 class PhotoRequestRepository extends EntityRepository
 {
-    public function findOneNewest()
+    public function findLastBroadcasted()
     {
         return $this->getEntityManager()
-            ->createQuery('SELECT r FROM AuderoShowphotoBundle:PhotoRequest r ORDER BY r.date DESC')
+            ->createQuery('
+              SELECT r
+              FROM AuderoShowphotoBundle:PhotoRequest r
+              WHERE r.validUntil IS NOT NULL
+              ORDER BY r.date DESC')
             ->setMaxResults(1)
             ->getOneOrNullResult();
     }
@@ -26,5 +31,26 @@ class PhotoRequestRepository extends EntityRepository
             ->createQuery('SELECT r FROM AuderoShowphotoBundle:PhotoRequest r WHERE r.slug = ?1')
             ->setParameter(1, $slug)
             ->getOneOrNullResult();
+    }
+
+    public function findLatest(User $user, $size) {
+        return $this->getEntityManager()
+            ->createQuery("SELECT req
+                           FROM AuderoShowphotoBundle:PhotoRequest req
+                           WHERE req.user = ?1 AND req.validUntil IS NOT NULL
+                           ORDER BY req.date DESC")
+            ->setMaxResults($size)
+            ->setParameter(1, $user)
+            ->getResult();
+    }
+
+    public function findAllData() {
+        return $this->getEntityManager()
+            ->createQuery(
+                'SELECT r
+                 FROM AuderoShowphotoBundle:PhotoRequest r'
+            )
+            ->getArrayResult();
+
     }
 }

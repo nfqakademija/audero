@@ -1,6 +1,3 @@
-var offset = 5;
-var category = $('#content-category').data('category');
-var content = $('#content');
 var dialog = $( "#notification_dialog" );
 
 $(function() {
@@ -12,11 +9,11 @@ $(function() {
 function handleNewRating(data) {
     console.log(data);
     var likeBar = $(".progress-bar-success[data-request_slug='" +
-                    data.requestSlug + "'][data-response_author='" +
-                    data.responseAuthor + "']");
+    data.requestSlug + "'][data-response_author='" +
+    data.responseAuthor + "']");
     var dislikeBar = $(".progress-bar-danger[data-request_slug='" +
-                    data.requestSlug + "'][data-response_author='" +
-                    data.responseAuthor + "']");
+    data.requestSlug + "'][data-response_author='" +
+    data.responseAuthor + "']");
 
     likeBar.css('width', data.likesPercent + "%");
     var likeText = data.likes;
@@ -33,7 +30,7 @@ function handleNewRating(data) {
     dislikeBar.text(dislikeText);
 }
 
-content.on('click', '.like_button', (function(event){
+$(document).on('click', '.like_button', (function(event){
     var type = 'create';
     if($(this).hasClass('active')) {
         type = 'remove';
@@ -64,7 +61,7 @@ content.on('click', '.like_button', (function(event){
     event.preventDefault();
 }));
 
-content.on('click','.dislike_button', (function(event){
+$(document).on('click','.dislike_button', (function(event){
     var type = 'create';
     if($(this).hasClass('active')) {
         type = 'remove';
@@ -99,31 +96,6 @@ content.on('click','.dislike_button', (function(event){
 
     event.preventDefault();
 }));
-
-$(window).scroll(function()
-{
-    if($(window).scrollTop() == $(document).height() - $(window).height())
-    {
-        $('#small-ajax-loader').show();
-        $.ajax({
-            url: "/load/" + category,
-            type: 'POST',
-            data: {offset: offset},
-            success: function(html)
-            {
-                if(html)
-                {
-                    $("#content").append(html);
-                    $('#small-ajax-loader').hide();
-                    offset += 5;
-                }else
-                {
-                    $('#small-ajax-loader').html('No more photos to show.');
-                }
-            }
-        });
-    }
-});
 
 var conn = new ab.Session('ws://vilnius2.projektai.nfqakademija.lt:12980',
     function() {

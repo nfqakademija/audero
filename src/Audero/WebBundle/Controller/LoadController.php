@@ -21,7 +21,10 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class LoadController extends Controller
 {
-    const LOAD_RESPONSES = 10;
+    /**
+     *
+     */
+    const LOAD_RESPONSES = 5;
 
     /**
      * @Route("/newest", name="web_load_newest")
@@ -31,48 +34,42 @@ class LoadController extends Controller
     {
         $offset = $request->request->get('offset', 0);
         $repo = $this->getDoctrine()->getRepository("AuderoShowphotoBundle:PhotoResponse");
+        if(!$repo) {
+            throw new InternalErrorException();
+        }
+
         $responses = $repo->findNewestWithOffset($offset, LoadController::LOAD_RESPONSES);
         if(!$responses) {
             return new Response();
         }
-        $ratings = array();
-        if($user = $this->getUser()) {
-            $ratings = $this->getUserRatingsForResponses($user, $responses);
-        }
 
-        $html = $this->renderView('AuderoWebBundle:Load:responses.html.twig', array(
-            'responses' => $responses,
-            'ratings'   => $ratings
-        ));
-
-        return new Response($html);
-    }
-
-    /**
-     * @Route("/most-commented", name="web_load_mostCommented")
-     * @Method("POST")
-     */
-    public function mostCommentedAction()
-    {
-        //$offset = $request->query->get('offset', 0);
-        $repo = $this->getDoctrine()->getRepository("AuderoShowphotoBundle:PhotoRequest");
-        $requests = $repo->findAll();
-
-        $html = $this->renderView('AuderoWebBundle:Load:responses.html.twig', array(
-            'requests' => $requests
-        ));
-
-        return new Response($html);
+        return new Response($this->createHtml($responses));
     }
 
     /**
      * @Route("/best", name="web_load_best")
      * @Method("POST")
      */
-    public function bestAction() {
+    public function bestAction(Request $request) {
+        $offset = $request->request->get('offset', 0);
+        $repo = $this->getDoctrine()->getRepository("AuderoShowphotoBundle:PhotoResponse");
+        if(!$repo) {
+            throw new InternalErrorException();
+        }
+        $responses = $repo->findBestWithOffset($offset, LoadController::LOAD_RESPONSES);
+        if(!$responses) {
+            return new Response();
+        }
 
+        return new Response($this->createHtml($responses));
     }
 
+    /**
+     * @param User $user
+     * @param $responses
+     * @return array
+     * @throws InternalErrorException
+     */
     private function getUserRatingsForResponses(User $user, $responses) {
         $repo = $this->getDoctrine()->getRepository("AuderoShowphotoBundle:Rating");
         if(!$repo) {
@@ -81,7 +78,6 @@ class LoadController extends Controller
 
         $ratings = array();
         foreach((array) $responses as $response) {
-            // TODO BIG CHECKING
             if($response instanceof PhotoResponse) {
                 $rate = $repo->findOneBy(array('user'=>$user, 'response'=>$response));
                 if($rate && $rate instanceof Rating) {
@@ -93,6 +89,22 @@ class LoadController extends Controller
         return $ratings;
     }
 
+    /**
+     * @param $responses
+     * @return string
+     * @throws InternalErrorException
+     */
+    private function createHtml($responses) {
+        $ratings = array();
+        if($user = $this->getUser()) {
+            $ratings = $this->getUserRatingsForResponses($user, $responses);
+        }
 
+        $html = $this->renderView('AuderoWebBundle:Load:responses.html.twig', array(
+            'responses' => $responses,
+            'ratings'   => $ratings
+        ));
 
+        return $html;
+    }
 }

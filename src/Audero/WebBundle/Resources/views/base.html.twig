@@ -40,7 +40,10 @@
   <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
           <div class="navbar-header">
-              <a href="{{ path('web_page_index') }}" class="navbar-brand"><img src="{{ asset('img/logo.png') }}" alt="ShowPhoto.me"/></a>
+              <a href="{{ path('web_page_index') }}" class="navbar-brand">
+                  {% image '@AuderoWebBundle/Resources/public/img/logo.png' %}
+                    <img src="{{ asset_url }}" alt="Showphoto" />
+                  {% endimage %} </a>
               <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-main">
                   <span class="icon-bar"></span>
                   <span class="icon-bar"></span>
@@ -48,25 +51,31 @@
               </button>
           </div>
           <div class="navbar-collapse collapse" id="navbar-main">
-              <form class="navbar-form navbar-left">
-                  <input class="form-control col-lg-8" placeholder="Search" type="text">
-              </form>
-              {#TODO remove <b> tags#}
               <ul class="nav navbar-nav navbar-right">
-                  <li><a href="{{ path('web_page_newest') }}"><b>Newest</b></a></li>
-                  <li><a href="{{ path('web_page_best') }}"><b>Best</b></a></li>
-                  <li><a href="{{ path('web_page_mostCommented') }}"><b>Hottest</b></a></li>
+                  <li><a href="{{ path('web_page_newest') }}">Newest</a></li>
+                  <li><a href="{{ path('web_page_best') }}">Best</a></li>
+                  <li><a href="{{ path('showphoto_game_play') }}"><i class="fa fa-play"></i>
+                          PLAY
+                      </a>
+                  </li>
                   {% if app.user %}
+                    {% if app.user.roles[0] is defined and app.user.roles[0] == 'ROLE_ADMIN' %}
+                      <li><a href="{{ path('backend_options_index') }}">
+                          Admin
+                          </a>
+                      </li>
+                    {% endif %}
                   <li class="dropdown">
-                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><b>Account</b> <b class="caret"></b></a>
+                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Account<b class="caret"></b></a>
                       <ul class="dropdown-menu">
-                          <li><a href="#">Profile</a></li>
+                          <li><a href="{{ path('web_profile_index') }}">Profile</a></li>
                           <li class="divider"></li>
-                          <li><a href="#">Logout</a></li>
+                          <li><a href="{{ path('fos_user_security_logout') }}">Logout</a></li>
                       </ul>
                   </li>
                   {% else %}
-                      <li><a href="#" target="_blank">Login</a></li>
+                      <li><a href="{{ path('fos_user_security_login') }}">Login</a></li>
+                      <li><a href="{{ path('fos_user_registration_register') }}">Register</a></li>
                   {% endif %}
 
 

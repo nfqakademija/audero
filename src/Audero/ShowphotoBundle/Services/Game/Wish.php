@@ -45,8 +45,11 @@ class Wish {
         }
 
         $wishesRepo = $this->em->getRepository("AuderoShowphotoBundle:Wish");
-        $wishes = (array) $wishesRepo->findOrderedByPosition($user, $options->getPlayerWishesCount());
+        if(!$wishesRepo) {
+            throw new \Exception('Could not access wishes repository');
+        }
 
+        $wishes = (array) $wishesRepo->findOrderedByPosition($user, $options->getPlayerWishesCount());
         $wishesByPosition = array();
         /**@var WishEntity $wish*/
         foreach($wishes as $wish) {
@@ -70,6 +73,7 @@ class Wish {
                 'wishList' => $wishList,
             )
         );
+
         $this->pusherQueue->add($data);
     }
 

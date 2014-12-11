@@ -1,47 +1,22 @@
 {% extends 'AuderoBackendBundle::base.html.twig' %}
 
-{% block title %}AuderoBackendBundle:Options:index{% endblock %}
+{% block title %}Admin Options{% endblock %}
+
+{% block body_path %}
+    <li class="active">
+        <i class="fa fa-table"></i> Options
+    </li>
+{% endblock %}
 
 {% block body_header %}Game options{% endblock %}
 
 {% block body %}
     <div class="col-lg-6">
         <div class="table-responsive">
-            <table class="table table-hover table-striped">
-                <tbody>
-                    <tr>
-                        <td>/index.html</td>
-                        <td>1265</td>
-                        <td>32.3%</td>
-                        <td>$321.33</td>
-                    </tr>
-                    <tr>
-                        <td>/about.html</td>
-                        <td>261</td>
-                        <td>33.3%</td>
-                        <td>$234.12</td>
-                    </tr>
-                    <tr>
-                        <td>/sales.html</td>
-                        <td>665</td>
-                        <td>21.3%</td>
-                        <td>$16.34</td>
-                    </tr>
-                    <tr>
-                        <td>/blog.html</td>
-                        <td>9516</td>
-                        <td>89.3%</td>
-                        <td>$1644.43</td>
-                    </tr>
-                    <tr>
-                        <td>/404.html</td>
-                        <td>23</td>
-                        <td>34.3%</td>
-                        <td>$23.52</td>
-                    </tr>
-                </tbody>
-            </table>
+
+                {{ form(form_options) }}
+
         </div>
     </div>
-    {{ form(form_options) }}
+
 {% endblock %}

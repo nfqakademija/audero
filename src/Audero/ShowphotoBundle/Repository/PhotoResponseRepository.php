@@ -3,6 +3,7 @@
 namespace Audero\ShowphotoBundle\Repository;
 
 use Audero\ShowphotoBundle\Entity\PhotoRequest;
+use Audero\ShowphotoBundle\Entity\User;
 use Doctrine\ORM\EntityRepository;
 
 /**
@@ -37,5 +38,36 @@ class PhotoResponseRepository extends EntityRepository
             ->setFirstResult($offset)
             ->setMaxResults($size)
             ->getResult();
+    }
+
+    public function findBestWithOffset($offset, $size) {
+        return $this->getEntityManager()
+            ->createQuery("SELECT res
+                           FROM AuderoShowphotoBundle:PhotoResponse res
+                           ORDER BY res.likes - res.dislikes DESC")
+            ->setFirstResult($offset)
+            ->setMaxResults($size)
+            ->getResult();
+    }
+
+    public function findLatest(User $user, $size) {
+        return $this->getEntityManager()
+            ->createQuery("SELECT res
+                           FROM AuderoShowphotoBundle:PhotoResponse res
+                           WHERE res.user = ?1
+                           ORDER BY res.date DESC")
+            ->setMaxResults($size)
+            ->setParameter(1, $user)
+            ->getResult();
+    }
+
+    public function findAllData() {
+        return $this->getEntityManager()
+            ->createQuery(
+                'SELECT r
+                 FROM AuderoShowphotoBundle:PhotoResponse r'
+            )
+            ->getArrayResult();
+
     }
 }

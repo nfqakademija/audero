@@ -54,10 +54,11 @@ class Player
         /**@var Options $options */
         $options = $this->em->getRepository("AuderoBackendBundle:OptionsRecord")->findCurrent();
         if (!$options) {
-            throw new InternalErrorException();
+            throw new InternalErrorException("Could not get admin options");
         }
 
         if ($playersRepo->getPlayersCount() < $options->getMaxPlayers()) {
+
             $player = new PlayerEntity();
             $player->setUser($user);
 

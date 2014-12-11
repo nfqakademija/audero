@@ -6,7 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Token
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Audero\ShowphotoBundle\Repository\TokenRepository")
  * @ORM\Table(name="token")
  */
 class Token

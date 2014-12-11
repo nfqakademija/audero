@@ -41,21 +41,22 @@ class WinnerQueue {
         return $this->em->getRepository("AuderoShowphotoBundle:Player")->findWinnerQueue($request);
     }
 
-
     /**
      * @param PRequestEntity $request
-     * @param $showUntil
-     * @throws \Exception
+     * @param $timeToShow
      */
-    public function broadcast(PRequestEntity $request, $showUntil) {
+    public function broadcast(PRequestEntity $request, $timeToShow) {
         $winnerQueue = (array) $this->generate($request);
+
         if(!$winnerQueue) {
-            return;
+            return null;
         }
 
-        $playersData = array();
+        $playersData = array(); $place = 0;
         foreach($winnerQueue as $entity) {
+            $place++;
             $playersData[] = array(
+                'place'    => $place,
                 'username' => $entity['username'],
                 'userRate' => $entity['rate'],
                 'likes'    => $entity['likes'],
@@ -68,7 +69,7 @@ class WinnerQueue {
             'topic' => 'game',
             'data'  => array(
                 'type' => 'winnerQueue',
-                'showUntil' => $showUntil,
+                'timeToShow' => $timeToShow,
                 'playersData' => $playersData
             )
         );

@@ -2,43 +2,15 @@
 
 {% block body %}
     <div class="row">
-        <h2>Profile</h2>
+        <h2>{{ user.username }}</h2>
         <hr>
-
         <div class="col-md-4">
-            <p><strong>{{ app.user.username }}</strong></p>
-            <p>{{ app.user.email }}</p>
-            <p>Your rate: {{ app.user.rate }} Your rank: {{ rank }}</p>
-            <a href="{{ path('fos_user_profile_edit') }}" class="btn btn-primary text-center btn-sm">Edit profile</a>
-            <a href="{{ path('fos_user_change_password') }}" class="btn btn-primary text-center btn-sm">Change Password</a>
+            <p class="text-center">{{ user.email }}</p>
+            <p class="text-center">Rate: {{ user.rate }} Rank: {{ rank }}</p>
         </div>
-
         <div class="col-md-8">
-            <h3>My wishes list: </h3>
-            <hr>
-            <div id="wish-list-errors">
-            </div>
-            <span id="wishes">
-                {% for i in 1..wishListSize %}
-                    <p><input type="text"
-                        {% if i > 3 %}
-                            {{ "class='form-control additional_wish' style='display:none'" }}
-                        {% else %}
-                            {{ "class='form-control'" }}
-                        {% endif %}
-                        data-position="{{ i }}"
-                        {% if wishList[i] is defined  %}
-                            value="{{ wishList[i].title }}"
-                        {% endif %}
-                        placeholder="Place your wish">
-                    </p>
-                {% endfor %}
-            </span>
-            <p><a id="show_more" href="#" title="Add more requests">Show / Hide</a></p>
             <!-- My last requests -->
-
-            <!-- My last requests -->
-            <h3>My Last requests: </h3>
+            <h3>Last requests: </h3>
             <hr>
             <table class="table table-striped">
                 <thead>
@@ -58,7 +30,7 @@
                 </tbody>
             </table>
             <br/>
-            <h3>My Last responses: </h3>
+            <h3>Last responses: </h3>
             <hr>
             <table class="table table-striped">
                 <thead>
@@ -83,7 +55,7 @@
                         </td>
                         <td><div class="progress">
                                 <div class="progress-bar progress-bar-success"
-                                        {% if response.likes + response.dislikes > 0 %}
+                                    {% if response.likes + response.dislikes > 0 %}
                                      style="width: {{ 100 * response.likes / (response.likes + response.dislikes) }}%" >
                                     {{ response.likes }}
                                     {%  else %}
@@ -91,7 +63,7 @@
                                     {% endif %}
                                 </div>
                                 <div class="progress-bar progress-bar-danger"
-                                        {% if response.likes + response.dislikes > 0 %}
+                                     {% if response.likes + response.dislikes > 0 %}
                                      style="width: {{ 100-100 * response.likes / (response.likes + response.dislikes) }}%" >
                                     {{ response.dislikes }}
                                     {%  else %}

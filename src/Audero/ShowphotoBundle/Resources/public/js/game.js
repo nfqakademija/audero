@@ -2,18 +2,26 @@
 var timeLeft = 0;
 /*Interval used to decrease time*/
 var counter;
+/*Notifications dialog*/
+var dialog = $("#notification_dialog");
+// Chat messages height hack
+$('#chat_messages').css('width', '286px').css('max-height', '305px').css('overflow-x', 'visible').css('margin-bottom', '5px').css('overflow-y', 'scroll').scrollTop(1000000000);
+//
 
 /*Notification dialog setup*/
 $(function() {
-    $( "#notification_dialog" ).dialog({
+    dialog.dialog({
         autoOpen: false
     });
 });
 
 /*Initializing timeLeft*/
 $(function(){
-    timeLeft = parseInt((parseInt($('#timer').data('validuntil'))*1000 - new Date().getTime())/1000);
-    counter = setInterval(timer, 1000);
+    timeLeft = parseInt($('#timer').data('timeleft'));
+    if(timeLeft > 0) {
+        counter = setInterval(timer, 1000);
+    }
+
 });
 
 function timer()
@@ -31,16 +39,24 @@ function timer()
 
 function handleRequest(data) {
     $("#request").text(data.requestTitle);
-    $("#user").text(data.username);
+    $("#user").text(" @" + data.username);
+    $('#upload_dialog_opener').show();
+    $('#winners-panel').hide();
+    $('#responses').html('');
     /*clearing previous interval*/
     clearInterval(counter);
     /*Setting time left*/
-    timeLeft = parseInt((parseInt(data.validUntil)*1000 - new Date().getTime())/1000);
+    timeLeft = parseInt(data.timeLeft);
     counter = setInterval(timer, 1000);
 }
 
 function handleResponse(data) {
-    $( "#responses" ).append("<div class='col-md-4'><p class='text-center'><img class='img-responsive' src='" + data.photoLink + "'></p></div>");
+    $( "#responses" ).prepend(
+        "<div class='col-lg-4 col-md-4'><a class='thumbnail' " +
+        "href='#'><img class='img-responsive' " +
+        "src='"+ data.photoLink +
+        "' alt=''></a></div>"
+    );
 }
 
 function handlePlayersUpdate(data) {
@@ -61,6 +77,28 @@ function handleWishesUpdate(data) {
     }
 }
 
+function handleWinnersQueue(data) {
+    var tag = $('#winners-panel-body');
+    tag.html('');
+    $('#winners-panel').show();
+
+    timeLeft = parseInt(data.timeToShow);
+    counter = setInterval(timer, 1000);
+
+    var entries = data.playersData;
+    for (var key in entries) {
+        if (entries.hasOwnProperty(key)) {
+            tag.append(
+            "<tr> " +
+                "<td>" + "1" + "</td>" +
+                "<td>" + entries[key].username + "</td>" +
+                "<td>" + entries[key].responseRate +"</td>" +
+            "</tr>");
+        }
+    }
+
+}
+
 /*Chat message submit handler*/
 $('form[name="showphoto_chat"]').submit(function( event ) {
     $.ajax( {
@@ -70,7 +108,8 @@ $('form[name="showphoto_chat"]').submit(function( event ) {
         success: function(data) {
             data = JSON.parse(data);
             if(data.status == 'failure') {
-                alert(data);
+                dialog.text(data.message);
+                dialog.dialog('open');
             }
         }
     } );
@@ -80,13 +119,20 @@ $('form[name="showphoto_chat"]').submit(function( event ) {
     event.preventDefault();
 });
 
-var conn = new ab.Session('ws://127.0.0.1:8080',
+function handleChatMessage(data) {
+    var tag = $('#chat_messages');
+    tag.append("<span class='text-muted'>" + data.author + ': ' + '</span>' +
+    data.text + "<hr class='no-padding'>");
+    tag.css('width', '290px').css('max-height', '305px').css('overflow-x', 'visible').css('margin-bottom', '5px').css('overflow-y', 'scroll').scrollTop(1000000000);
+}
+
+var conn = new ab.Session('ws://vilnius2.projektai.nfqakademija.lt:12980',
     function() {
         conn.subscribe('chat', function(topic, data) {
-            $('#chat_messages').append("<span class='text-muted'>" + data.author + ': ' + '</span>' +
-            data.text + "<hr class='no-padding'>");
+            handleChatMessage(data);
         });
         conn.subscribe('game', function(topic, data) {
+            console.log(data);
             if(data.type == 'request') {
                 handleRequest(data);
             }else if(data.type == 'response') {
@@ -94,7 +140,7 @@ var conn = new ab.Session('ws://127.0.0.1:8080',
             }else if(data.type == 'player') {
                 handlePlayersUpdate(data);
             }else if(data.type == 'winnerQueue') {
-                console.log(data);
+                handleWinnersQueue(data);
             }else if(data.type == "wish") {
                 handleWishesUpdate(data);
             }
@@ -102,12 +148,7 @@ var conn = new ab.Session('ws://127.0.0.1:8080',
     },
     function() {
         /*Notifying user about connection closure*/
-        //TODO
-        setTimeout(function(){
-            var dialog = $('#notification_dialog');
-            dialog.text('Connection closed');
-            dialog.dialog('open');
-        }, 1000);
+        //TODO REDIRECT
 
     },
     {'skipSubprotocolCheck': true}

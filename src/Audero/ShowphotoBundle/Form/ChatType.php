@@ -15,7 +15,11 @@ class ChatType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('text')
+            ->add('text', 'text', array(
+                'constraints' => array(
+                    new \Symfony\Component\Validator\Constraints\NotBlank(),
+                    new \Symfony\Component\Validator\Constraints\Length(array('min'=>'5', 'max'=>"50")),
+            )))
             ->add('Send', 'submit')
         ;
     }

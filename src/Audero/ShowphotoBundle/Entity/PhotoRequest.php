@@ -28,6 +28,13 @@ class PhotoRequest
     private $date;
 
     /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="valid_until", type="datetime", nullable=true)
+     */
+    private $validUntil;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="title", type="string", length=255)
@@ -191,5 +198,21 @@ class PhotoRequest
     public function getDate()
     {
         return $this->date;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getValidUntil()
+    {
+        return $this->validUntil;
+    }
+
+    /**
+     * @param \DateTime $validUntil
+     */
+    public function setValidUntil($validUntil)
+    {
+        $this->validUntil = $validUntil;
     }
 }

@@ -5,13 +5,12 @@ services:
         tags:
           - { name: doctrine.event_listener, event: onFlush }
     #Uploader services
-    uploader.token.provider:
+    token.provider:
         class:  Audero\ShowphotoBundle\Services\Uploader\TokenProvider
-        arguments: ["%imgur_client_id%", "%imgur_client_secret%", "%imgur_refresh_token%"]
-        public: false;
+        arguments: ["@doctrine.orm.entity_manager", "%imgur_client_id%", "%imgur_client_secret%", "%imgur_refresh_token%"]
     uploader:
         class:  Audero\ShowphotoBundle\Services\Uploader\Imgur
-        arguments: ["@uploader.token.provider"]
+        arguments: ["@doctrine.orm.entity_manager"]
     #Game services
     game.chat:
        class:  Audero\ShowphotoBundle\Services\Game\Chat
