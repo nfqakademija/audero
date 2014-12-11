@@ -25,6 +25,7 @@ class OptionsType extends AbstractType
             ->add('timeForRequest', 'integer')
             ->add('minPlayers', 'integer')
             ->add('maxPlayers', 'integer')
+            ->add('timeForWinnerQueue', 'integer')
             ->add('playerWishesCount', 'integer')
             ->add('save', 'submit')
         ;

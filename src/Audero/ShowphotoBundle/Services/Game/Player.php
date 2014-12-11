@@ -162,6 +162,8 @@ class Player
             $this->remove($player);
         }
 
+        $this->broadcast();
+
     }
 
 } 

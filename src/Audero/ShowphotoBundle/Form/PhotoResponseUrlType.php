@@ -16,7 +16,7 @@ class PhotoResponseUrlType extends AbstractType
     {
         $builder
             ->add('photoUrl','url', array('required' => true))
-            ->add('Upload', 'submit');
+            ->add('upload', 'submit');
     }
 
     /**

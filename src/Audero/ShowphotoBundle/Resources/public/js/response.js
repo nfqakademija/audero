@@ -1,7 +1,7 @@
 $(function () {
     var options = {
         beforeSubmit: function () {
-            alert('loader show');
+            $('#upload_message').text('Uploading...')
         },
         success: function (data) {
             if (data.status == 'success') {
@@ -10,8 +10,7 @@ $(function () {
             } else {
                 $('#errors').text(data.message);
             }
-
-            alert('loader hide');
+            $('#upload_message').text('');
         },
         resetForm: true        // reset the form after successful submit
     };

@@ -10,7 +10,6 @@ $(function() {
 });
 
 function handleNewRating(data) {
-    console.log(data);
     var likeBar = $(".progress-bar-success[data-request_slug='" +
                     data.requestSlug + "'][data-response_author='" +
                     data.responseAuthor + "']");

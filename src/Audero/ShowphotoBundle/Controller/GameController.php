@@ -44,6 +44,8 @@ class GameController extends Controller
             return $this->redirect($this->generateUrl('showphoto_spectate_index'));
         }
 
+        $this->get('game.player')->broadcast();
+
         /** @var \Audero\BackendBundle\Entity\Options $backendOptions */
         $backendOptions = $em->getRepository('AuderoBackendBundle:OptionsRecord')->findCurrent();
         if(!$backendOptions) {

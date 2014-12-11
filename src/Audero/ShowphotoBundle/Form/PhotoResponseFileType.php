@@ -16,7 +16,7 @@ class PhotoResponseFileType extends AbstractType
     {
         $builder
             ->add('photoFile','file', array('required' => true))
-            ->add('Upload', 'submit');
+            ->add('upload', 'submit');
     }
 
     /**

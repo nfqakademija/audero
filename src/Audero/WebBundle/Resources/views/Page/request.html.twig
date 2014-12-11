@@ -33,35 +33,6 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
-    $('#like_button').click(function(){
-        $.ajax({
-            type: "POST",
-            url: '/app_dev.php/rating/like',
-            data: {request_slug: $(this).data('request_slug'), response_author: $(this).data('response_author'), rate: $(this).data('rate')}
-        });
-    });
 
-    $('#dislike_button').click(function(){
-        $.ajax({
-            type: "POST",
-            url: '/app_dev.php/rating/',
-            data: {photo_id: $(this).data('id'), rate: $(this).data('rate')}
-        });
-    });
-
-    var conn = new ab.Session('ws://127.0.0.1:8080',
-            function() {
-                conn.subscribe('chat', function(topic, data) {
-                    console.log(data);
-                });
-            },
-            function() {
-                console.warn('WebSocket connection closed');
-            },
-            {'skipSubprotocolCheck': true}
-    );
-
-</script>
 
 {% endblock %}

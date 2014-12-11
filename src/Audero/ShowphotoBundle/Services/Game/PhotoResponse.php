@@ -115,8 +115,8 @@ class PhotoResponse
                 ->setWidth($data->width);
             return $response;
         }
-        // TODO
-        throw new \Exception('Failed to upload image. Available formats: ');
+
+        throw new \Exception("Failed to upload image. Try again or upload from pc \n ");
     }
 
     /**

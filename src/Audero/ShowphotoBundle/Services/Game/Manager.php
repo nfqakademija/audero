@@ -100,11 +100,11 @@ class Manager implements OutputInterface
 
             $this->waitUntilRequestExpires($requestEntity);
 
-            /*$this->broadcastWinnerQueue($options, $requestEntity);*/
+            $this->broadcastWinnerQueue($options, $requestEntity);
 
             /*Waiting*/
-            /*$this->notification("Showing winners queue for {$options->getTimeForWinnerQueue()} sec");
-            sleep($options->getTimeForWinnerQueue());*/
+            $this->notification("Showing winners queue for {$options->getTimeForWinnerQueue()} sec");
+            sleep($options->getTimeForWinnerQueue());
 
             //TODO kick all players who did not respond
 

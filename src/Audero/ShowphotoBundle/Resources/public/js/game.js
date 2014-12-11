@@ -53,14 +53,23 @@ function handleRequest(data) {
 function handleResponse(data) {
     $( "#responses" ).prepend(
         "<div class='col-lg-4 col-md-4'><a class='thumbnail' " +
-        "href='#'><img class='img-responsive' " +
+        "href='/game/" + data.requestSlug + "/" + data.author  + "' target='_blank'>" +
+        "<img class='img-responsive' " +
         "src='"+ data.photoLink +
         "' alt=''></a></div>"
     );
 }
 
 function handlePlayersUpdate(data) {
-    console.log(data.players);
+    var players = data.players;
+    var tag = $('#players_content');
+    tag.html('');
+    for (var key in players) {
+        if (players.hasOwnProperty(key)) {
+            tag.append("<li><a href='/user/'" + players[key] + "'>" +
+            "<i class='fa fa-user'></i>" + players[key] + "</a></li>");
+        }
+    }
 }
 
 function handleWishesUpdate(data) {
@@ -84,7 +93,6 @@ function handleWinnersQueue(data) {
 
     timeLeft = parseInt(data.timeToShow);
     counter = setInterval(timer, 1000);
-
     var entries = data.playersData;
     for (var key in entries) {
         if (entries.hasOwnProperty(key)) {
@@ -132,7 +140,6 @@ var conn = new ab.Session('ws://vilnius2.projektai.nfqakademija.lt:12980',
             handleChatMessage(data);
         });
         conn.subscribe('game', function(topic, data) {
-            console.log(data);
             if(data.type == 'request') {
                 handleRequest(data);
             }else if(data.type == 'response') {
